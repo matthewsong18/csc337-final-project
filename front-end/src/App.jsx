@@ -1,5 +1,5 @@
 import './App.css';
-import { Router, Routes, Route } from "react-router";
+import { BrowserRouter, Routes, Route } from "react-router";
 
 // Import page components
 import Home from './pages/Home';
@@ -10,18 +10,20 @@ import Profile from './pages/Profile';
 function App() {
 
   return (
-    <Router>
-      <div>
-        {/* Add a Navbar or other common components here */}
-        <Routes>
-          {/* Define routes */}
-          <Route path="/" element={<Home />} />
-          <Route path="/login" element={<Login />} />
-          <Route path="/chat" element={<Chat />} />
-          <Route path="/profile" element={<Profile />} />
-        </Routes>
-      </div>
-    </Router>
+    <BrowserRouter>
+        <div>
+          {/* Add a Navbar or other common components here */}
+          <h3>This is common components across pages</h3>
+          <Routes>
+            {/* Define routes */}
+            <Route path="/" element={<Home />} />
+            <Route path="/login" element={<Login />} />
+            <Route path="/chat" element={<Chat />} />
+            <Route path="/profile" element={<Profile />} />
+          </Routes>
+        </div>
+    </BrowserRouter>
+    
   )
 }
 

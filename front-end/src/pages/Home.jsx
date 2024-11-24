@@ -1,5 +1,3 @@
-// Home.jsx (Inside /pages)
-
 function Home() {
   return (
     <div>

@@ -7,10 +7,8 @@ backend/
 │   ├── PollOption.js
 ├── routes/                 // Define route handlers
 │   ├── authRoutes.js       // For login/signup
-│   ├── chatRoutes.js       // For chat and messaging
-│   ├── pollRoutes.js       // For poll creation and voting
-│   ├── helpRoutes.js       // For help-related endpoints
-│   ├── userRoutes.js       // For user-specific actions
+│   ├── chatRoutes.js       // For chat, messaging, and poll
+│   ├── userRoutes.js       // For user-specific actions: join, create, help page, profile
 ├── controllers/            // Business logic for routes
 │   ├── authController.js
 │   ├── chatController.js

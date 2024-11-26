@@ -1,19 +1,17 @@
 const { Router } = require("express");
+const { getUserByName, createUser } = require("../controllers/userController");
 
 const authRouter = Router();
 
-// Signup route
-authRouter.post("/signup/:username", (req, res) => {
-    res.send(`New user signs up: ${req.params.username}`);
-});
+// Sign up a new user
+authRouter.post("/signup/:username", createUser);
 
-// Login routes
+// Get login page
 authRouter.get("/login", (req, res) => {
-    res.send(`Login page`);
+    res.send(`Login/Signup page`);
 });
 
-authRouter.get("/login/:username", (req, res) => {
-  res.send(`Username: ${req.params.username}`);
-});
+// Get into user profile
+authRouter.get("/login/:username", getUserByName);
 
 module.exports = authRouter;

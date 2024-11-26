@@ -1,3 +1,7 @@
+## Motivation
+MVC structure just makes it's easier to read and understand the flow of the project: requests go through routers, routers call controllers, controllers handle logic, interact with db, and send back data to the frontend.
+## File Structure
+```code
 backend/
 ├── models/                 // Schemas for MongoDB objects
 │   ├── User.js
@@ -17,8 +21,6 @@ backend/
 ├── utils/                  // Helper utilities (e.g., UUID)
 │   ├── generateUUID.js
 │   ├── validation.js
-├── config/                 // Configuration and environment files
-│   ├── db.js               // MongoDB connection setup
-│   ├── dotenv.config.js    // Load environment variables
 ├── app.js                  // Main application entry point
 ├── package.json            // Dependencies and scripts
+```

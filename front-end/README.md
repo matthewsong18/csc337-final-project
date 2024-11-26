@@ -1,6 +1,6 @@
 # **React + Vite Project Setup**
 
-This repository provides a streamlined setup for building a React application using Vite, with Hot Module Replacement (HMR) and customizable ESLint rules.
+This repository provides a setup for building a React application using Vite, with Hot Module Replacement (HMR) and customizable ESLint rules.
 
 ## **Key Features**
 - **Fast Development**: Utilizes Vite's blazing-fast development server with HMR.
@@ -11,14 +11,12 @@ This repository provides a streamlined setup for building a React application us
 ---
 
 ## **Folder Structure Overview**
-This project follows a clean and modular folder structure for ease of development and scalability:
+This project follows a modular folder structure for ease of development and scalability:
 
 ### **Root Directory**
-- **`public/`**  
-  Stores static assets (e.g., images, files) that are referenced by absolute URLs or excluded from Vite's build pipeline.
+- **`public/`**: Stores static assets (e.g., images, files) that are referenced by absolute URLs or excluded from Vite's build pipeline.
 
-- **`src/`**  
-  Contains the application code. Key subdirectories and files:
+- **`src/`**: Contains the application code. Key subdirectories and files:
   - **`src/assets/`**: Assets processed and optimized by Vite during the build process (e.g., images, fonts).
   - **`src/components/`**: Reusable UI components (e.g., Navbar, Footer).
   - **`src/pages/`**: Contains React components representing different pages of the app.
@@ -35,7 +33,7 @@ This project follows a clean and modular folder structure for ease of developmen
 ---
 
 ## **Detailed File and Folder Structure**
-```plaintext
+```
 /src
   ├── assets/           // Static assets processed by Vite
   ├── components/       // Reusable UI components
@@ -43,7 +41,7 @@ This project follows a clean and modular folder structure for ease of developmen
       ├── Home.jsx      // Home page
       ├── Login.jsx     // Login page
       ├── Signup.jsx    // Signup page
-      ├── Chat.jsx      // Chat feature
+      ├── Chat.jsx      // Chat page
       ├── Profile.jsx   // User profile page
   ├── App.jsx           // Main component with routing logic
   ├── main.jsx          // React entry point
@@ -53,18 +51,18 @@ This project follows a clean and modular folder structure for ease of developmen
 
 ## Getting Started
 1. Clone the repository:
-```bash
+```
 git clone <repository-url> 
 ```
-2. Install dependencies:
-```bash
+2. Go into the frontend folder (since the frontend runs on a different server than backend):
+```
+cd frontend
+```
+3. Install dependencies:
+```
 npm install
 ```
-3. Start the development server:
-```bash
-npm run dev
+4. Start the development server (used to start a development server that watches for file changes and automatically reloads the application):
 ```
-4. Build for production:
-```bash
-npm run build
+npm run dev
 ```

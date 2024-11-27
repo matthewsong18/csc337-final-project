@@ -12,6 +12,13 @@ describe("Message Schema", () => {
     await mongoose.connection.close();
   });
 
+  // Clear collections before each test
+  beforeEach(async () => {
+    await User.deleteMany({});
+    await Chat.deleteMany({});
+    await Message.deleteMany({});
+  });
+
   it("should create a message with an author, a chat, content, and a date", async () => {
     const user = await User.create({ user_name: "Alice", has_account: true });
     const chat = await Chat.create({ users: [user._id] });

@@ -20,13 +20,20 @@ describe("UserService", () => {
       has_account: true,
       user_name: "Bob",
     });
-    const user2 = await UserService.createUser({
-      user_name: "Bob",
-      has_account: true,
-    });
+
+    let err;
+
+    try {
+      const user2 = await UserService.createUser({
+        user_name: "Bob",
+        has_account: true,
+      });
+    } catch (error) {
+      err = error;
+    }
 
     expect(user1).toBeDefined();
     expect(user1.user_name).toBe("Bob");
-    expect(user2).toBeUndefined();
+    expect(err).toBeDefined();
   });
 });

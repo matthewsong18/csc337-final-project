@@ -12,6 +12,9 @@ UserSchema.pre("save", function (next) {
   if (!this.has_account && this.user_name) {
     return next(new Error("Guest users cannot have a user_name."));
   }
+  if (this.has_account && !this.user_name) {
+    return next(new Error("The user has an account, but no user_name."));
+  }
   next();
 });
 

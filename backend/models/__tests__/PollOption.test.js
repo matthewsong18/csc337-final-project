@@ -26,4 +26,10 @@ describe("Poll Schema", () => {
   it("should ensure that a poll option has a title", async () => {
     await expect(async () => await PollOption.create({})).rejects.toThrow();
   });
+
+  it("should ensure that the vote count is zero", async () => {
+    const poll_option = await PollOption.create({ title: "A title" });
+
+    expect(poll_option.vote_count).toBe(0);
+  });
 });

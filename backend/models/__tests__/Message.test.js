@@ -35,14 +35,14 @@ describe("Message Schema", () => {
   });
 
   it("should ensure that a message has an author, chat, content, and date", async () => {
-    expect(async () => await Message.create({})).rejects.toThrow();
+    await expect(async () => await Message.create({})).rejects.toThrow();
 
     const user = await User.create({ has_account: true, user_name: "Happy" });
-    expect(async () => await Message.create({ author: user })).rejects
+    await expect(async () => await Message.create({ author: user })).rejects
       .toThrow();
 
     const chat = await Chat.create({ users: [user] });
-    expect(async () => await Message.create({ author: user, chat: chat }))
+    await expect(async () => await Message.create({ author: user, chat: chat }))
       .rejects
       .toThrow();
   });

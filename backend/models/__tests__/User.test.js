@@ -12,12 +12,24 @@ describe("User Schema", () => {
     await mongoose.connection.close();
   });
 
+  // Clear collections before each test
+  beforeEach(async () => {
+    await User.deleteMany({});
+  });
+
   // Test case: Creating a user
   it("should create a user with a user_name and has_account", async () => {
-    const user = new User({ user_name: "Alice", has_account: true });
-    const savedUser = await user.save();
+    const user = await User.create({ user_name: "Alice", has_account: true });
 
-    expect(savedUser.user_name).toBe("Alice");
-    expect(savedUser.has_account).toBe(true);
+    expect(user.user_name).toBe("Alice");
+    expect(user.has_account).toBe(true);
   });
+
+  it("should create a user with no user_name", async () => {
+    const guest_user = await User.create({});
+
+    expect(guest_user.user_name).toBeUndefined();
+    expect(guest_user.has_account).toBe(false);
+  });
+
 });

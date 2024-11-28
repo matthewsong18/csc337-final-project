@@ -2,7 +2,7 @@ const mongoose = require("mongoose");
 const { Schema } = mongoose;
 
 const PollSchema = new Schema({
-  title: String,
+  title: { type: String, required: true },
   options: [{ type: Schema.Types.ObjectId, ref: "PollOption" }],
   users_voted: [{ type: Schema.Types.ObjectId, ref: "User" }],
 });

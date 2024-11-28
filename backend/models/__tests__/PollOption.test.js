@@ -22,4 +22,8 @@ describe("Poll Schema", () => {
 
     expect(poll_option.title).toBe("A poll option");
   });
+
+  it("should ensure that a poll option has a title", async () => {
+    await expect(async () => await PollOption.create({})).rejects.toThrow();
+  });
 });

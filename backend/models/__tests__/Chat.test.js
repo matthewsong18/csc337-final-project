@@ -21,7 +21,7 @@ describe("Chat Schema", () => {
   it("should create a chat with a list of users", async () => {
     // Create users
     const user1 = await User.create({ user_name: "Alice", has_account: true });
-    const user2 = await User.create({ user_name: "Bob", has_account: false });
+    const user2 = await User.create({ user_name: "Bob", has_account: true });
 
     // Create a chat with the users
     const chat = await Chat.create({ users: [user1._id, user2._id] });
@@ -36,7 +36,7 @@ describe("Chat Schema", () => {
   it("should populate user details in the chat", async () => {
     // Create users
     const user1 = await User.create({ user_name: "Alice", has_account: true });
-    const user2 = await User.create({ user_name: "Bob", has_account: false });
+    const user2 = await User.create({ user_name: "Bob", has_account: true });
 
     // Create a chat with the users
     const chat = await Chat.create({ users: [user1._id, user2._id] });
@@ -53,7 +53,7 @@ describe("Chat Schema", () => {
     expect(populatedChat.users[0].user_name).toBe("Alice");
     expect(populatedChat.users[0].has_account).toBe(true);
     expect(populatedChat.users[1].user_name).toBe("Bob");
-    expect(populatedChat.users[1].has_account).toBe(false);
+    expect(populatedChat.users[1].has_account).toBe(true);
   });
 
   it("should not allow a chat without users", async () => {

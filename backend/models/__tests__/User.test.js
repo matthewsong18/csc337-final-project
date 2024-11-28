@@ -20,4 +20,11 @@ describe("User Schema", () => {
     expect(savedUser.user_name).toBe("Alice");
     expect(savedUser.has_account).toBe(true);
   });
+
+  it("should not allow a duplicate user with the same user_name", async () => {
+    const user1 = await User.create({ user_name: "Alice" });
+    const user2 = await User.create({ user_name: "Alice" });
+
+    expect(user2).toBeUndefined();
+  });
 });

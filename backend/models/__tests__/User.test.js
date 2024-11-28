@@ -43,4 +43,16 @@ describe("User Schema", () => {
 
     expect(err).toBeDefined();
   });
+
+  it("should not allow a user without a user_name if they have an account", async () => {
+    let err;
+
+    try {
+      await User.create({ has_account: true });
+    } catch (error) {
+      err = error;
+    }
+
+    expect(err).toBeDefined();
+  });
 });

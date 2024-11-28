@@ -32,4 +32,15 @@ describe("User Schema", () => {
     expect(guest_user.has_account).toBe(false);
   });
 
+  it("should not allow a user to have a user_name when has_account is false", async () => {
+    let err;
+
+    try {
+      await User.create({ user_name: "Alice" });
+    } catch (error) {
+      err = error;
+    }
+
+    expect(err).toBeDefined();
+  });
 });

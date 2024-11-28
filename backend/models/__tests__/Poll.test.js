@@ -22,4 +22,16 @@ describe("Poll Schema", () => {
 
     expect(poll.title).toBe("A poll");
   });
+
+  it("should not be possible to have a poll without a title", async () => {
+    let err;
+
+    try {
+      await Poll.create({});
+    } catch (error) {
+      err = error;
+    }
+
+    expect(err).toBeDefined();
+  });
 });

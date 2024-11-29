@@ -1,5 +1,5 @@
 const mongoose = require("mongoose");
-const { Poll } = require("..");
+const { Poll, PollOption } = require("..");
 
 describe("Poll Schema", () => {
   // Connect to a test database before running tests
@@ -17,21 +17,27 @@ describe("Poll Schema", () => {
     await Poll.deleteMany({});
   });
 
-  it("should create a poll with a title", async () => {
-    const poll = await Poll.create({ title: "A poll" });
+  it("should create a poll with a title and poll option", async () => {
+    const poll_option = await PollOption.create({ title: "1" });
+    const poll = await Poll.create({
+      title: "A poll",
+      options: poll_option._id,
+    });
 
     expect(poll.title).toBe("A poll");
+    expect(poll.options).toBeDefined();
   });
 
   it("should not be possible to have a poll without a title", async () => {
-    let err;
+    await expect(Poll.create({})).rejects.toThrow();
+  });
 
-    try {
-      await Poll.create({});
-    } catch (error) {
-      err = error;
-    }
+  it("should ensure that Poll has at least one option", async () => {
+    await expect(Poll.create({ title: "title" })).rejects
+      .toThrow();
 
-    expect(err).toBeDefined();
+    const poll_option = await PollOption.create({ title: "poll option" });
+    await expect(Poll.create({ title: "title", options: [poll_option._id] }))
+      .resolves.toBeDefined();
   });
 });

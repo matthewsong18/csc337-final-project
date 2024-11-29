@@ -37,11 +37,13 @@ describe("Message Schema", () => {
     await expect(async () => await Message.create({})).rejects.toThrow();
 
     const user = await User.create({ has_account: true, user_name: "Happy" });
-    await expect(async () => await Message.create({ author: user })).rejects
+    await expect(async () => await Message.create({ author: user._id })).rejects
       .toThrow();
 
-    const chat = await Chat.create({ users: [user] });
-    await expect(async () => await Message.create({ author: user, chat: chat }))
+    const chat = await Chat.create({ users: [user._id] });
+    await expect(async () =>
+      await Message.create({ author: user._id, chat: chat._id })
+    )
       .rejects
       .toThrow();
   });
@@ -51,10 +53,10 @@ describe("Message Schema", () => {
       has_account: true,
       user_name: "TimeKeeper",
     });
-    const chat = await Chat.create({ users: [user] });
+    const chat = await Chat.create({ users: [user._id] });
     const message = await Message.create({
-      author: user,
-      chat: chat,
+      author: user._id,
+      chat: chat._id,
       content: "I am the timekeeper.",
     });
 

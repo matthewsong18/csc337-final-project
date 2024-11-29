@@ -36,4 +36,33 @@ describe("UserService", () => {
     expect(user1.user_name).toBe("Bob");
     expect(err).toBeDefined();
   });
+
+  // Testing findUser
+  it("should retrieve a user by username if the user exists", async () => {
+    const createdUser = await UserService.createUser({
+      user_name: "Lauren",
+      has_account: true,
+    });
+
+    const foundUser = await UserService.findUser("Lauren");
+
+    expect(foundUser).toBeDefined();
+    expect(foundUser.user_name).toBe("Lauren");
+    expect(foundUser.has_account).toBe(true);
+  });
+
+  it("should throw an error if the user is not found", async () => {
+    let error;
+
+    try {
+      await UserService.findUser("Bill");
+    } catch (err) {
+      error = err;
+    }
+
+    // Assert: Verify an error is thrown
+    expect(error).toBeDefined();
+    expect(error.message).toBe('User with username "Bill" not found.');
+  });
+
 });

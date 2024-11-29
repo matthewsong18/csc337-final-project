@@ -1,10 +1,10 @@
-const { Router } = require("express");
-
-const chatRouter = Router();
+const express = require("express");
+const path = require("path");
+const chatRouter = express.Router();
 
 // Get a chat
 chatRouter.get("/:chat_id", (req, res) => {
-    res.send(`Chat ID: ${req.params.chat_id}`);
+    res.sendFile(path.join(__dirname, "../../frontend/public/chat.html"))
 });
 
 // Get a poll

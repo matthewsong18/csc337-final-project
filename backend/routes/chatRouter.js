@@ -23,6 +23,11 @@ chatRouter.get("/create", (req, res) => {
     res.send(`Create a new chat`);
 });
 
+// Handle undefined routes
+chatRouter.get("*", (req, res) => {
+    res.sendFile(path.join(__dirname, "../../frontend/public/error.html"))
+})
+
 // Post a message to a chat
 chatRouter.post("/:chat_id/:user_id/:message_content", (req, res) => {
     res.send("User post message");

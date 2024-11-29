@@ -3,9 +3,7 @@ const path = require("path");
 const authRouter = express.Router();
 
 // Sign up a new user
-authRouter.post("/signup/:username", (req, res) => {
-    // TO-DO
-});
+authRouter.post("/signup/:username", createUser);
 
 // Get login page
 authRouter.get("/login", (req, res) => {
@@ -13,9 +11,7 @@ authRouter.get("/login", (req, res) => {
 });
 
 // Get into user profile
-authRouter.get("/login/:username", (req, res) => {
-    // TO-DO
-});
+authRouter.get("/login/:username", getUserByName);
 
 // Handle undefined routes
 authRouter.get("*", (req, res) => {

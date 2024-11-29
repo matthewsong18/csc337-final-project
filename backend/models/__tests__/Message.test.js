@@ -19,7 +19,7 @@ describe("Message Schema", () => {
     await Message.deleteMany({});
   });
 
-  it("should create a message with an author, a chat, content, and a date", async () => {
+  it("should create a message with an author, a chat, and content", async () => {
     const user = await User.create({ user_name: "Alice", has_account: true });
     const chat = await Chat.create({ users: [user._id] });
     const message = await Message.create({
@@ -31,10 +31,9 @@ describe("Message Schema", () => {
     expect(message.author).toBe(user._id);
     expect(message.chat).toBe(chat._id);
     expect(message.content).toBe("Hello");
-    expect(message.date).toBeDefined();
   });
 
-  it("should ensure that a message has an author, chat, content, and date", async () => {
+  it("should ensure that a message has an author, chat, and content", async () => {
     await expect(async () => await Message.create({})).rejects.toThrow();
 
     const user = await User.create({ has_account: true, user_name: "Happy" });

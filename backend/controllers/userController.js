@@ -39,7 +39,7 @@ async function createUser(req, res) {
     } catch (error) {
         console.error(`Error: ${error}`);
     }
-    
+
     return;
 };
 

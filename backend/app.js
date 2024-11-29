@@ -4,10 +4,14 @@ const indexRouter = require("./routes/indexRouter");
 const chatRouter = require("./routes/chatRouter");
 const authRouter = require("./routes/authRouter");
 
+// Serve static files from the frontend folder globally
+app.use(express.static(path.join(__dirname, "../../frontend")));
+
 app.use("/auth", authRouter);
 app.use("/chat", chatRouter);
 app.use("/", indexRouter);
-// Error page
+
+// Error handling for unmatched routes
 chatRouter.get("*", (req, res) => {
     res.sendFile(path.join(__dirname, "../../frontend/public/error.html"));
 });

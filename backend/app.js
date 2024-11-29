@@ -9,10 +9,10 @@ app.use("/chat", chatRouter);
 app.use("/", indexRouter);
 // Error page
 chatRouter.get("*", (req, res) => {
-    res.send("* is a great way to catch all otherwise unmatched paths, e.g. for custom 404 error handling.");
+    res.sendFile(path.join(__dirname, "../../frontend/public/error.html"));
 });
 
 const PORT = 3000;
 app.listen(PORT, () => {
-  console.log(`Achat app - listening on port ${PORT}!`);
+  console.log(`Achat app - listening on http://localhost:${PORT}`);
 });

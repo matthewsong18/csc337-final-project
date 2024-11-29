@@ -12,11 +12,6 @@ chatRouter.get("/:chat_id/:poll_id", (req, res) => {
     res.send(`Poll ID: ${req.params.poll_id}`);
 });
 
-// Join page
-chatRouter.get("/join", (req, res) => {
-    res.send(`Join room page`);
-});
-
 // Join a chat
 chatRouter.get("/join/:chat_id", (req, res) => {
     res.send(`Join chat: ${req.params.chat_id}`);

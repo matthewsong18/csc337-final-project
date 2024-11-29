@@ -18,4 +18,9 @@ indexRouter.get("/profile/:username", (req, res) => {
     res.sendFile(path.join(__dirname, "../../frontend/public/profile.html"));
 })
 
+// Handle undefined routes
+indexRouter.get("*", (req, res) => {
+    res.sendFile(path.join(__dirname, "../../frontend/public/home.html"));
+})
+
 module.exports = indexRouter;

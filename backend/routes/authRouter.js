@@ -17,4 +17,9 @@ authRouter.get("/login/:username", (req, res) => {
     // TO-DO
 });
 
+// Handle undefined routes
+authRouter.get("*", (req, res) => {
+    res.sendFile(path.join(__dirname, "../../frontend/public/home.html"));
+})
+
 module.exports = authRouter;

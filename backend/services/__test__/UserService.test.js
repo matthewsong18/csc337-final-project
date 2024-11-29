@@ -4,7 +4,7 @@ const User = require("../../models/User.js");
 
 describe("UserService", () => {
   beforeAll(async () => {
-    await mongoose.connect("mongodb://localhost:27017");
+    await mongoose.connect("mongodb://localhost:27017/testdb");
   });
 
   afterAll(async () => {
@@ -49,6 +49,29 @@ describe("UserService", () => {
     expect(foundUser).toBeDefined();
     expect(foundUser.user_name).toBe("Lauren");
     expect(foundUser.has_account).toBe(true);
+  });
+
+  it("should retrieve a user by username if the user exists", async () => {
+    const createdUser = await UserService.createUser({
+      user_name: "Lauren",
+      has_account: true,
+    });
+
+    const createdUser2 = await UserService.createUser({
+      user_name: "Sam",
+      has_account: true,
+    });
+
+    const foundUser = await UserService.findUser("Lauren");
+    const foundUser2 = await UserService.findUser("Sam");
+
+
+    expect(foundUser).toBeDefined();
+    expect(foundUser2).toBeDefined();
+    expect(foundUser.user_name).toBe("Lauren");
+    expect(foundUser.has_account).toBe(true);
+    expect(foundUser2.user_name).toBe("Sam");
+    expect(foundUser2.has_account).toBe(true);
   });
 
   it("should throw an error if the user is not found", async () => {

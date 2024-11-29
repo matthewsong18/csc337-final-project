@@ -46,4 +46,22 @@ describe("Message Schema", () => {
       .rejects
       .toThrow();
   });
+
+  it("should ensure that message's createdAt timestamp is immutable", async () => {
+    const user = await User.create({
+      has_account: true,
+      user_name: "TimeKeeper",
+    });
+    const chat = await Chat.create({ users: [user] });
+    const message = await Message.create({
+      author: user,
+      chat: chat,
+      content: "I am the timekeeper.",
+    });
+
+    expect(message.createdAt).toBeDefined();
+    const message_created_timestamp = message.createdAt;
+    message.createdAt = Date.now();
+    expect(message.createdAt).toBe(message_created_timestamp);
+  });
 });

@@ -5,7 +5,7 @@ const app = require("./app");
 const PORT = 3000;
 
 const server = app.listen(PORT, () => {
-  console.log(`Achat app - listening on port ${PORT}!`);
+  console.log(`Achat app - listening on: http://localhost:${PORT}`);
 });
 
 module.exports = server; // Export server for manual control if needed

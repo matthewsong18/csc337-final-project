@@ -1,6 +1,6 @@
 const { Router } = require("express");
 const { getUserByName, createUser} = require("../controllers/userController");
-
+const path = require("path");
 const authRouter = Router();
 
 // Sign up a new user

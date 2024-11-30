@@ -11,9 +11,9 @@ describe("userController", () => {
   });
 
   afterAll(async () => {
-    await mongoose.connection.close();
+      await mongoose.connection.close();
   });
-
+  
   beforeEach(async () => {
     await User.deleteMany();
   });
@@ -25,10 +25,14 @@ describe("userController", () => {
       has_account: true,
     });
 
-    // simulates GET request on app.js
+    // Simulate GET request on app.js
     const response = await request(app).get("/auth/login/Lauren");
 
     expect(response.status).toBe(200);
+    // checks we are sending json
+    expect(response.headers["content-type"]).toEqual(
+      expect.stringContaining("json")
+    );
     expect(response.body).toHaveProperty("user_name", "Lauren");
     expect(response.body).toHaveProperty("has_account", true);
   });

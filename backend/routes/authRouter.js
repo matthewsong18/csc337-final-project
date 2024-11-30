@@ -8,10 +8,15 @@ authRouter.post("/signup/:username", createUser);
 
 // Get login page
 authRouter.get("/login", (req, res) => {
-    res.send(`Login/Signup page`);
+    res.sendFile(path.join(__dirname, "../../frontend/public/auth.html"))
 });
 
 // Get into user profile
 authRouter.get("/login/:username", getUserByName);
+
+// Handle undefined routes
+authRouter.get("*", (req, res) => {
+    res.sendFile(path.join(__dirname, "../../frontend/public/error.html"))
+})
 
 module.exports = authRouter;

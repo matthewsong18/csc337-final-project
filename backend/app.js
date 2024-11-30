@@ -1,6 +1,7 @@
 const express = require("express");
 const path = require("path");
 const app = express();
+
 const indexRouter = require("./routes/indexRouter");
 const chatRouter = require("./routes/chatRouter");
 const authRouter = require("./routes/authRouter");
@@ -17,7 +18,4 @@ chatRouter.get("*", (req, res) => {
     res.sendFile(path.join(__dirname, "../../frontend/public/error.html"));
 });
 
-const PORT = 3000;
-app.listen(PORT, () => {
-  console.log(`Achat app - listening on http://localhost:${PORT}`);
-});
+module.exports = app;

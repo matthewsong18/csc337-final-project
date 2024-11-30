@@ -1,46 +1,26 @@
-const db = require("../config/db");
+const UserService = require("../services/UserService");
 
 async function getUserByName(req, res) {
     const { username } = req.params;
 
-    const user = await db.getUserByName(username);
+    try {
+        const user = await UserService.findUser(username);
 
-    if (!user) {
-    res.status(404).send("User not found");
-    return;
+        // Call view for profile of user
+        res.status(200).json(user);
+
+    } catch (error) {
+
+        // Call view for error finding user
+        res.status(404).json({ message: error.message });
     }
-
-    console.log(`Username: ${username}`);
-    res.send(`User ID: ${user.id}`);
-    return;
-};
+}
 
 async function createUser(req, res) {
-    const { username } = req.params;
+        // Just placeholder
+        const { username } = req.params;
+        res.status(200).json(user);
+}
 
-    const user = await db.getUserByName(username);
 
-    if (!user) {
-        // append to the db
-        await db.createUser(username);
-        // redirect to profile page
-        try {
-            res.redirect(`/profile/${username}`);
-        } catch (error) {
-            console.error(`Error: ${error}`);
-        }
-        console.log(`A new user is added: ${username}`);
-        return;
-    }
-
-    console.log("User is already in the db");
-    try {
-        res.redirect('/auth/login');
-    } catch (error) {
-        console.error(`Error: ${error}`);
-    }
-
-    return;
-};
-
-module.exports = { getUserByName, createUser };
+module.exports = { getUserByName, createUser};

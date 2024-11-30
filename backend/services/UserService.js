@@ -12,6 +12,16 @@ class UserService {
 
     return await User.create(userData);
   }
+
+  static async findUser(username){
+    const user = await User.findOne({user_name: username});
+
+    if (!user) {
+      throw new Error(`User with username "${username}" not found.`);
+    }
+
+    return user;
+  }
 }
 
 module.exports = UserService;

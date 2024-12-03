@@ -18,10 +18,7 @@ async function user_signup(request, response) {
 
 async function create_new_user(user_name) {
   try {
-    return await UserService.createUser({
-      has_account: true,
-      user_name: user_name,
-    });
+    return await UserService.createUser(user_name);
   } catch (error) {
     throw new Error(`Error creating user: ${error}`);
   }

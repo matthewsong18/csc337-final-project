@@ -19,10 +19,7 @@ describe("userController", () => {
 
   // Testing getUserByName
   it("should return the user profile when username exists", async () => {
-    await UserService.createUser({
-      user_name: "Lauren",
-      has_account: true,
-    });
+    await UserService.createUser("Lauren");
 
     // Simulate GET request on app.js
     const response = await request(app).get("/auth/login/Lauren");

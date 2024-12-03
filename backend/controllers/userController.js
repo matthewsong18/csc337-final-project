@@ -6,13 +6,13 @@ async function user_signup(request, response) {
     const user = await create_new_user(user_name);
     response.status(201).json({
       status: 201,
-      message: `Created: user successfully signed-up as ${user_name}`,
+      message: `User successfully signed-up as ${user_name}`,
       user_id: user._id,
     });
   } catch (error) {
     response.status(400).json({
       status: 400,
-      message: error,
+      message: `${error}`,
     });
   }
 }
@@ -21,7 +21,7 @@ async function create_new_user(user_name) {
   try {
     return await UserService.createUser(user_name);
   } catch (error) {
-    throw new Error(`Error creating user: ${error}`);
+    throw error;
   }
 }
 

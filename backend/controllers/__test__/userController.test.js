@@ -1,8 +1,8 @@
 const request = require("supertest");
 const mongoose = require("mongoose");
-const app = require("../../app"); 
+const app = require("../../app");
 const UserService = require("../../services/UserService");
-const User = require ("../../models/User");
+const User = require("../../models/User");
 
 describe("userController", () => {
 
@@ -11,9 +11,9 @@ describe("userController", () => {
   });
 
   afterAll(async () => {
-      await mongoose.connection.close();
+    await mongoose.connection.close();
   });
-  
+
   beforeEach(async () => {
     await User.deleteMany();
   });
@@ -44,6 +44,20 @@ describe("userController", () => {
     expect(response.body).toHaveProperty(
       "message",
       'User with username "Bill" not found.'
+    );
+  });
+
+  it("should signup the user when calling user_signup", async () => {
+    const response = await request(app).post("/auth/signup/Happy");
+
+    expect(response.status).toBe(201);
+    expect(response.body).toHaveProperty(
+      "status",
+      201,
+    );
+    expect(response.body).toHaveProperty(
+      "message",
+      "User successfully signed-up as Happy",
     );
   });
 });

@@ -43,6 +43,7 @@ describe("userController", () => {
     );
   });
 
+  // Test user_signup()
   it("should signup the user when calling user_signup", async () => {
     const response = await request(app).post("/auth/signup/Happy");
 
@@ -53,7 +54,7 @@ describe("userController", () => {
     );
     expect(response.body).toHaveProperty(
       "message",
-      "User successfully signed-up as Happy",
+      "Created: user successfully signed-up as Happy",
     );
   });
 });

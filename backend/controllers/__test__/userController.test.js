@@ -57,4 +57,16 @@ describe("userController", () => {
       "Created: user successfully signed-up as Happy",
     );
   });
+
+  it("should return a 400 status code if the user_name already exists", async () => {
+    await UserService.createUser("Happy");
+
+    const response = await request(app).post("/auth/signup/Happy");
+
+    expect(response.status).toBe(400);
+    expect(response.body).toHaveProperty(
+      "message",
+      "Bad Request: user with user_name already exists",
+    );
+  });
 });

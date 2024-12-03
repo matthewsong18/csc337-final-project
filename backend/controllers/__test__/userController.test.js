@@ -54,7 +54,7 @@ describe("userController", () => {
     );
     expect(response.body).toHaveProperty(
       "message",
-      "Created: user successfully signed-up as Happy",
+      "User successfully signed-up as Happy",
     );
   });
 
@@ -66,7 +66,7 @@ describe("userController", () => {
     expect(response.status).toBe(400);
     expect(response.body).toHaveProperty(
       "message",
-      "Bad Request: user with user_name already exists",
+      "Error: User with user_name already exists",
     );
   });
 });

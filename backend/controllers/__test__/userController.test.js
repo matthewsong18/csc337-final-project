@@ -5,7 +5,6 @@ const UserService = require("../../services/UserService");
 const User = require("../../models/User");
 
 describe("userController", () => {
-
   beforeAll(async () => {
     await mongoose.connect("mongodb://localhost:27017/testdb");
   });
@@ -15,12 +14,12 @@ describe("userController", () => {
   });
 
   beforeEach(async () => {
-    await User.deleteMany();
+    await User.deleteMany({});
   });
 
   // Testing getUserByName
   it("should return the user profile when username exists", async () => {
-    const testUser = await UserService.createUser({
+    await UserService.createUser({
       user_name: "Lauren",
       has_account: true,
     });
@@ -31,7 +30,7 @@ describe("userController", () => {
     expect(response.status).toBe(200);
     // checks we are sending json
     expect(response.headers["content-type"]).toEqual(
-      expect.stringContaining("json")
+      expect.stringContaining("json"),
     );
     expect(response.body).toHaveProperty("user_name", "Lauren");
     expect(response.body).toHaveProperty("has_account", true);
@@ -43,7 +42,7 @@ describe("userController", () => {
     expect(response.status).toBe(404);
     expect(response.body).toHaveProperty(
       "message",
-      'User with username "Bill" not found.'
+      'User with username "Bill" not found.',
     );
   });
 

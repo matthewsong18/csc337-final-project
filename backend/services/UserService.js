@@ -1,4 +1,3 @@
-const mongoose = require("mongoose");
 const User = require("../models/User");
 
 class UserService {
@@ -13,8 +12,8 @@ class UserService {
     return await User.create(userData);
   }
 
-  static async findUser(username){
-    const user = await User.findOne({user_name: username});
+  static async findUser(username) {
+    const user = await User.findOne({ user_name: username });
 
     if (!user) {
       throw new Error(`User with username "${username}" not found.`);

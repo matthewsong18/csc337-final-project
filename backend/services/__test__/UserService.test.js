@@ -12,7 +12,7 @@ describe("UserService", () => {
   });
 
   beforeEach(async () => {
-    await User.deleteMany();
+    await User.deleteMany({});
   });
 
   it("should prevent multiple accounts from having the same user_name", async () => {
@@ -64,5 +64,4 @@ describe("UserService", () => {
     expect(error).toBeDefined();
     expect(error.message).toBe('User with username "Bill" not found.');
   });
-
 });

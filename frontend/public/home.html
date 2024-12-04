@@ -3,9 +3,15 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Achat homepage</title>
+	<link rel="stylesheet" href="/styles.css">
+    <title>AChat Homepage</title>
 </head>
 <body>
-    <h1>Homepage</h1>
+    <div class="homeLogo"><img src="img/AChat.png" alt="AChat Logo" width="700" height="400"></div>
+	<div><input type="text" class="chatPin" placeholder="PIN #"></div>
+	<div><input type="button" class="homepageLogin" value="Login" onclick="window.location.href='auth.html'"><div>
+	<div><input type="button" class="homepageJoin" value="Join Chat" onclick="window.location.href='/chat.html'"><div>
+	<div><input type="button" class="homepageCreate" value="Create Chat" onclick="window.location.href='/chat.html'"></div>
+	<div><input type="button" class="helpButton" id="button" name="button" value="Help" onclick="window.location.href='/help.html'"></div>
 </body>
 </html>

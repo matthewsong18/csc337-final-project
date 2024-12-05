@@ -2,7 +2,7 @@ const UserService = require("../services/UserService");
 
 async function user_signup(request, response) {
   try {
-    const { user_name } = request.params;
+    const user_name = get_user_name(request);
     const user = await create_new_user(user_name);
     response.status(201).json({
       status: 201,
@@ -15,6 +15,11 @@ async function user_signup(request, response) {
       message: `${error}`,
     });
   }
+}
+
+function get_user_name(request) {
+  const { user_name } = request.params;
+  return decodeURIComponent(user_name);
 }
 
 async function create_new_user(user_name) {

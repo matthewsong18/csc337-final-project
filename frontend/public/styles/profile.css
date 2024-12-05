@@ -1,0 +1,44 @@
+.welcomeMessage {
+	font-family: 'Rockwell', serif;
+	font-size: 72px;
+	font-weight: bold;
+	position: absolute;
+    top: 25vh;
+    left: 50vw;
+    transform: translateX(-50%);
+}
+
+.chatroomButton {
+    position: fixed;
+    top: calc(25vh + 100px);
+    left: 50%;
+    transform: translateX(-50%);
+    display: block;
+    width: 400px;
+    height: 100px;
+    border: 2px solid black;
+    background-color: lightcoral;
+    color: black;
+    font-family: 'Rockwell', serif;
+    font-size: 50px;
+    text-align: center;
+    cursor: pointer;
+    font-weight: bold;
+}
+
+.helpButton {
+    position: fixed;
+    top: 10px;
+    left: 10px;
+    display: block;
+    width: 100px;
+    height: 100px;
+    border: 2px solid black;
+    background-color: lightcoral;
+    color: black;
+    font-family: 'Rockwell', serif;
+    font-size: 28px;
+    text-align: center;
+    cursor: pointer;
+    font-weight: bold;
+}

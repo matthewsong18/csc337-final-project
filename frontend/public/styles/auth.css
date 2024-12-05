@@ -1,0 +1,24 @@
+.login {
+	position: absolute;
+    top: 35vh;
+    left: 50vw;
+    transform: translateX(-50%);
+	border: 3px solid red;
+	padding: 15px;
+}
+
+.loginForm {
+	font-size: 38px;
+	font-family: 'Rockwell', serif;
+}
+
+.loginPageText {
+	width: 200px;
+	height: 30px;
+}
+
+.lsButtons {
+	display: flex;
+	justify-content: center;
+	padding: 10px 0px 0px 0px;
+}

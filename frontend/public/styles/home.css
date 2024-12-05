@@ -1,0 +1,91 @@
+.homeLogo {
+    position: absolute;
+    top: 5vh;
+    left: 50vw;
+    transform: translateX(-50%);
+}
+
+.chatPin {
+	position: absolute;
+    top: calc(5vh + 400px);
+    left: 50vw;
+    transform: translateX(-50%);
+    display: block;
+    width: 250px;
+    height: 30px;
+    border: 2px solid black;
+    color: black;
+    font-family: 'Rockwell', serif;
+    font-size: 24px;
+    text-align: center;
+}
+
+.homepageJoin {
+	position: fixed;
+    top: calc(5vh + 500px);
+    left: 50%;
+    transform: translateX(-50%);
+    display: block;
+    width: 400px;
+    height: 100px;
+    border: 2px solid black;
+    background-color: lightcoral;
+    color: black;
+    font-family: 'Rockwell', serif;
+    font-size: 50px;
+    text-align: center;
+    cursor: pointer;
+    font-weight: bold;
+}
+
+.homepageLogin {
+	position: fixed;
+    top: 10px;
+    left: 120px;
+    display: block;
+    width: 100px;
+    height: 100px;
+    border: 2px solid black;
+    background-color: lightcoral;
+    color: black;
+    font-family: 'Rockwell', serif;
+    font-size: 28px;
+    text-align: center;
+    cursor: pointer;
+    font-weight: bold;
+}
+
+.homepageCreate {
+	position: fixed;
+    top: calc(5vh + 650px);
+    left: 50%;
+    transform: translateX(-50%);
+    display: block;
+    width: 400px;
+    height: 100px;
+    border: 2px solid black;
+    background-color: lightcoral;
+    color: black;
+    font-family: 'Rockwell', serif;
+    font-size: 50px;
+    text-align: center;
+    cursor: pointer;
+    font-weight: bold;
+}
+
+.helpButton {
+    position: fixed;
+    top: 10px;
+    left: 10px;
+    display: block;
+    width: 100px;
+    height: 100px;
+    border: 2px solid black;
+    background-color: lightcoral;
+    color: black;
+    font-family: 'Rockwell', serif;
+    font-size: 28px;
+    text-align: center;
+    cursor: pointer;
+    font-weight: bold;
+}

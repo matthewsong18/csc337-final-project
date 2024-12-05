@@ -69,4 +69,21 @@ describe("userController", () => {
       "Error: User with user_name already exists",
     );
   });
+
+  it("should not throw an error on a really long user_name", async () => {
+    const long_user_name = "webkajwebkjhaf!@$&)!&)!*(&*!$)" +
+      "aksjfhasjkfhas;kfd;haslkdfjaslk;fjaskldfjweoir2oi3qr89ahfawfjadsfkjasdfkjasd" +
+      "alkfas;dfhasf34y1081835ijafhaskfasfja;sdkfjabamnwjeopiaeurpioashfd;kajdfklas";
+    const response = await request(app).post(`/auth/signup/${long_user_name}`);
+
+    expect(response.status).toBe(201);
+    expect(response.body).toHaveProperty(
+      "message",
+      `User successfully signed-up as ${long_user_name}`,
+    );
+
+    const user = await UserService.findUser(long_user_name);
+    expect(user).toBeDefined();
+    expect(user.user_name).toBe(long_user_name);
+  });
 });

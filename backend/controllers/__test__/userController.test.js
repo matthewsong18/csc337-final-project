@@ -86,4 +86,15 @@ describe("userController", () => {
     expect(user).toBeDefined();
     expect(user.user_name).toBe(long_user_name);
   });
+
+  it("should handle special characters like # in the user_name", async () => {
+    const special_user_name = "@!#*)(@&#)(&@#!)user";
+    const encoded_user_name = encodeURI(special_user_name);
+
+    await request(app).post(`/auth/signup/${encoded_user_name}`);
+
+    const user = await UserService.findUser(special_user_name);
+    expect(user).toBeDefined();
+    expect(user.user_name).toBe(special_user_name);
+  });
 });

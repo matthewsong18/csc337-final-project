@@ -11,20 +11,6 @@
     <div class="welcomeMessage" id="welcomeMessage">Profile Page</div>
 	<div><input type="button" class="chatroomButton" id="button" name="button" value="Join Chatroom" onclick="window.location.href='/chat.html'"></div>
 	<div><input type="button" class="helpButton" id="button" name="button" value="Help" onclick="window.location.href='/help.html'"></div>
+	<script src="/scripts/profile.js"></script>
 </body>
-
-<script>
-	const pathSegments = window.location.pathname.split('/');
-	const username = pathSegments[pathSegments.length - 1];
-
-	console.log("Extracted username:", username);
-
-	const welcomeMessage = document.getElementById("welcomeMessage");
-	if (username) {
-		welcomeMessage.textContent = `Welcome, ${username}!`;
-	} else {
-		welcomeMessage.textContent = "Welcome!";
-	}
-</script>
-
 </html>

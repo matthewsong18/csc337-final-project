@@ -24,7 +24,7 @@ describe("chatController", () => {
   });
 
   // Validate timestampt format
-  it("should return true when timestamp in correct format", async () => {
+  it("should return true when timestamp in correct format", () => {
     const timestamp_1 = is_valid_timestamp("2022-02-26T16:37:48.244Z"); // createdAt format
     const timestamp_2 = is_valid_timestamp("2024-12-06T12:00:00Z"); // Date format
     const timestamp_no_ms = is_valid_timestamp("2024-12-06T12:00:00Z");
@@ -41,7 +41,7 @@ describe("chatController", () => {
     expect(timestamp_nonstring).toBe(true);
   });
 
-  it("should return false when timestamp is invalid", async () => {
+  it("should return false when timestamp is invalid", () => {
     const timestamp_null = is_valid_timestamp(null);
     const timestamp_undefined = is_valid_timestamp(undefined);
     const timestamp_malformed = is_valid_timestamp("2024-12-06A12:00:00G");
@@ -57,4 +57,44 @@ describe("chatController", () => {
     expect(timestamp_extra_characters).toBe(false);
     expect(timestamp_empty_string).toBe(false);
   });
+
+  // check load message buffer
+  it("should return an array of objects of messages sorted by timestamp, buffer size", async () => {
+    let message_ids = [];
+    const user_1 = await User.create({ user_name: "Alice", has_account: true });
+    const user_2 = await User.create({ has_account: false });
+    for (let i = 0; i < 10; i++) {
+        const message = await Message.create({
+            author: i % 2 == 0 ? user_1._id : user_2._id,
+            content: `Message #${i+1}`,
+        });
+        message_ids.push(message._id);
+    }
+    const messages = await load_message_buffer(message_ids, 8, Date.now());
+    // validate all fields desire
+    let message_1 = messages[0];
+    expect(message_1.author).toBeDefined();
+    expect(message_1.author._id == user_1._id.toString()).toBe(true);
+    expect(message_1.content).toBeDefined();
+    expect(message_1.content).toBe("Message #1");
+    expect(message_1.createdAt).toBeDefined();
+    expect(is_valid_timestamp(message_1.createdAt)).toBeTruthy();
+    
+    let message_2 = messages[1];
+    expect(message_2.author).toBeDefined();
+    expect(message_2.author._id == user_2._id.toString()).toEqual(true);
+    expect(message_2.content).toBeDefined();
+    expect(message_2.content).toBe("Message #2");
+    expect(message_2.createdAt).toBeDefined();
+    expect(is_valid_timestamp(message_2.createdAt)).toBeTruthy();
+
+    // check buffer size
+    expect(messages.length).toBe(8);
+  });
+
+  it("should return an empty array when there's no message id", async () => {
+    const messages = await load_message_buffer([], 8, Date.now());
+    expect(messages.length).toBe(0);
+  });
+  
 });

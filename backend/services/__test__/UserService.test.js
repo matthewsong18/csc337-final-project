@@ -16,12 +16,12 @@ describe("UserService", () => {
   });
 
   it("should prevent multiple accounts from having the same user_name", async () => {
-    const user1 = await UserService.createUser("Bob");
+    const user1 = await UserService.create_user("Bob");
 
     let err;
 
     try {
-      await UserService.createUser("Bob");
+      await UserService.create_user("Bob");
     } catch (error) {
       err = error;
     }
@@ -33,9 +33,9 @@ describe("UserService", () => {
 
   // Testing findUser
   it("should retrieve a user by username if the user exists", async () => {
-    await UserService.createUser("Lauren");
+    await UserService.create_user("Lauren");
 
-    const foundUser = await UserService.findUser("Lauren");
+    const foundUser = await UserService.find_user("Lauren");
 
     expect(foundUser).toBeDefined();
     expect(foundUser.user_name).toBe("Lauren");
@@ -46,7 +46,7 @@ describe("UserService", () => {
     let error;
 
     try {
-      await UserService.findUser("Bill");
+      await UserService.find_user("Bill");
     } catch (err) {
       error = err;
     }

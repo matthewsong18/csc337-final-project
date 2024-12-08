@@ -96,5 +96,56 @@ describe("chatController", () => {
     const messages = await load_message_buffer([], 8, Date.now());
     expect(messages.length).toBe(0);
   });
+
+  // check load poll buffer
+  it("should return an array of objects of polls sorted by timestamp, buffer size", async () => {
+    let poll_ids = [];
+    let poll_option_ids = [];
+    const user_1 = await User.create({ user_name: "Alice", has_account: true });
+    const user_2 = await User.create({ has_account: false });
+    const user_3 = await User.create({ user_name: "Bob", has_account: true });
+    const user_4 = await User.create({ user_name: "Charlie", has_account: true });
+    for (let i = 0; i < 8; i++) {
+        const poll_option = await PollOption.create({
+            title: `Option #${i+1}`,
+        })
+        poll_option_ids.push(poll_option._id);
+    }
+    const poll_1 = await Poll.create({
+        title: "Poll Title 1",
+        options: poll_option_ids.slice(0, 4),
+        users_voted: [user_1, user_2, user_3, user_4],
+    });
+    poll_ids.push(poll_1._id);
+    const poll_2 = await Poll.create({
+        title: "Poll Title 2",
+        options: poll_option_ids.slice(4),
+        users_voted: [user_1, user_2, user_3],
+    });
+    poll_ids.push(poll_2._id);
+    
+    const polls = await load_poll_buffer(poll_ids, 8, Date.now());
+    // validate all fields desire
+    expect(poll_1.title).toBeDefined();
+    expect(poll_1.title).toBe("Poll Title 1");
+    expect(poll_1.options).toBeDefined();
+    expect(poll_1.options[0]._id == poll_option_ids[0].toString()).toBe(true);
+    expect(poll_1.users_voted).toBeDefined();
+    expect(poll_1.users_voted.length).toBe(4);
+    expect(poll_1.createdAt).toBeDefined();
+    expect(is_valid_timestamp(poll_1.createdAt)).toBeTruthy();
+    
+    expect(poll_2.title).toBeDefined();
+    expect(poll_2.title).toBe("Poll Title 2");
+    expect(poll_2.options).toBeDefined();
+    expect(poll_2.options[0]._id == poll_option_ids[4].toString()).toBe(true);
+    expect(poll_2.users_voted).toBeDefined();
+    expect(poll_2.users_voted.length).toBe(3);
+    expect(poll_2.createdAt).toBeDefined();
+    expect(is_valid_timestamp(poll_2.createdAt)).toBeTruthy();
+
+    // check buffer size
+    expect(polls.length).toBe(2);
+  });
   
 });

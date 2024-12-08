@@ -16,6 +16,19 @@ async function load_message_buffer(message_ids, buffer_size, timestamp) {
     return messages;
 }
 
+async function load_poll_buffer(poll_ids, buffer_size, timestamp) {
+    // return x polls based on timestamps provided
+    const polls = await Poll.find({
+        _id: { $in: poll_ids},
+        createdAt: { $lte: new Date(timestamp) }, // Filter polls before the given timestamp
+    })
+    .limit(buffer_size)
+    .populate("options", "title vote_count")
+    .populate("users_voted", "user_name")
+    .select("title options users_voted createdAt") // no need to get chat._id
+    return polls;
+}
+
 function is_valid_timestamp(timestamp) {
     if (timestamp === null) {
         return false;
@@ -29,5 +42,6 @@ function is_valid_timestamp(timestamp) {
 
 module.exports = {
     load_message_buffer,
+    load_poll_buffer,
     is_valid_timestamp
 }

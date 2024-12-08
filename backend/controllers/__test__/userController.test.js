@@ -6,7 +6,7 @@ const User = require("../../models/User");
 
 describe("userController", () => {
   beforeAll(async () => {
-    await mongoose.connect("mongodb://localhost:27017/testdb");
+    await mongoose.connect("mongodb://localhost:27017/user_controller_testdb");
   });
 
   afterAll(async () => {

@@ -32,16 +32,16 @@ async function load_poll_buffer(poll_ids, buffer_size, timestamp) {
 }
 
 function sort_by_timestamp(messages, polls, buffer_size) {
-    let chat_history = messages.concat(polls);
-    // Sort by createdAt in ascending order (latest -> oldest)
     try {
+        const chat_history = [...messages, ...polls];
         if (chat_history.length == 0) return chat_history;
+        // Sort by createdAt in ascending order (latest -> oldest)
         chat_history.sort((a, b) => new Date(a.createdAt) - new Date(b.createdAt)); 
+        if (buffer_size >= chat_history.length) return chat_history;
+        return chat_history.slice(buffer_size);
     } catch (err) {
         throw new Error(`Failed to sort chat_history: ${err.message}`);
     }
-    if (buffer_size >= chat_history.length) return chat_history;
-    return chat_history.slice(buffer_size);
 }
 
 function is_valid_timestamp(timestamp) {

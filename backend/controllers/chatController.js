@@ -17,8 +17,10 @@ async function load_message_buffer(message_ids, buffer_size, timestamp) {
 }
 
 async function load_poll_buffer(poll_ids, buffer_size, timestamp) {
+    let polls = [];
+    if (poll_ids.length === 0) return polls;
     // return x polls based on timestamps provided
-    const polls = await Poll.find({
+    polls = await Poll.find({
         _id: { $in: poll_ids},
         createdAt: { $lte: new Date(timestamp) }, // Filter polls before the given timestamp
     })

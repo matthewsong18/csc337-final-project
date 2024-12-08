@@ -1,94 +1,143 @@
-.homeLogo {
-    position: absolute;
-    top: 15vh;
-    left: 50vw;
-    transform: translateX(-50%);
-    width: "400";
-    height: "auto";
 
+/* All text in the html file will be the same font */
+
+html{
+	font-family: 'Inter', 'sans-serif';
 }
 
-.chatPin {
-	position: absolute;
-    top: calc(5vh + 400px);
-    left: 50vw;
-    transform: translateX(-50%);
-    display: block;
-    width: 250px;
-    height: 30px;
-    border: 2px solid black;
-    color: black;
-    font-family: 'Rockwell', serif;
-    font-size: 24px;
-    text-align: center;
+body {
+	background-color: #e7f3fd;
+    padding: 1vh;
 }
 
-.homepageJoin {
-	position: fixed;
-    top: calc(5vh + 500px);
-    left: 50%;
-    transform: translateX(-50%);
-    display: block;
-    width: 400px;
-    height: 100px;
-    border: 2px solid black;
-    background-color: lightcoral;
-    color: black;
-    font-family: 'Rockwell', serif;
-    font-size: 50px;
-    text-align: center;
-    cursor: pointer;
-    font-weight: bold;
+
+#headerBar{
+    position: sticky;
+    top: 0;
+    overflow: hidden;
+    display: flex;
+    justify-content: space-between;
+    height: 5vh;
 }
 
-.homepageLogin {
-	position: fixed;
-    top: 10px;
-    left: 120px;
-    display: block;
-    width: 100px;
-    height: 100px;
-    border: 2px solid black;
-    background-color: lightcoral;
-    color: black;
-    font-family: 'Rockwell', serif;
-    font-size: 28px;
+.headerButtons{
+    background-color: white;
+    border-radius: 20px;
+    font-size: 1.5vh;
+    white-space: nowrap;
+	height: 80%;
+	width: 8%;
     text-align: center;
-    cursor: pointer;
-    font-weight: bold;
+	color: #02111e;
+    border: none;
+	box-shadow:0 8px 16px #cfe5fc;
 }
 
-.homepageCreate {
-	position: fixed;
-    top: calc(5vh + 650px);
-    left: 50%;
-    transform: translateX(-50%);
-    display: block;
-    width: 400px;
-    height: 100px;
-    border: 2px solid black;
-    background-color: lightcoral;
-    color: black;
-    font-family: 'Rockwell', serif;
-    font-size: 50px;
+#bodyContainer{
+    display: flex;
+    flex-direction: column;
+	justify-content: center;
     text-align: center;
-    cursor: pointer;
-    font-weight: bold;
+    align-items: center;
+    width: 100vw;
+    height: 80vh;
+
+}
+#homeLogo {
+    position: relative;
+    width: 30vw;
+    height: auto;
+    z-index: 1; 
+    margin-bottom: -6vh;
 }
 
-.helpButton {
-    position: fixed;
-    top: 10px;
-    left: 10px;
-    display: block;
-    width: 100px;
-    height: 100px;
-    border: 2px solid black;
-    background-color: lightcoral;
-    color: black;
-    font-family: 'Rockwell', serif;
-    font-size: 28px;
+#joinOrCreateComponent {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    background-color: #f1f8fe;
+    width: 35vw;
+    height: 30vh;
+    border-radius: 5px;
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
+}
+
+
+/* guest text */
+#guestHeader{
+	font-size: 3vh;
+	background: linear-gradient(120deg, #1280f2, #f653df);
+	text-align: center;
+	font-weight: bold;
+    padding-bottom: 1vh;
+
+	/* Makes it so that the gradient only applies to text*/
+	-webkit-background-clip: text;
+	background-clip: text;
+    -webkit-text-fill-color: transparent;
+}
+
+#chatPin {
+	text-align: center;
+	background-color: #f1f8fe;
+    font-size: 120%;
+	color: #02111e;
+	border: none;
+	width: 15vw;
+	height: 3vh;
+	border: 2px solid #1280f2;
+	border-radius: 3px;
+}
+.buttonContainer {
+	text-align: center;
+    padding: 2vh;
+    width: 80%;
+}
+
+#createButton{
+    background-color: #1280f2; 
+}
+
+#joinButton{
+    background-color: #c875f8;
+}
+
+.bodyButton{
+	padding: 0.5vw 2vw;
+	border-radius: 10px;
+    font-size: 1.5vh;
+    white-space: nowrap;
+	height: 20%;
+	width: 35%;
     text-align: center;
-    cursor: pointer;
-    font-weight: bold;
+	color: #02111e;
+	border: none;
+	box-shadow:0 8px 16px rgba(0, 0, 0, 0.2);
+}
+
+.bodyButton:hover {
+	transform: scale(1.1);
+	background: linear-gradient(120deg, #1280f2, #f653df);
+}
+
+/* creates the or divider line */
+.divider {
+	display: flex;
+	align-items: center;
+	text-align: center;
+	width: 100%;
+	margin: 3% 0;
+	color: #87127f;
+	font-style:italic;
+    padding: 2vh 0 2vh 0;
+}
+  
+.divider::before,
+.divider::after {
+	content: "";
+	flex-grow: 1;
+	border-bottom: 2px solid #87127f; 
+	margin: 0 10px; 
 }

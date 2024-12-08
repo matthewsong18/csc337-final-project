@@ -66,7 +66,7 @@ body {
 }
 
 #usernameHeader {
-	font-size: 1.8vh;
+	font-size: 2vh;
     white-space: nowrap;
 	padding-bottom: 1vh;
 	background: linear-gradient(120deg, #1280f2, #f653df);
@@ -87,6 +87,8 @@ body {
 	border: none;
 	width: 15vw;
 	height: 3vh;
+	border: 2px solid #1280f2;
+	border-radius: 3px;
 }
 
 .buttonContainer {
@@ -104,7 +106,7 @@ body {
 .lsButton{
 	padding: 0.5vw 2vw;
 	border-radius: 10px;
-    font-size: 1.5vh;
+    font-size: 2vh;
     white-space: nowrap;
 	height: 30%;
 	width: 30%;

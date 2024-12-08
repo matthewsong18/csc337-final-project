@@ -18,7 +18,7 @@ chatRouter.get("/join/:chat_id", (req, res) => {
 });
 
 // Create a new chat
-chatRouter.get("/create", (req, res) => {
+chatRouter.post("/create", (req, res) => {
     // create a new chat and redirect user to that chat
     res.send(`Create a new chat`);
 });

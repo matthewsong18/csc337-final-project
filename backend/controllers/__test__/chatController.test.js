@@ -152,5 +152,61 @@ describe("chatController", () => {
     const polls = await load_poll_buffer([], 8, Date.now());
     expect(polls.length).toBe(0);
   });
+
+  // check sorting polls and messages by timestamp
+  it("should return an array of messages and polls sorted in ascending time order", async () => {
+    const user = await User.create({ user_name: "Test User", has_account: true });
+    const message_ids = [];
+    const poll_ids = [];
+    // Create messages with different timestamps
+    const message1 = await Message.create({
+        author: user._id,
+        content: "Message 1",
+        createdAt: new Date("2024-12-08T10:00:00Z"),
+    });
+    message_ids.push(message1._id);
+    const message2 = await Message.create({
+        author: user._id,
+        content: "Message 2",
+        createdAt: new Date("2024-12-08T10:02:00Z"),
+    });
+    message_ids.push(message2._id);
+    // Create polls with different timestamps
+    const pollOption1 = await PollOption.create({ title: "Option 1" });
+    const pollOption2 = await PollOption.create({ title: "Option 2" });
+
+    const poll1 = await Poll.create({
+        title: "Poll 1",
+        options: [pollOption1._id],
+        createdAt: new Date("2024-12-08T10:01:30Z"),
+    });
+    poll_ids.push(poll1._id);
+    const poll2 = await Poll.create({
+        title: "Poll 2",
+        options: [pollOption2._id],
+        createdAt: new Date("2024-12-08T10:00:30Z"),
+    });
+    poll_ids.push(poll2._id);
+    // Combine messages and polls
+    const messages = await load_message_buffer(message_ids, 2, Date.now());
+    const polls = await load_poll_buffer(poll_ids, 2, Date.now());
+
+    // Sort combined array by timestamp
+    const sorted = sort_by_timestamp(messages, polls, 4);
+
+    // Validate the order
+    expect(sorted[0].createdAt).toBe(messages[0].createdAt); // Message 1
+    expect(sorted[1].createdAt).toBe(polls[1].createdAt); // Poll 2
+    expect(sorted[2].createdAt).toBe(polls[0].createdAt); // Poll 1
+    expect(sorted[3].createdAt).toBe(messages[1].createdAt); // Message 2
+    
+    // Check buffer size
+    expect(sorted.length).toBe(4);
+  });
+
+  it("should return an empty array when there's no polls and messages", async () => {
+    const chat_history = await sort_by_timestamp([], [], 6);
+    expect(chat_history.length).toBe(0);
+  });
   
 });

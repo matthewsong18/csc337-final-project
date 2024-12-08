@@ -1,8 +1,11 @@
 .homeLogo {
     position: absolute;
-    top: 5vh;
+    top: 15vh;
     left: 50vw;
     transform: translateX(-50%);
+    width: "400";
+    height: "auto";
+
 }
 
 .chatPin {

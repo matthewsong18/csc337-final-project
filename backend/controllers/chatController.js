@@ -31,6 +31,19 @@ async function load_poll_buffer(poll_ids, buffer_size, timestamp) {
     return polls;
 }
 
+function sort_by_timestamp(messages, polls, buffer_size) {
+    let chat_history = messages.concat(polls);
+    // Sort by createdAt in ascending order (latest -> oldest)
+    try {
+        if (chat_history.length == 0) return chat_history;
+        chat_history.sort((a, b) => new Date(a.createdAt) - new Date(b.createdAt)); 
+    } catch (err) {
+        throw new Error(`Failed to sort chat_history: ${err.message}`);
+    }
+    if (buffer_size >= chat_history.length) return chat_history;
+    return chat_history.slice(buffer_size);
+}
+
 function is_valid_timestamp(timestamp) {
     if (timestamp === null) {
         return false;
@@ -45,5 +58,6 @@ function is_valid_timestamp(timestamp) {
 module.exports = {
     load_message_buffer,
     load_poll_buffer,
+    sort_by_timestamp,
     is_valid_timestamp
 }

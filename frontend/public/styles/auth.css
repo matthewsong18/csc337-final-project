@@ -1,24 +1,139 @@
-.login {
-	position: absolute;
-    top: 35vh;
-    left: 50vw;
-    transform: translateX(-50%);
-	border: 3px solid red;
-	padding: 15px;
+/* Description: This is a CSS file that is used to style the auth.html
+   page on the Achat website. This provides a sytle and format for the
+   user login/signup form. The colors were taken form the color reference 
+   identified for the website. */
+
+
+/* All text in the html file will be the same font */
+html{
+	font-family: 'Inter', 'sans-serif';
 }
 
-.loginForm {
-	font-size: 38px;
-	font-family: 'Rockwell', serif;
+body {
+	background-color: #f1f8fe;
 }
 
-.loginPageText {
-	width: 200px;
-	height: 30px;
+/* home button on top left */
+#logo{
+	width: 8vw;
+	height: auto;
+	padding-left: 2vh;
+	cursor: pointer;
+
 }
 
-.lsButtons {
+#formContainer{
+	margin-top: 7%;
+	background:  #cfe5fc;
+	height: 50vh;
+	width: 35vw;
 	display: flex;
+	flex-direction: column;
 	justify-content: center;
-	padding: 10px 0px 0px 0px;
+	overflow: auto;
+	border-radius: 5px;
+	box-shadow:0 8px 16px rgba(0, 0, 0, 0.2);
+	margin-left: 32%;
 }
+
+/* login/signup text */
+#header{
+	font-size: 6vh;
+	background: linear-gradient(120deg, #1280f2, #f653df);
+	text-align: center;
+	font-weight: bold;
+
+	/* Makes it so that the gradient only applies to text*/
+	-webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+}
+
+/* welcome text */
+#welcomeHeader{
+	text-align: center;
+	font-weight: bold;
+	color:  #9ecafa;
+	font-size: 2vh;
+}
+
+/* container for the username form */
+.loginForm {
+    padding: 5vh 0 5vh 0;
+    display: flex;
+    flex-direction: column;
+	align-items: center;
+}
+
+#usernameHeader {
+	font-size: 1.8vh;
+    white-space: nowrap;
+	padding-bottom: 1vh;
+	background: linear-gradient(120deg, #1280f2, #f653df);
+	text-align: center;
+	font-weight: bold;
+
+	/* Makes it so that the gradient only applies to text*/
+	-webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+}
+
+#usernamefield {
+	text-align: center;
+	background-color: #f1f8fe;
+    font-size: 120%;
+	color: #02111e;
+	border: none;
+	width: 15vw;
+	height: 3vh;
+}
+
+.buttonContainer {
+	text-align: center;
+}
+
+#loginButton{
+    background-color: #1280f2; 
+}
+
+#signupButton{
+    background-color: #c875f8;
+}
+
+.lsButton{
+	padding: 0.5vw 2vw;
+	border-radius: 10px;
+    font-size: 1.5vh;
+    white-space: nowrap;
+	height: 30%;
+	width: 30%;
+	color: #02111e;
+	border: none;
+	box-shadow:0 8px 16px rgba(0, 0, 0, 0.2);
+}
+
+.lsButton:hover {
+	transform: scale(1.1);
+	background: linear-gradient(120deg, #1280f2, #f653df);
+
+}
+
+
+/* creates the or divider line */
+.divider {
+	display: flex;
+	align-items: center;
+	text-align: center;
+	width: 100%;
+	margin: 3% 0;
+	color: #87127f;
+	font-style:italic;
+}
+  
+.divider::before,
+.divider::after {
+	content: "";
+	flex-grow: 1;
+	border-bottom: 2px solid #87127f; 
+	margin: 0 10px; 
+}
+  

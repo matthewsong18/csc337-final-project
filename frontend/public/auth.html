@@ -6,21 +6,22 @@
     <link rel="stylesheet" href="/styles/auth.css">
     <title>Login</title>
 </head>
-<body class="login">
-    <table class="loginForm">
-        <tr>
-            <td><label for="usernamefield">Username:</label></td>
-            <td><input type="text" class="loginPageText" id="usernamefield" placeholder="Enter username"></td>
-        </tr>
-        <tr>
-            <td><label for="passwordfield">Password:</label></td>
-            <td><input type="password" class="loginPageText" id="passwordfield" placeholder="Enter password"></td>
-        </tr>
-    </table>
-    <div class="lsButtons">
-        <input type="button" class="lsButton" id="loginButton" name="login" value="Login" onclick="loginUser()">
-        &nbsp;&nbsp;&nbsp;&nbsp;
-        <input type="button" class="lsButton" id="signupButton" name="signup" value="Signup" onclick="signupUser()">
+<body>
+    <a href="home.html"> 
+        <img id= "logo" src="./img/AChat.png" alt="Achat logo">
+    </a>
+    <div id = "formContainer">
+        <div id = "header"> Login/Signup </div>
+        <div id = "welcomeHeader">WELCOME</div>
+        <div class="loginForm">
+            <label id= "usernameHeader" for="usernamefield">ENTER YOUR USERNAME</label>
+            <input type="text" id="usernamefield">
+        </div>
+        <div class="buttonContainer">
+            <input type="button" class="lsButton" id="loginButton" name="login" value="Login" onclick="loginUser()"><br>
+            <div class="divider"> OR </div>
+            <input type="button" class="lsButton" id="signupButton" name="signup" value="Signup" onclick="signupUser()"><br>
+        </div>
     </div>
     <script src="/scripts/auth.js"></script>
 </body>

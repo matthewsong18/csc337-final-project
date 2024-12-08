@@ -3,32 +3,40 @@ const path = require('path');
 const { Chat, Message, Poll  } = require("../models/index");
 
 async function load_message_buffer(message_ids, buffer_size, timestamp) {
-    let messages = [];
-    if (message_ids.length === 0) return messages;
-    // return x messages based on timestamps provided
-    messages = await Message.find({
-        _id: { $in: message_ids },
-        createdAt: { $lte: new Date(timestamp) }, // Filter messages before the given timestamp
-    })
-    .limit(buffer_size)
-    .populate("author", "user_name has_account")
-    .select("author content createdAt")
-    return messages;
+    try {
+        let messages = [];
+        if (message_ids.length === 0) return messages;
+        // return x messages based on timestamps provided
+        messages = await Message.find({
+            _id: { $in: message_ids },
+            createdAt: { $lte: new Date(timestamp) }, // Filter messages before the given timestamp
+        })
+        .limit(buffer_size)
+        .populate("author", "user_name has_account")
+        .select("author content createdAt")
+        return messages;
+    } catch (err) {
+        throw new Error(`Failed to load message buffer: ${err.message}`);
+    }
 }
 
 async function load_poll_buffer(poll_ids, buffer_size, timestamp) {
-    let polls = [];
-    if (poll_ids.length === 0) return polls;
-    // return x polls based on timestamps provided
-    polls = await Poll.find({
-        _id: { $in: poll_ids},
-        createdAt: { $lte: new Date(timestamp) }, // Filter polls before the given timestamp
-    })
-    .limit(buffer_size)
-    .populate("options", "title vote_count")
-    .populate("users_voted", "user_name")
-    .select("title options users_voted createdAt") // no need to get chat._id
-    return polls;
+    try {
+        let polls = [];
+        if (poll_ids.length === 0) return polls;
+        // return x polls based on timestamps provided
+        polls = await Poll.find({
+            _id: { $in: poll_ids},
+            createdAt: { $lte: new Date(timestamp) }, // Filter polls before the given timestamp
+        })
+        .limit(buffer_size)
+        .populate("options", "title vote_count")
+        .populate("users_voted", "user_name")
+        .select("title options users_voted createdAt") // no need to get chat._id
+        return polls;
+    } catch (err) {
+        throw new Error(`Failed to load poll buffer: ${err.message}`);
+    }
 }
 
 function sort_by_timestamp(messages, polls, buffer_size) {

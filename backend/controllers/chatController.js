@@ -2,6 +2,37 @@ const mongoose = require("mongoose");
 const path = require('path');
 const { Chat, Message, Poll  } = require("../models/index");
 
+async function load_chat(chat_id, timestamp, buffer_size=10) {
+    try {
+        // validate chat_id (2 stesps)
+        const is_valid_id = mongoose.Types.ObjectId.isValid(chat_id);
+        if (!is_valid_id) {
+            throw new Error("Invalid chat id");
+        }
+
+        const existing_chat = await Chat.findById(chat_id);
+        if (!existing_chat) {
+            throw new Error("This chat doesn't exist");
+        }
+
+        // validate timestamp format
+        if (!is_valid_timestamp(timestamp)) {
+            throw new Error("Timestamp requested is invalid");
+        } 
+        // validate timestamp logic
+        if (new Date(timestamp) > Date.now()) {
+            throw new Error("Timestamp requested is in the future");
+        }
+
+        const chat = await Chat.findById({ _id: chat_id });
+        const messages = await load_message_buffer(chat.message, buffer_size, timestamp);
+        const polls = await load_poll_buffer(chat.polls, buffer_size, timestamp);
+        return sort_by_timestamp(messages, polls, buffer_size);
+    } catch (err) {
+        throw new Error(`Failed to load chat: ${err.message}`);
+    }
+}
+
 async function load_message_buffer(message_ids, buffer_size, timestamp) {
     try {
         let messages = [];
@@ -64,6 +95,7 @@ function is_valid_timestamp(timestamp) {
 }
 
 module.exports = {
+    load_chat,
     load_message_buffer,
     load_poll_buffer,
     sort_by_timestamp,

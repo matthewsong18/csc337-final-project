@@ -208,5 +208,107 @@ describe("chatController", () => {
     const chat_history = await sort_by_timestamp([], [], 6);
     expect(chat_history.length).toBe(0);
   });
+
+  // check load chat with all functions combined
+  it("should throw an error for an invalid chat ID", async () => {
+    let error;
+    try {
+        const invalid_chat_id = "123"; // Not a valid ObjectId format
+        await load_chat(invalid_chat_id, Date().now, 10);
+    } catch (err) {
+        error = err;
+    }
+    expect(error).toBeDefined();    
+    expect(error.message).toBe("Invalid chat id");
+  });
+
+  it("should throw an error for a non-existent chat", async () => {
+    let error;
+    try {
+        const valid_but_nonexistent_id = new mongoose.Types.ObjectId();
+        await load_chat(valid_but_nonexistent_id, Date().now);
+    } catch (err) {
+        error = err;
+    }
+    expect(error).toBeDefined();    
+    expect(error.message).toBe("This chat doesn't exist");
+  });
   
+  it("should throw an error for an invalid timestamp format", async () => {
+    let error;
+    try {
+        const user = await User.create({});
+        const chat = await Chat.create({ title: "Test Chat", message: [], polls: [], users: [user]});
+        const invalid_timestamp = "invalid-date";
+        await load_chat(chat._id, invalid_timestamp);
+    } catch (err) {
+        error = err;
+    }
+    expect(error).toBeDefined();    
+    expect(error.message).toBe("Timestamp requested is invalid");
+  });
+
+  it("should throw an error if the timestamp is in the future", async () => {
+    let error;
+    try {
+        const user = await User.create({});
+        const chat = await Chat.create({ title: "Test Chat", message: [], polls: [], users: [user]});
+        let now = new Date();
+        let future = now.setDate(now.getDate() + 3); // Add 3 days
+        await load_chat(chat._id, future);
+    } catch (err) {
+        error = err;
+    }
+    expect(error).toBeDefined();    
+    expect(error.message).toBe("Timestamp requested is in the future");
+  });
+
+  it("should return an empty array if no messages or polls exist in the chat", async () => {
+    const user = await User.create({});
+    const chat = await Chat.create({ title: "Empty Chat", message: [], polls: [], users: [user] });
+    const result = await load_chat(chat._id, Date.now());
+    expect(result.length).toBe(0);
+  });
+
+  it("should return sorted messages and polls for a valid request", async () => {
+    const user = await User.create({ user_name: "Test User", has_account: true });
+
+    // Create messages and polls
+    const message1 = await Message.create({
+      author: user._id,
+      content: "Message 1",
+      createdAt: new Date("2024-12-01T10:00:00Z"),
+    });
+
+    const message2 = await Message.create({
+      author: user._id,
+      content: "Message 2",
+      createdAt: new Date("2024-12-01T12:00:00Z"),
+    });
+
+    const pollOption1 = await PollOption.create({ title: "Option 1" });
+    const pollOption2 = await PollOption.create({ title: "Option 2" });
+    const poll = await Poll.create({
+      title: "Poll 1",
+      options: [pollOption1, pollOption2],
+      createdAt: new Date("2024-12-01T11:00:00Z"),
+    });
+
+    // Create chat
+    const chat = await Chat.create({
+      title: "Test Chat",
+      message: [message1._id, message2._id],
+      polls: [poll._id],
+      users: [user]
+    });
+
+    // Call load_chat
+    const result = await load_chat(chat._id, Date.now());
+
+    expect(result.length).toBe(3); // 2 messages + 1 poll
+    expect(result[0].content).toBe("Message 1");
+    expect(result[1].title).toBe("Poll 1");
+    expect(result[2].content).toBe("Message 2");
+    expect(result.every((item) => is_valid_timestamp(item.createdAt))).toBeTruthy();
+  });
 });

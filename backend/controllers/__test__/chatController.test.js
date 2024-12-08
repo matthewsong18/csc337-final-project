@@ -147,5 +147,10 @@ describe("chatController", () => {
     // check buffer size
     expect(polls.length).toBe(2);
   });
+
+  it("should return an empty array when there's no poll id", async () => {
+    const polls = await load_poll_buffer([], 8, Date.now());
+    expect(polls.length).toBe(0);
+  });
   
 });

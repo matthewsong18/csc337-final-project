@@ -66,7 +66,7 @@ describe("userController", () => {
     expect(response.status).toBe(400);
     expect(response.body).toHaveProperty(
       "message",
-      "Error: User with user_name already exists",
+      'Error: User with username "Happy" already exists',
     );
   });
 

@@ -29,7 +29,7 @@ async function load_chat(chat_id, timestamp, buffer_size=10) {
         const polls = await load_poll_buffer(chat.polls, buffer_size, timestamp);
         return sort_by_timestamp(messages, polls, buffer_size);
     } catch (err) {
-        throw new Error(`Failed to load chat: ${err.message}`);
+        throw new Error(`${err.message}`);
     }
 }
 

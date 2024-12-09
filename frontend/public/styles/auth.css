@@ -104,9 +104,9 @@ body {
 }
 
 .lsButton{
-	padding: 0.5vw 2vw;
+	padding: 0.3em 1.5em;
 	border-radius: 10px;
-    font-size: 2vh;
+    font-size: calc(0.7vw + 0.4rem);
     white-space: nowrap;
 	height: 30%;
 	width: 30%;
@@ -120,7 +120,6 @@ body {
 	background: linear-gradient(120deg, #1280f2, #f653df);
 
 }
-
 
 /* creates the or divider line */
 .divider {

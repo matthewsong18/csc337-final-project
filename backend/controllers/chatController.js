@@ -3,7 +3,18 @@ const path = require('path');
 const { v4: uuidv4 } = require('uuid');
 const { Chat, Message, Poll  } = require("../models/index");
 
-let connections = [];
+let connections = {};
+
+async function post_message(req, res) {
+    const { new_message, chat_id } = req.params;
+    update_clients_in_chat(new_message, chat_id);
+    res.send("User post message");
+}
+
+function update_clients_in_chat(new_update, chat_id) {
+    let clients = connections[chat_id];
+    clients.forEach(client => client.response.write(`data: ${JSON.stringify(new_update)}\n\n`));
+}
 
 async function subscribe_chat(req, res) {
     try {
@@ -33,6 +44,7 @@ async function subscribe_chat(req, res) {
         req.on("close", () => {
             // Remove the client from the chat_id's connections
             connections[chat_id] = connections[chat_id].filter(client => client.id !== clientId);
+            res.end(); // close the connection
         })
     } catch(err) {
         throw new Error(`${err.message}`);
@@ -132,6 +144,7 @@ function is_valid_timestamp(timestamp) {
 }
 
 module.exports = {
+    post_message,
     subscribe_chat,
     load_chat,
     load_message_buffer,

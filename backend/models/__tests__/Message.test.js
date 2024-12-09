@@ -4,7 +4,7 @@ const { User, Chat, Message } = require("..");
 describe("Message Schema", () => {
   // Connect to test database before running tests
   beforeAll(async () => {
-    await mongoose.connect("mongodb://localhost:27017");
+    await mongoose.connect("mongodb://localhost:27017/message_testdb");
   });
 
   // Disconnect after tests

@@ -1,6 +1,5 @@
 async function signupUser() {
     const userName = document.getElementById("usernamefield").value;
-    const password = document.getElementById("passwordfield").value;
 
     if (!userName) {
         alert("Please enter a username.");
@@ -13,7 +12,6 @@ async function signupUser() {
             headers: {
                 "Content-Type": "application/json",
             },
-            body: JSON.stringify({ password: password }),
         });
 
         if (response.ok) {

@@ -24,17 +24,17 @@ function get_user_name(request) {
 
 async function create_new_user(user_name) {
   try {
-    return await UserService.createUser(user_name);
+    return await UserService.create_user(user_name);
   } catch (error) {
     throw error;
   }
 }
 
-async function getUserByName(req, res) {
+async function get_user_by_name(req, res) {
   const { username } = req.params;
 
   try {
-    const user = await UserService.findUser(username);
+    const user = await UserService.find_user(username);
     // Call view for profile of user
     res.status(200).json(user);
   } catch (error) {
@@ -44,7 +44,7 @@ async function getUserByName(req, res) {
 }
 
 module.exports = {
-  getUserByName,
+  get_user_by_name,
   user_signup,
   create_new_user,
 };

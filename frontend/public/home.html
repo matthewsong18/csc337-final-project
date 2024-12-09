@@ -3,15 +3,31 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-	<link rel="stylesheet" href="/styles.css">
+	<link rel="stylesheet" href="/styles/home.css">
     <title>AChat Homepage</title>
 </head>
 <body>
-    <div class="homeLogo"><img src="img/AChat.png" alt="AChat Logo" width="700" height="400"></div>
-	<div><input type="text" class="chatPin" placeholder="PIN #"></div>
-	<div><input type="button" class="homepageLogin" value="Login" onclick="window.location.href='auth.html'"><div>
-	<div><input type="button" class="homepageJoin" value="Join Chat" onclick="window.location.href='/chat.html'"><div>
-	<div><input type="button" class="homepageCreate" value="Create Chat" onclick="window.location.href='/chat.html'"></div>
-	<div><input type="button" class="helpButton" id="button" name="button" value="Help" onclick="window.location.href='/help.html'"></div>
+	<div id = "headerBar">
+		<input type="button" class = "headerButtons" id="helpButton" value="Help" onclick="window.location.href='help.html'">
+		<input type="button" class = "headerButtons" id="loginButton" value="Login / Signup" onclick="window.location.href='auth.html'">
+	</div>
+
+	<div id="bodyContainer">
+
+    	<img id ="homeLogo" src="img/Achat_big_logo.png" alt="AChat Logo"><br>
+
+		<div id = "joinOrCreateComponent"> 
+			<div id="guestHeader">Join as Guest</div>
+			<input type="text" id="chatPin" placeholder="PIN #">
+
+			<div class="buttonContainer">
+				<input type="button" class="bodyButton" id="joinButton" value="Join Chat" onclick="joinChat()"><br>
+				<div class="divider"> OR </div>
+				<input type="button" class="bodyButton" id="createButton" value="Create Chat" onclick="createChat()"><br>
+			</div>
+		</div>
+	</div>
+
+	<script src="/scripts/home.js"></script>
 </body>
 </html>

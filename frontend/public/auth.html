@@ -3,85 +3,26 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="/styles.css">
+    <link rel="stylesheet" href="/styles/auth.css">
     <title>Login</title>
 </head>
-<body class="login">
-    <table class="loginForm">
-        <tr>
-            <td><label for="usernamefield">Username:</label></td>
-            <td><input type="text" class="loginPageText" id="usernamefield" placeholder="Enter username"></td>
-        </tr>
-        <tr>
-            <td><label for="passwordfield">Password:</label></td>
-            <td><input type="password" class="loginPageText" id="passwordfield" placeholder="Enter password"></td>
-        </tr>
-    </table>
-    <div class="lsButtons">
-        <input type="button" class="lsButton" id="loginButton" name="login" value="Login" onclick="loginUser()">
-        &nbsp;&nbsp;&nbsp;&nbsp;
-        <input type="button" class="lsButton" id="signupButton" name="signup" value="Signup" onclick="signupUser()">
+<body>
+    <a href="home.html"> 
+        <img id= "logo" src="./img/AChat.png" alt="Achat logo">
+    </a>
+    <div id = "formContainer">
+        <div id = "header"> Login/Signup </div>
+        <div id = "welcomeHeader">WELCOME</div>
+        <div class="loginForm">
+            <label id= "usernameHeader" for="usernamefield">ENTER YOUR USERNAME</label>
+            <input type="text" id="usernamefield">
+        </div>
+        <div class="buttonContainer">
+            <input type="button" class="lsButton" id="loginButton" name="login" value="Login" onclick="loginUser()"><br>
+            <div class="divider"> OR </div>
+            <input type="button" class="lsButton" id="signupButton" name="signup" value="Signup" onclick="signupUser()"><br>
+        </div>
     </div>
+    <script src="/scripts/auth.js"></script>
 </body>
-
-<script>
-    async function signupUser() {
-        const userName = document.getElementById("usernamefield").value;
-        const password = document.getElementById("passwordfield").value;
-
-        if (!userName) {
-            alert("Please enter a username.");
-            return;
-        }
-
-        try {
-            const response = await fetch(`/auth/signup/${userName}`, {
-                method: "POST",
-                headers: {
-                    "Content-Type": "application/json",
-                },
-                body: JSON.stringify({ password: password }),
-            });
-
-            if (response.ok) {
-                window.location.href = `/profile/${userName}`;
-            } else {
-                const data = await response.json();
-                alert(data.message || "Signup failed.");
-            }
-        } catch (error) {
-            console.error("Error signing up:", error);
-            alert("An error occurred. Please try again.");
-        }
-    }
-
-    async function loginUser() {
-        const userName = document.getElementById("usernamefield").value;
-
-        if (!userName) {
-            alert("Please enter a username.");
-            return;
-        }
-
-        try {
-            const response = await fetch(`/auth/login/${userName}`, {
-                method: "GET",
-                headers: {
-                    "Content-Type": "application/json",
-                },
-            });
-
-            if (response.ok) {
-                window.location.href = `/profile/${userName}`;
-            } else {
-                const data = await response.json();
-                alert(data.message || "Login failed.");
-            }
-        } catch (error) {
-            console.error("Error logging in:", error);
-            alert("An error occurred. Please try again.");
-        }
-    }
-</script>
-
 </html>

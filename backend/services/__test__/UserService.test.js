@@ -4,7 +4,7 @@ const User = require("../../models/User.js");
 
 describe("UserService", () => {
   beforeAll(async () => {
-    await mongoose.connect("mongodb://localhost:27017/testdb");
+    await mongoose.connect("mongodb://localhost:27017/user_service_testdb");
   });
 
   afterAll(async () => {
@@ -12,22 +12,16 @@ describe("UserService", () => {
   });
 
   beforeEach(async () => {
-    await User.deleteMany();
+    await User.deleteMany({});
   });
 
   it("should prevent multiple accounts from having the same user_name", async () => {
-    const user1 = await UserService.createUser({
-      has_account: true,
-      user_name: "Bob",
-    });
+    const user1 = await UserService.createUser("Bob");
 
     let err;
 
     try {
-      const user2 = await UserService.createUser({
-        user_name: "Bob",
-        has_account: true,
-      });
+      await UserService.createUser("Bob");
     } catch (error) {
       err = error;
     }
@@ -39,10 +33,7 @@ describe("UserService", () => {
 
   // Testing findUser
   it("should retrieve a user by username if the user exists", async () => {
-    const createdUser = await UserService.createUser({
-      user_name: "Lauren",
-      has_account: true,
-    });
+    await UserService.createUser("Lauren");
 
     const foundUser = await UserService.findUser("Lauren");
 
@@ -64,5 +55,4 @@ describe("UserService", () => {
     expect(error).toBeDefined();
     expect(error.message).toBe('User with username "Bill" not found.');
   });
-
 });

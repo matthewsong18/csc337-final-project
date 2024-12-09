@@ -1,0 +1,157 @@
+/* Description: This is a CSS file that is used to style the home.html
+   page on the Achat website. This provides a sytle and format for a join
+   and create chat form as well as a header for the login and help button.
+   The colors were taken from the color reference identified for the website. */
+   
+/* All text in the html file will be the same font */
+
+html{
+	font-family: 'Inter', 'sans-serif';
+}
+
+body {
+	background-color: #f1f8fe;
+    padding: 1vh;
+}
+
+
+#headerBar{
+    position: sticky;
+    top: 0;
+    overflow: hidden;
+    display: flex;
+    justify-content: space-between;
+    height: 7vh;
+    padding: 1vh 2vh 2vh 2vh;
+}
+
+.headerButtons{
+    background-color: white;
+    border-radius: 20px;
+    font-size: 2vh;
+    white-space: nowrap;
+	height: 60%;
+	width: 10%;
+    text-align: center;
+	color: #02111e;
+    border: none;
+	box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
+}
+
+.headerButtons:hover{
+	transform: scale(1.1);
+	background: linear-gradient(120deg, #1280f2, #f653df);
+}
+
+#bodyContainer{
+    display: flex;
+    flex-direction: column;
+	justify-content: center;
+    text-align: center;
+    align-items: center;
+    width: 100vw;
+    height: 60vh;
+
+}
+#homeLogo {
+    position: relative;
+    width: 30vw;
+    height: auto;
+    z-index: 1; 
+    margin-bottom: -7vh;
+	margin-left: -5vh;
+}
+
+#joinOrCreateComponent {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    background-color: #f1f8fe;
+    width: 35vw;
+    height: 35vh;
+    border-radius: 5px;
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
+    overflow: auto;
+}
+
+
+/* guest text */
+#guestHeader{
+	font-size: 3vh;
+	background: linear-gradient(120deg, #1280f2, #f653df);
+	text-align: center;
+	font-weight: bold;
+    padding-bottom: 1vh;
+
+	/* Makes it so that the gradient only applies to text*/
+	-webkit-background-clip: text;
+	background-clip: text;
+    -webkit-text-fill-color: transparent;
+}
+
+#chatPin {
+	text-align: center;
+	background-color: #f1f8fe;
+    font-size: 120%;
+	color: #02111e;
+	border: none;
+	width: 15vw;
+	height: 3vh;
+	border: 2px solid #1280f2;
+	border-radius: 3px;
+}
+.buttonContainer {
+	text-align: center;
+    padding: 3vh 0 1vh 0;
+    width: 80%;
+}
+
+#createButton{
+    background-color: #1280f2; 
+}
+
+#joinButton{
+    background-color: #c875f8;
+}
+
+
+.bodyButton{
+	padding: 0.5vw 2vw;
+	border-radius: 10px;
+    font-size: 2vh;
+    white-space: nowrap;
+	height: 23%;
+	width: 35%;
+    text-align: center;
+	color: #02111e;
+	border: none;
+	box-shadow:0 8px 16px rgba(0, 0, 0, 0.2);
+}
+
+.bodyButton:hover {
+	transform: scale(1.1);
+	background: linear-gradient(120deg, #1280f2, #f653df);
+}
+
+/* creates the or divider line */
+.divider {
+	display: flex;
+	align-items: center;
+	text-align: center;
+	width: 100%;
+	margin: 3% 0;
+	color: #87127f;
+	font-style:italic;
+    padding: 2vh 0 2vh 0;
+}
+  
+.divider::before,
+.divider::after {
+	content: "";
+	flex-grow: 1;
+	border-bottom: 2px solid #87127f; 
+	margin: 0 10px; 
+	color: #02111e;
+}

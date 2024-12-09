@@ -4,7 +4,7 @@ const app = require("../../app");
 const UserService = require("../../services/UserService");
 const User = require("../../models/User");
 
-describe("userController", () => {
+describe("user_controller", () => {
   beforeAll(async () => {
     await mongoose.connect("mongodb://localhost:27017/testdb");
   });
@@ -19,7 +19,7 @@ describe("userController", () => {
 
   // Testing getUserByName
   it("should return the user profile when username exists", async () => {
-    await UserService.createUser("Lauren");
+    await UserService.create_user("Lauren");
 
     // Simulate GET request on app.js
     const response = await request(app).get("/auth/login/Lauren");
@@ -59,7 +59,7 @@ describe("userController", () => {
   });
 
   it("should return a 400 status code if the user_name already exists", async () => {
-    await UserService.createUser("Happy");
+    await UserService.create_user("Happy");
 
     const response = await request(app).post("/auth/signup/Happy");
 
@@ -82,7 +82,7 @@ describe("userController", () => {
       `User successfully signed-up as ${long_user_name}`,
     );
 
-    const user = await UserService.findUser(long_user_name);
+    const user = await UserService.find_user(long_user_name);
     expect(user).toBeDefined();
     expect(user.user_name).toBe(long_user_name);
   });
@@ -100,7 +100,7 @@ describe("userController", () => {
       `User successfully signed-up as ${special_user_name}`,
     );
 
-    const user = await UserService.findUser(special_user_name);
+    const user = await UserService.find_user(special_user_name);
     expect(user).toBeDefined();
     expect(user.user_name).toBe(special_user_name);
   });

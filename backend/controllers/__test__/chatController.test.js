@@ -1,9 +1,12 @@
 const request = require("supertest");
 const mongoose = require("mongoose");
+const http = require("http");
+const axios = require("axios");
 const app = require("../../app"); 
 const UserService = require("../../services/UserService");
 const { Chat, Message, Poll, PollOption, User } = require("../../models/index");
 const { load_chat, load_message_buffer, load_poll_buffer, sort_by_timestamp, is_valid_timestamp } = require("../chatController");
+const { subscribe_chat } = require("../chatController");
 
 describe("chatController", () => {
 
@@ -310,5 +313,102 @@ describe("chatController", () => {
     expect(result[1].title).toBe("Poll 1");
     expect(result[2].content).toBe("Message 2");
     expect(result.every((item) => is_valid_timestamp(item.createdAt))).toBeTruthy();
+  });
+
+  // Check subscribe_chat function for streaming
+  it('should set proper headers and send initial chat buffer', async () => {
+    const user = await User.create({ user_name: "Test User", has_account: true });
+
+    // Create messages and polls
+    const message1 = await Message.create({
+      author: user._id,
+      content: "Message 1",
+      createdAt: new Date("2024-12-01T10:00:00Z"),
+    });
+
+    const message2 = await Message.create({
+      author: user._id,
+      content: "Message 2",
+      createdAt: new Date("2024-12-01T12:00:00Z"),
+    });
+
+    const pollOption1 = await PollOption.create({ title: "Option 1" });
+    const pollOption2 = await PollOption.create({ title: "Option 2" });
+    const poll = await Poll.create({
+      title: "Poll 1",
+      options: [pollOption1, pollOption2],
+      createdAt: new Date("2024-12-01T11:00:00Z"),
+    });
+
+    // Create chat
+    const chat = await Chat.create({
+      title: "Test Chat",
+      message: [message1._id, message2._id],
+      polls: [poll._id],
+      users: [user]
+    });
+
+    // create a server
+    var httpServer = http.createServer(function(req, res){ 
+      const url = new URL(req.url, `http://${req.headers.host}`);
+      // Match the route and extract the `chat_id`
+      if (url.pathname.startsWith('/chat/') && url.pathname.endsWith('/events')) {
+        const chatIdMatch = url.pathname.match(/^\/chat\/([^/]+)\/events$/);
+        if (chatIdMatch) {
+            // Manually add `params` to the request object
+            req.params = { chat_id: chatIdMatch[1] };
+            subscribe_chat(req, res);
+        } else {
+            res.statusCode = 404;
+            res.end('Not Found');
+        }
+      } else {
+        res.statusCode = 404;
+        res.end('Not Found');
+      }
+      req.on('close', () => {
+        res.end(); // close the connection
+      })
+    }); 
+      
+    // Listening to http Server 
+    httpServer.listen(3009, 'localhost', () => { 
+        console.log("Server is running at port 3009..."); 
+        console.log(`/chat/${chat._id}/events`);
+    }); 
+
+    const req_url = `http://localhost:3009/chat/${chat._id}/events`;
+    // Create an AbortController instance to close the request
+    const controller = new AbortController();
+    const signal = controller.signal;
+    
+    const response = await axios({
+      method: 'GET',
+      url: req_url,
+      responseType: 'stream',
+      signal,
+    });
+
+    // check response headers
+    expect(response.headers["content-type"]).toBe("text/event-stream");
+    expect(response.headers["cache-control"]).toBe("no-cache");
+    expect(response.headers["connection"]).toBe("keep-alive");
+    expect(response.headers["transfer-encoding"]).toBe("chunked");
+
+    // check response data
+    // Create a buffer to store the streamed data
+    let receivedData = '';
+    // listen for updates
+    response.data.on('data', (chunk) => {
+        receivedData += chunk.toString(); // Accumulate the chunks
+        expect(receivedData).toContain('data: '); // Ensure it follows the SSE format
+        const parsedData = JSON.parse(receivedData.split('data: ')[1]); // Extract and parse the data
+        expect(parsedData.length).toBe(3);
+        expect(parsedData[0]._id == message1._id.toString()).toBe(true);
+        expect(parsedData[1]._id == poll._id.toString()).toBe(true);
+        expect(parsedData[2]._id == message2._id.toString()).toBe(true);
+        controller.abort(); // close the request
+        httpServer.close();
+    });
   });
 });

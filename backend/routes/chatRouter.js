@@ -1,6 +1,6 @@
 const express = require("express");
 const path = require("path");
-const { subscribe_chat } = require("../controllers/chatController");
+const { post_message, subscribe_chat } = require("../controllers/chatController");
 const chatRouter = express.Router();
 
 // Get a chat
@@ -33,9 +33,7 @@ chatRouter.get("*", (req, res) => {
 })
 
 // Post a message to a chat
-chatRouter.post("/:chat_id/:user_id/:message_content", (req, res) => {
-    res.send("User post message");
-});
+chatRouter.post("/:chat_id/:user_id/:message_content", post_message);
 
 // Set poll title
 chatRouter.post("/:chat_id/:poll_title", (req, res) => {

@@ -21,7 +21,8 @@ body {
     overflow: hidden;
     display: flex;
     justify-content: space-between;
-    height: 5vh;
+    height: 7vh;
+    padding: 1vh 2vh 2vh 2vh;
 }
 
 .headerButtons{
@@ -29,12 +30,12 @@ body {
     border-radius: 20px;
     font-size: 1.5vh;
     white-space: nowrap;
-	height: 80%;
+	height: 60%;
 	width: 8%;
     text-align: center;
 	color: #02111e;
     border: none;
-	box-shadow:0 8px 16px #cfe5fc;
+	box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
 }
 
 #bodyContainer{
@@ -66,6 +67,7 @@ body {
     height: 30vh;
     border-radius: 5px;
     box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
+    overflow: auto;
 }
 
 

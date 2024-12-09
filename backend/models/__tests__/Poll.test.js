@@ -4,7 +4,7 @@ const { Poll, PollOption } = require("..");
 describe("Poll Schema", () => {
   // Connect to a test database before running tests
   beforeAll(async () => {
-    await mongoose.connect("mongodb://localhost:27017/testdb");
+    await mongoose.connect("mongodb://localhost:27017/poll_testdb");
   });
 
   // Disconnect after all tests

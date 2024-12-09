@@ -1,6 +1,43 @@
 const mongoose = require("mongoose");
 const path = require('path');
+const { v4: uuidv4 } = require('uuid');
 const { Chat, Message, Poll  } = require("../models/index");
+
+let connections = [];
+
+async function subscribe_chat(req, res) {
+    try {
+        const { chat_id } = req.params;
+        const headers = {
+            'Content-Type': 'text/event-stream',
+            'Connection': 'keep-alive',
+            'Cache-Control': 'no-cache'
+        };
+        res.writeHead(200, headers);
+
+        const chat_buffer = await load_chat(chat_id, Date.now());
+        const data = `data: ${JSON.stringify(chat_buffer)}\n\n`;
+        res.write(data);
+
+        // Use a unique id for each client
+        const clientId = uuidv4(); 
+        // Add the client to the connections object
+        if (!connections[chat_id]) {
+            connections[chat_id] = [];
+        }
+        connections[chat_id].push({
+            id: clientId,
+            response: res
+        });
+
+        req.on("close", () => {
+            // Remove the client from the chat_id's connections
+            connections[chat_id] = connections[chat_id].filter(client => client.id !== clientId);
+        })
+    } catch(err) {
+        throw new Error(`${err.message}`);
+    }
+}
 
 async function load_chat(chat_id, timestamp, buffer_size=10) {
     try {
@@ -95,6 +132,7 @@ function is_valid_timestamp(timestamp) {
 }
 
 module.exports = {
+    subscribe_chat,
     load_chat,
     load_message_buffer,
     load_poll_buffer,

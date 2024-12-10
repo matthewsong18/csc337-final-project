@@ -12,8 +12,4 @@ app.use("/auth", authRouter);
 app.use("/chat", chatRouter);
 app.use("/", indexRouter);
 
-// chatRouter.get("*", (req, res) => {
-//   res.sendFile(path.join(__dirname, "../../frontend/public/error.html"));
-// });
-
 module.exports = app;

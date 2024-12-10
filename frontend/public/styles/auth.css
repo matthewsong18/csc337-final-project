@@ -11,6 +11,8 @@ html{
 
 body {
 	background-color: #f1f8fe;
+	margin: 0;
+	padding: 0;
 }
 
 /* home button on top left */
@@ -23,22 +25,22 @@ body {
 }
 
 #formContainer{
-	margin-top: 7%;
+	margin: 5% auto;
 	background:  #cfe5fc;
-	height: 50vh;
-	width: 35vw;
+	height: auto;
+	max-width: 35vw; 
+	padding: 3rem 0 3rem 0;
 	display: flex;
 	flex-direction: column;
 	justify-content: center;
 	overflow: auto;
 	border-radius: 5px;
 	box-shadow:0 8px 16px rgba(0, 0, 0, 0.2);
-	margin-left: 32%;
 }
 
 /* login/signup text */
 #header{
-	font-size: 6vh;
+	font-size: calc(2vw + 1rem);
 	background: linear-gradient(120deg, #1280f2, #f653df);
 	text-align: center;
 	font-weight: bold;
@@ -54,21 +56,22 @@ body {
 	text-align: center;
 	font-weight: bold;
 	color:  #9ecafa;
-	font-size: 2vh;
+	font-size: calc(0.8vw + 0.4rem);
+	margin-top: 0.5rem;
 }
 
 /* container for the username form */
 .loginForm {
-    padding: 5vh 0 5vh 0;
+    padding: 2rem 0;
     display: flex;
     flex-direction: column;
 	align-items: center;
 }
 
 #usernameHeader {
-	font-size: 2vh;
+	font-size: calc(0.7vw + 0.4rem);
     white-space: nowrap;
-	padding-bottom: 1vh;
+	padding-bottom: 0.5rem;
 	background: linear-gradient(120deg, #1280f2, #f653df);
 	text-align: center;
 	font-weight: bold;
@@ -82,17 +85,18 @@ body {
 #usernamefield {
 	text-align: center;
 	background-color: #f1f8fe;
-    font-size: 120%;
+    font-size: calc(1vw + 0.5rem);
 	color: #02111e;
 	border: none;
-	width: 15vw;
-	height: 3vh;
+	max-width: 15vw;
+	height: 2.5rem;
 	border: 2px solid #1280f2;
 	border-radius: 3px;
 }
 
 .buttonContainer {
 	text-align: center;
+	margin-top: 1rem;
 }
 
 #loginButton{
@@ -104,12 +108,13 @@ body {
 }
 
 .lsButton{
-	padding: 0.5vw 2vw;
+	padding: 0.5em 1.5em;
 	border-radius: 10px;
-    font-size: 2vh;
+    font-size: calc(0.7vw + 0.4rem);
     white-space: nowrap;
-	height: 30%;
-	width: 30%;
+	height: auto;
+	width: auto;
+	max-width: 100%; 
 	color: #02111e;
 	border: none;
 	box-shadow:0 8px 16px rgba(0, 0, 0, 0.2);
@@ -121,14 +126,13 @@ body {
 
 }
 
-
 /* creates the or divider line */
 .divider {
 	display: flex;
 	align-items: center;
 	text-align: center;
 	width: 100%;
-	margin: 3% 0;
+	margin: 2rem 0;
 	color: #87127f;
 	font-style:italic;
 }

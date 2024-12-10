@@ -11,9 +11,9 @@ html{
 
 body {
 	background-color: #f1f8fe;
-    padding: 1vh;
+    padding: 0px;
+    margin: 0px;
 }
-
 
 #headerBar{
     position: sticky;
@@ -21,21 +21,24 @@ body {
     overflow: hidden;
     display: flex;
     justify-content: space-between;
-    height: 7vh;
-    padding: 1vh 2vh 2vh 2vh;
+    height: 90px;
+    width: 100vw;
 }
 
-.headerButtons{
+.headerButtons {
+    margin: 15px;
     background-color: white;
     border-radius: 20px;
-    font-size: 2vh;
+    font-size: calc(0.6vw + 0.5rem);
+    padding: 0.2em 0.8em;
     white-space: nowrap;
-	height: 60%;
-	width: 10%;
+    width: auto;
+    height: 40px;
+    min-height: 1vh;
     text-align: center;
-	color: #02111e;
+    color: #02111e;
     border: none;
-	box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
 }
 
 .headerButtons:hover{
@@ -51,7 +54,6 @@ body {
     align-items: center;
     width: 100vw;
     height: 60vh;
-
 }
 #homeLogo {
     position: relative;
@@ -117,18 +119,19 @@ body {
 }
 
 
-.bodyButton{
-	padding: 0.5vw 2vw;
-	border-radius: 10px;
-    font-size: 2vh;
+.bodyButton {
+    padding: 0.3em 1.5em;
+    font-size: calc(0.8vw + 0.4rem);
     white-space: nowrap;
-	height: 23%;
-	width: 35%;
+    height: auto;
+    width: auto;
     text-align: center;
-	color: #02111e;
-	border: none;
-	box-shadow:0 8px 16px rgba(0, 0, 0, 0.2);
+    color: #02111e;
+    border: none;
+    border-radius: 10px;
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
 }
+
 
 .bodyButton:hover {
 	transform: scale(1.1);

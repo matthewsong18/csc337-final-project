@@ -1,11 +1,11 @@
 const request = require("supertest");
 const mongoose = require("mongoose");
-const http = require("http");
+const express = require("express");
 const axios = require("axios");
 const app = require("../../app"); 
 const UserService = require("../../services/UserService");
 const { Chat, Message, Poll, PollOption, User } = require("../../models/index");
-const { load_chat, load_message_buffer, load_poll_buffer, sort_by_timestamp, is_valid_timestamp } = require("../chatController");
+const { load_chat, load_message_buffer, load_poll_buffer, sort_by_timestamp, validate_timestamp_format } = require("../chatController");
 const { subscribe_chat } = require("../chatController");
 
 describe("chatController", () => {
@@ -28,13 +28,13 @@ describe("chatController", () => {
 
   // Validate timestamp format
   it("should return true when timestamp in correct format", () => {
-    const timestamp_1 = is_valid_timestamp("2022-02-26T16:37:48.244Z"); // createdAt format
-    const timestamp_2 = is_valid_timestamp("2024-12-06T12:00:00Z"); // Date format
-    const timestamp_no_ms = is_valid_timestamp("2024-12-06T12:00:00Z");
-    const timestamp_no_timezone = is_valid_timestamp("2024-12-06T12:00:00");
-    const timestamp_offset = is_valid_timestamp("2024-12-06T12:00:00+05:30");
-    const timestamp_no_separator = is_valid_timestamp("2024-12-06 12:00:00Z");
-    const timestamp_nonstring = is_valid_timestamp(Date.now());
+    const timestamp_1 = validate_timestamp_format("2022-02-26T16:37:48.244Z"); // createdAt format
+    const timestamp_2 = validate_timestamp_format("2024-12-06T12:00:00Z"); // Date format
+    const timestamp_no_ms = validate_timestamp_format("2024-12-06T12:00:00Z");
+    const timestamp_no_timezone = validate_timestamp_format("2024-12-06T12:00:00");
+    const timestamp_offset = validate_timestamp_format("2024-12-06T12:00:00+05:30");
+    const timestamp_no_separator = validate_timestamp_format("2024-12-06 12:00:00Z");
+    const timestamp_nonstring = validate_timestamp_format(Date.now());
     expect(timestamp_1).toBe(true);
     expect(timestamp_2).toBe(true);
     expect(timestamp_no_ms).toBe(true);
@@ -45,13 +45,13 @@ describe("chatController", () => {
   });
 
   it("should return false when timestamp is invalid", () => {
-    const timestamp_null = is_valid_timestamp(null);
-    const timestamp_undefined = is_valid_timestamp(undefined);
-    const timestamp_malformed = is_valid_timestamp("2024-12-06A12:00:00G");
-    const timestamp_string = is_valid_timestamp("hello world");
-    const timestamp_wrong_order = is_valid_timestamp("12:00:00T2024-12-06");
-    const timestamp_extra_characters = is_valid_timestamp("2024-12-06T12:00:00Zabc");
-    const timestamp_empty_string = is_valid_timestamp("");
+    const timestamp_null = validate_timestamp_format(null);
+    const timestamp_undefined = validate_timestamp_format(undefined);
+    const timestamp_malformed = validate_timestamp_format("2024-12-06A12:00:00G");
+    const timestamp_string = validate_timestamp_format("hello world");
+    const timestamp_wrong_order = validate_timestamp_format("12:00:00T2024-12-06");
+    const timestamp_extra_characters = validate_timestamp_format("2024-12-06T12:00:00Zabc");
+    const timestamp_empty_string = validate_timestamp_format("");
     expect(timestamp_null).toBe(false);
     expect(timestamp_undefined).toBe(false);
     expect(timestamp_malformed).toBe(false);
@@ -73,7 +73,7 @@ describe("chatController", () => {
         });
         message_ids.push(message._id);
     }
-    const messages = await load_message_buffer(message_ids, 8, Date.now());
+    const messages = await load_message_buffer(message_ids, Date.now(), 8);
     // validate all fields desire
     let message_1 = messages[0];
     expect(message_1.author).toBeDefined();
@@ -81,7 +81,7 @@ describe("chatController", () => {
     expect(message_1.content).toBeDefined();
     expect(message_1.content).toBe("Message #1");
     expect(message_1.createdAt).toBeDefined();
-    expect(is_valid_timestamp(message_1.createdAt)).toBeTruthy();
+    expect(validate_timestamp_format(message_1.createdAt)).toBeTruthy();
     
     let message_2 = messages[1];
     expect(message_2.author).toBeDefined();
@@ -89,14 +89,14 @@ describe("chatController", () => {
     expect(message_2.content).toBeDefined();
     expect(message_2.content).toBe("Message #2");
     expect(message_2.createdAt).toBeDefined();
-    expect(is_valid_timestamp(message_2.createdAt)).toBeTruthy();
+    expect(validate_timestamp_format(message_2.createdAt)).toBeTruthy();
 
     // check buffer size
     expect(messages.length).toBe(8);
   });
 
   it("should return an empty array when there's no message id", async () => {
-    const messages = await load_message_buffer([], 8, Date.now());
+    const messages = await load_message_buffer([], Date.now(), 8);
     expect(messages.length).toBe(0);
   });
 
@@ -127,7 +127,7 @@ describe("chatController", () => {
     });
     poll_ids.push(poll_2._id);
     
-    const polls = await load_poll_buffer(poll_ids, 8, Date.now());
+    const polls = await load_poll_buffer(poll_ids, Date.now(), 8);
     // validate all fields desire
     expect(poll_1.title).toBeDefined();
     expect(poll_1.title).toBe("Poll Title 1");
@@ -136,7 +136,7 @@ describe("chatController", () => {
     expect(poll_1.users_voted).toBeDefined();
     expect(poll_1.users_voted.length).toBe(4);
     expect(poll_1.createdAt).toBeDefined();
-    expect(is_valid_timestamp(poll_1.createdAt)).toBeTruthy();
+    expect(validate_timestamp_format(poll_1.createdAt)).toBeTruthy();
     
     expect(poll_2.title).toBeDefined();
     expect(poll_2.title).toBe("Poll Title 2");
@@ -145,14 +145,14 @@ describe("chatController", () => {
     expect(poll_2.users_voted).toBeDefined();
     expect(poll_2.users_voted.length).toBe(3);
     expect(poll_2.createdAt).toBeDefined();
-    expect(is_valid_timestamp(poll_2.createdAt)).toBeTruthy();
+    expect(validate_timestamp_format(poll_2.createdAt)).toBeTruthy();
 
     // check buffer size
     expect(polls.length).toBe(2);
   });
 
   it("should return an empty array when there's no poll id", async () => {
-    const polls = await load_poll_buffer([], 8, Date.now());
+    const polls = await load_poll_buffer([], Date.now(), 8);
     expect(polls.length).toBe(0);
   });
 
@@ -191,8 +191,8 @@ describe("chatController", () => {
     });
     poll_ids.push(poll2._id);
     // Combine messages and polls
-    const messages = await load_message_buffer(message_ids, 2, Date.now());
-    const polls = await load_poll_buffer(poll_ids, 2, Date.now());
+    const messages = await load_message_buffer(message_ids, Date.now(), 2);
+    const polls = await load_poll_buffer(poll_ids, Date.now(), 2);
 
     // Sort combined array by timestamp
     const sorted = sort_by_timestamp(messages, polls, 4);
@@ -248,7 +248,7 @@ describe("chatController", () => {
         error = err;
     }
     expect(error).toBeDefined();    
-    expect(error.message).toBe("Timestamp requested is invalid");
+    expect(error.message).toBe("Timestamp's format is invalid");
   });
 
   it("should throw an error if the timestamp is in the future", async () => {
@@ -312,10 +312,10 @@ describe("chatController", () => {
     expect(result[0].content).toBe("Message 1");
     expect(result[1].title).toBe("Poll 1");
     expect(result[2].content).toBe("Message 2");
-    expect(result.every((item) => is_valid_timestamp(item.createdAt))).toBeTruthy();
+    expect(result.every((item) => validate_timestamp_format(item.createdAt))).toBeTruthy();
   });
 
-  // Check subscribe_chat function for streaming
+  // Check subscribe_to_chat function for streaming
   it('should set proper headers and send initial chat buffer', async () => {
     const user = await UserService.createUser("Test User");
 
@@ -347,35 +347,17 @@ describe("chatController", () => {
       polls: [poll._id],
       users: [user]
     });
+    const foundChat = await Chat.findById(chat._id);
+    console.log("Chat found in DB:", foundChat);
 
     // create a server
-    var httpServer = http.createServer(function(req, res){ 
-      const url = new URL(req.url, `http://${req.headers.host}`);
-      // Match the route and extract the `chat_id`
-      if (url.pathname.startsWith('/chat/') && url.pathname.endsWith('/events')) {
-        const chatIdMatch = url.pathname.match(/^\/chat\/([^/]+)\/events$/);
-        if (chatIdMatch) {
-            // Manually add `params` to the request object
-            req.params = { chat_id: chatIdMatch[1] };
-            subscribe_chat(req, res);
-        } else {
-            res.statusCode = 404;
-            res.end('Not Found');
-        }
-      } else {
-        res.statusCode = 404;
-        res.end('Not Found');
-      }
-      req.on('close', () => {
-        res.end(); // close the connection
-      })
-    }); 
-      
-    // Listening to http Server 
-    httpServer.listen(3009, 'localhost', () => { 
-        console.log("Server is running at port 3009..."); 
-        console.log(`/chat/${chat._id}/events`);
-    }); 
+    const app = express();
+    app.get(`/chat/:chat_id/events`, subscribe_to_chat);
+    const server = app.listen(3009, 'localhost', () => {
+      console.log(`Achat app - listening on: http://localhost:3009`);
+      console.log(`/chat/${chat._id}/events`);
+    })
+   
 
     const req_url = `http://localhost:3009/chat/${chat._id}/events`;
     // Create an AbortController instance to close the request
@@ -408,7 +390,9 @@ describe("chatController", () => {
         expect(parsedData[1]._id == poll._id.toString()).toBe(true);
         expect(parsedData[2]._id == message2._id.toString()).toBe(true);
         controller.abort(); // close the request
-        httpServer.close();
+        server.close(() => {
+          console.log('Server closed');
+        });
     });
   });
 

@@ -113,8 +113,8 @@ body {
     font-size: calc(0.7vw + 0.4rem);
     white-space: nowrap;
 	height: auto;
-	width: 30%;
-	max-width: 30%; 
+	width: auto;
+	max-width: 100%; 
 	color: #02111e;
 	border: none;
 	box-shadow:0 8px 16px rgba(0, 0, 0, 0.2);

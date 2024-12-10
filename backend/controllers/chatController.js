@@ -53,7 +53,7 @@ async function subscribe_chat(req, res) {
 
 async function load_chat(chat_id, timestamp, buffer_size=10) {
     try {
-        // validate chat_id (2 stesps)
+        // validate chat_id (2 steps)
         const is_valid_id = mongoose.Types.ObjectId.isValid(chat_id);
         if (!is_valid_id) {
             throw new Error("Invalid chat id");

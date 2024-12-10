@@ -26,7 +26,7 @@ describe("chatController", () => {
     await PollOption.deleteMany({})
   });
 
-  // Validate timestampt format
+  // Validate timestamp format
   it("should return true when timestamp in correct format", () => {
     const timestamp_1 = is_valid_timestamp("2022-02-26T16:37:48.244Z"); // createdAt format
     const timestamp_2 = is_valid_timestamp("2024-12-06T12:00:00Z"); // Date format

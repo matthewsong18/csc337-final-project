@@ -12,8 +12,8 @@
 
 .helpButton {
     position: fixed;
-    top: 10px;
-    left: 10px;
+    top: 5px;
+    left: 15px;
     display: block;
     width: 100px;
     height: 100px;
@@ -25,4 +25,17 @@
     text-align: center;
     cursor: pointer;
     font-weight: bold;
+}
+
+.headerBox {
+	background: #CCCCCC;
+	position: fixed;
+	width: 100vw;
+	height: 12vh;
+	top: 0px;
+	text-align: center;
+	font-family: 'Rockwell', serif;
+	font-size: 32px;
+	font-weight: bold;
+	color: #757575;
 }

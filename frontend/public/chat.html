@@ -7,11 +7,16 @@
     <title>Chat page</title>
 </head>
 <body>
+	<div class="headerBox">
+		<span id="chatName" contenteditable="true">Chat Name</span> <br> <span id="pinNumber">PIN</span>
+	</div>
     <div>
 		<input type="text" class="chatTextBox" placeholder="Got something interesting to say?">
 	</div>
 	<div>
 		<input type="button" class="helpButton" id="button" name="button" value="Help" onclick="window.location.href='/help.html'">
-		</div>
+	</div>
+	
+	<script src="/scripts/chat.js"></script>
 </body>
 </html>

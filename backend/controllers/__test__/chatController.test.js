@@ -64,8 +64,8 @@ describe("chatController", () => {
   // check load message buffer
   it("should return an array of objects of messages sorted by timestamp, buffer size", async () => {
     let message_ids = [];
-    const user_1 = await User.create({ user_name: "Alice", has_account: true });
-    const user_2 = await User.create({ has_account: false });
+    const user_1 = await UserService.createUser("Alice");
+    const user_2 = await User.create({});
     for (let i = 0; i < 10; i++) {
         const message = await Message.create({
             author: i % 2 == 0 ? user_1._id : user_2._id,
@@ -104,10 +104,10 @@ describe("chatController", () => {
   it("should return an array of objects of polls sorted by timestamp, buffer size", async () => {
     let poll_ids = [];
     let poll_option_ids = [];
-    const user_1 = await User.create({ user_name: "Alice", has_account: true });
-    const user_2 = await User.create({ has_account: false });
-    const user_3 = await User.create({ user_name: "Bob", has_account: true });
-    const user_4 = await User.create({ user_name: "Charlie", has_account: true });
+    const user_1 = await UserService.createUser("Alice");
+    const user_2 = await User.create({});
+    const user_3 = await UserService.createUser("Bob");
+    const user_4 = await UserService.createUser("Charlie");
     for (let i = 0; i < 8; i++) {
         const poll_option = await PollOption.create({
             title: `Option #${i+1}`,
@@ -158,7 +158,7 @@ describe("chatController", () => {
 
   // check sorting polls and messages by timestamp
   it("should return an array of messages and polls sorted in ascending time order", async () => {
-    const user = await User.create({ user_name: "Test User", has_account: true });
+    const user = await UserService.createUser("Test User");
     const message_ids = [];
     const poll_ids = [];
     // Create messages with different timestamps
@@ -274,7 +274,7 @@ describe("chatController", () => {
   });
 
   it("should return sorted messages and polls for a valid request", async () => {
-    const user = await User.create({ user_name: "Test User", has_account: true });
+    const user = await UserService.createUser("Test User");
 
     // Create messages and polls
     const message1 = await Message.create({
@@ -317,7 +317,7 @@ describe("chatController", () => {
 
   // Check subscribe_chat function for streaming
   it('should set proper headers and send initial chat buffer', async () => {
-    const user = await User.create({ user_name: "Test User", has_account: true });
+    const user = await UserService.createUser("Test User");
 
     // Create messages and polls
     const message1 = await Message.create({
@@ -411,4 +411,6 @@ describe("chatController", () => {
         httpServer.close();
     });
   });
+
+  
 });

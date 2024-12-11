@@ -1,6 +1,6 @@
 const express = require("express");
 const path = require("path");
-const { post_message, subscribe_chat } = require("../controllers/chatController");
+const { create_message, subscribe_to_chat } = require("../controllers/chatController");
 const chatRouter = express.Router();
 
 // Get a chat
@@ -9,7 +9,7 @@ chatRouter.get("/:chat_id", (req, res) => {
 });
 
 // Establish a SSE connection 
-chatRouter.get("/:chat_id/events", subscribe_chat);
+chatRouter.get("/:chat_id/events", subscribe_to_chat);
 
 // Get a poll
 chatRouter.get("/:chat_id/:poll_id", (req, res) => {
@@ -33,7 +33,7 @@ chatRouter.get("*", (req, res) => {
 })
 
 // Post a message to a chat
-chatRouter.post("/:chat_id/:user_id/:message_content", post_message);
+chatRouter.post("/:chat_id/:user_id/:message_content", create_message);
 
 // Set poll title
 chatRouter.post("/:chat_id/:poll_title", (req, res) => {

@@ -236,6 +236,7 @@ function stringtify_for_sse(raw_data) {
 }
 
 module.exports = {
+  create_message,
   subscribe_to_chat,
   load_chat,
   load_message_buffer,

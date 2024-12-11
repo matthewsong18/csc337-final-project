@@ -6,7 +6,7 @@ const app = require("../../app");
 const UserService = require("../../services/UserService");
 const { Chat, Message, Poll, PollOption, User } = require("../../models/index");
 const { load_chat, load_message_buffer, load_poll_buffer, sort_by_timestamp, validate_timestamp_format } = require("../chatController");
-const { subscribe_chat } = require("../chatController");
+const { subscribe_to_chat } = require("../chatController");
 
 describe("chatController", () => {
 
@@ -129,23 +129,23 @@ describe("chatController", () => {
     
     const polls = await load_poll_buffer(poll_ids, Date.now(), 8);
     // validate all fields desire
-    expect(poll_1.title).toBeDefined();
-    expect(poll_1.title).toBe("Poll Title 1");
-    expect(poll_1.options).toBeDefined();
-    expect(poll_1.options[0]._id == poll_option_ids[0].toString()).toBe(true);
-    expect(poll_1.users_voted).toBeDefined();
-    expect(poll_1.users_voted.length).toBe(4);
-    expect(poll_1.createdAt).toBeDefined();
-    expect(validate_timestamp_format(poll_1.createdAt)).toBeTruthy();
+    expect(polls[0].title).toBeDefined();
+    expect(polls[0].title).toBe("Poll Title 1");
+    expect(polls[0].options).toBeDefined();
+    expect(polls[0].options[0]._id == poll_option_ids[0].toString()).toBe(true);
+    expect(polls[0].users_voted).toBeDefined();
+    expect(polls[0].users_voted.length).toBe(4);
+    expect(polls[0].createdAt).toBeDefined();
+    expect(validate_timestamp_format(polls[0].createdAt)).toBeTruthy();
     
-    expect(poll_2.title).toBeDefined();
-    expect(poll_2.title).toBe("Poll Title 2");
-    expect(poll_2.options).toBeDefined();
-    expect(poll_2.options[0]._id == poll_option_ids[4].toString()).toBe(true);
-    expect(poll_2.users_voted).toBeDefined();
-    expect(poll_2.users_voted.length).toBe(3);
-    expect(poll_2.createdAt).toBeDefined();
-    expect(validate_timestamp_format(poll_2.createdAt)).toBeTruthy();
+    expect(polls[1].title).toBeDefined();
+    expect(polls[1].title).toBe("Poll Title 2");
+    expect(polls[1].options).toBeDefined();
+    expect(polls[1].options[0]._id == poll_option_ids[4].toString()).toBe(true);
+    expect(polls[1].users_voted).toBeDefined();
+    expect(polls[1].users_voted.length).toBe(3);
+    expect(polls[1].createdAt).toBeDefined();
+    expect(validate_timestamp_format(polls[1].createdAt)).toBeTruthy();
 
     // check buffer size
     expect(polls.length).toBe(2);

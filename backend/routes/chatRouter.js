@@ -9,11 +9,13 @@ chatRouter.get("/join/:chat_id", async (req, res) => {
     const chatId = req.params.chat_id;
 
     try {
+		//Check if a chat with the given PIN exists
 		console.log("Attempting to find chat");
         const chat = await Chat.findOne({ pin: chatId });
 		console.log("Chat found");
 
         if (chat) {
+			//Respond true if the chatroom exists
 			res.json({ exists: true });
         } else {
             res.status(404).json({ exists: false, message: "Chatroom not found." });
@@ -32,8 +34,8 @@ function generateRandomPin() {
 // Create a new chat
 chatRouter.post("/create", async (req, res) => {
 	console.log("POST request recieved");
-    const pin = generateRandomPin();  // Generate a random PIN
-    const chatName = "Anonymous Chat";  // Set a default chat name
+    const pin = generateRandomPin();
+    const chatName = "Anonymous Chat";
 
     try {
 		console.log("Attempting to create new Chat")
@@ -41,12 +43,11 @@ chatRouter.post("/create", async (req, res) => {
         const newChat = new Chat({
             name: chatName,
             pin: pin,
-            users: [],  // No users initially
-            message: [], // No messages initially
+            users: [],
+            message: [],
         });
 		console.log("Chat created successfully")
 
-        // Save the chat to the database
         try {
 			// Attempt to save the new chat instance to the database
 			await newChat.save();
@@ -55,7 +56,6 @@ chatRouter.post("/create", async (req, res) => {
 			// Send a response after saving the chat
 			res.json({ chatId: pin });
 		} catch (error) {
-			// Log the error details to understand what went wrong
 			console.error("Error saving chat:", error);
 			return res.status(500).json({ message: "An error occurred while creating the chat" });
 		}
@@ -71,7 +71,7 @@ chatRouter.get("/:chat_id", (req, res) => {
 });
 
 // Get a poll
-chatRouter.get("/:chat_id/:poll_id", (req, res) => {
+chatRouter.get("/poll/:chat_id/:poll_id", (req, res) => {
     res.send(`Poll ID: ${req.params.poll_id}`);
 });
 

@@ -5,52 +5,8 @@ html {
 
 body {
     background-color: #f1f8fe;
-	margiin: 0;
+	margin: 0;
 	padding: 0;
-}
-
-#chatName {
-	font-family: 'Inter', 'sans-serif';
-	font-weight: bold;
-	font-size: 4.0rem;
-}
-
-.chatTextBox {
-    position: fixed;
-    top: 85vh;
-    left: 45%;
-    transform: translateX(-50%);
-    height: 10vh;
-    width: 80vw;
-    border: 2px solid #1280f2;
-    border-radius: 5px;
-    font-size: 1.5rem;
-    padding: 10px;
-    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
-    background-color: white;
-    color: #02111e;
-}
-
-.helpButton {
-    position: fixed;
-    top: 3vh;
-    left: 3vh;
-    height: 50px;
-    width: 150px;
-    background-color: white;
-    border: none;
-    border-radius: 20px;
-    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
-    font-size: 1rem;
-    text-align: center;
-    color: #02111e;
-    cursor: pointer;
-}
-
-.helpButton:hover {
-    transform: scale(1.1);
-    background: linear-gradient(120deg, #1280f2, #f653df);
-    color: white;
 }
 
 .headerBox {
@@ -78,6 +34,50 @@ body {
     padding: 0;
 }
 
+#chatName {
+	font-family: 'Inter', 'sans-serif';
+	font-weight: bold;
+	font-size: 4.0rem;
+}
+
+.helpButton {
+    position: fixed;
+    top: 3vh;
+    left: 3vh;
+    height: 50px;
+    width: 150px;
+    background-color: white;
+    border: none;
+    border-radius: 20px;
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
+    font-size: 1rem;
+    text-align: center;
+    color: #02111e;
+    cursor: pointer;
+}
+
+.helpButton:hover {
+    transform: scale(1.1);
+    background: linear-gradient(120deg, #1280f2, #f653df);
+    color: white;
+}
+
+.chatTextBox {
+    position: fixed;
+    top: 85vh;
+    left: 45%;
+    transform: translateX(-50%);
+    height: 10vh;
+    width: 80vw;
+    border: 2px solid #1280f2;
+    border-radius: 5px;
+    font-size: 1.5rem;
+    padding: 10px;
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
+    background-color: white;
+    color: #02111e;
+}
+
 .chatButton {
     position: fixed;
     top: 87vh;
@@ -97,6 +97,10 @@ body {
     justify-content: center;
 }
 
+.chatButton:hover {
+    background: linear-gradient(120deg, #1280f2, #f653df);
+}
+
 .pollButton {
     position: fixed;
     top: 87vh;
@@ -114,10 +118,6 @@ body {
     display: flex;
     align-items: center;
     justify-content: center;
-}
-
-.chatButton:hover {
-    background: linear-gradient(120deg, #1280f2, #f653df);
 }
 
 .pollButton:hover {
@@ -162,7 +162,6 @@ body {
     background: linear-gradient(120deg, #1280f2, #f653df);
     transform: scale(1.1);
 }
-
 
 .close-button {
     color: #aaa;

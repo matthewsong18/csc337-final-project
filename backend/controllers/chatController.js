@@ -235,8 +235,10 @@ function stringtify_for_sse(raw_data) {
 
 // TO join a chat:
 // 1. Validate chat_pin.
-// 2. Repond with exists: true if found
-// 3. Respond with error and exists: false if not.
+// 2. Identify the user based on user_id stored on cookie
+// 3. If there's an id found, use it to link user and chat
+// 4. If not found, assume it's a guest user and create a new User document
+// 5. Repond accordingly to user
 async function join_chat(req, res) {
 	console.log("GET request received");
   const chat_pin = req.params.chat_id;
@@ -244,6 +246,12 @@ async function join_chat(req, res) {
     console.log("Attempting to find chat");
     validate_chat_pin(chat_pin);
     console.log("Chat found");
+    // Before we have cookie, assume that guest user create chat
+    const new_user = await UserService.create_guest_user();
+    const chat = await Chat.findOne({ pin: chat_pin });
+    // link chat and user together
+    new_user.chats.push(chat._id);
+    chat.users.push(new_user._id);
     res.status(200).json({ exists: true });
   } catch (error) {
     console.error("Error checking chatroom existence:", error);

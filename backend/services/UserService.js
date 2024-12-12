@@ -1,7 +1,7 @@
 const User = require("../models/User");
 
 class UserService {
-  static async createUser(user_name) {
+  static async create_user(user_name) {
     const existing_user = await User.findOne({ user_name: user_name });
     if (existing_user) {
       throw new Error(`User with username "${user_name}" already exists`);
@@ -10,7 +10,7 @@ class UserService {
     return await User.create({ has_account: true, user_name: user_name });
   }
 
-  static async findUser(username) {
+  static async find_user(username) {
     const user = await User.findOne({ user_name: username });
 
     if (!user) {

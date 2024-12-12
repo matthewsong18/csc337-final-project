@@ -114,7 +114,16 @@ const respond_with_error_json = async (response, error_message) => {
 // 3. If saving fails, return an error object with failure details.
 // 4. If saving succeeds, return the saved message ID.
 const save_message = async (message, user_id) => {
-  throw new Error("save_message not yet implemented");
+  try {
+    const message_document = await Message.create({
+      author: user_id,
+      content: message,
+    });
+
+    return message_document._id;
+  } catch (error) {
+    throw error;
+  }
 };
 
 // TO add a message to chat:

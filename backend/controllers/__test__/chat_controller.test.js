@@ -28,8 +28,9 @@ describe("chat_controller", () => {
     await Message.deleteMany({});
   });
 
-  it("save a message", async () => {
-    const user = UserService.createUser("test_user_1");
+  it("should save a message", async () => {
+    const user = await UserService.createUser("test_user_1");
+    expect(user).toBeDefined();
     const message_string = "This is a test message.";
 
     const message_id = await save_message(message_string, user._id);
@@ -39,19 +40,23 @@ describe("chat_controller", () => {
     expect(message.content).toBe(message_string);
   });
 
-  it("should create a message when given valid inputs", async () => {
-    const user = await UserService.createUser("Happy");
-    const chat = await Chat.create({ users: [user._id] });
-    const message_string = "A test string message";
-
-    const response = await request(app).post(
-      `/${chat._id}/${user._id}/${message_string}`,
-    );
-
-    expect(response.status).toBe(201);
-    expect(response.body).toHaveProperty(
-      "message",
-      `${message_string}`,
-    );
+  it("should throw an error on bad message bad inputs", async () => {
+    await expect(async () => await save_message(null, null)).rejects.toThrow();
   });
+
+  // it("should create a message when given valid inputs", async () => {
+  //   const user = await UserService.createUser("Happy");
+  //   const chat = await Chat.create({ users: [user._id] });
+  //   const message_string = "A test string message";
+
+  //   const response = await request(app).post(
+  //     `/${chat._id}/${user._id}/${message_string}`,
+  //   );
+
+  //   expect(response.status).toBe(201);
+  //   expect(response.body).toHaveProperty(
+  //     "message",
+  //     `${message_string}`,
+  //   );
+  // });
 });

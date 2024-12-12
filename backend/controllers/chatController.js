@@ -1,5 +1,6 @@
 const mongoose = require("mongoose");
 const { v4: uuidv4 } = require('uuid');
+const UserService = require("../services/UserService");
 const { Chat, Message, Poll  } = require("../models/index");
 
 let client_connections = {};
@@ -302,9 +303,26 @@ async function create_chat (req, res) {
     }
 }
 
-//Utility function to generate PIN
-function generateRandomPin() {
-  return Math.floor(10000000 + Math.random() * 90000000);
+//TO generate unique random pin (and actively retry if a pin was used)
+// 1. Generate a random pin
+// 2. Check if that pin was assigned to any chat documents
+// 3. If yes, re-generate new one and re-check (limit 100 times)
+// 4. If not, return that pin
+async function generate_unique_pin() {
+  let retries = 0;
+  const maxRetries = 100; // Limit to prevent infinite loop
+  let pin;
+  while (retries < maxRetries) {
+    pin = Math.floor(10000000 + Math.random() * 90000000);
+    const existingChat = await Chat.findOne({ pin: pin });
+    if (!existingChat) {
+      console.log(`Generated unique PIN: ${pin}`);
+      return pin;
+    }
+    console.log(`Retry ${retries + 1}: PIN ${pin} already exists`);
+    retries++;
+  }
+  throw new Error("Failed to generate unique PIN after multiple attempts");
 }
 
 module.exports = {

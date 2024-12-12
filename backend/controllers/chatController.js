@@ -41,7 +41,7 @@ async function subscribe_to_chat (request, response) {
     const updated_data = stringtify_for_sse(chat_buffer);
     send_data_to_client(response, updated_data);
   } catch (error) {
-    respond_with_error_json(response, error.message);
+    respond_with_error_json(response, 400, {message: error.message});
     throw new Error(`${error.message}`);
   }
 }
@@ -78,11 +78,8 @@ async function validate_chat_existence (chat_id) {
   return true;
 }
 
-function respond_with_error_json (response, error_message) {
-  response.status(400).json({
-    status: 400,
-    message: `${error_message}`,
-  });
+function respond_with_error_json (response, status_code, error_json) {
+  response.status(status_code).json(error_json);
 }
 
 // TO establish sse connection:
@@ -235,24 +232,39 @@ function stringtify_for_sse(raw_data) {
   return `data: ${JSON.stringify(raw_data)}\n\n`;
 }
 
+// TO join a chat:
+// 1. Validate chat_pin.
+// 2. Repond with exists: true if found
+// 3. Respond with error and exists: false if not.
 async function join_chat(req, res) {
-	console.log("GET request recieved");
-    const chatId = req.params.chat_id;
+	console.log("GET request received");
+  const chat_pin = req.params.chat_id;
+  try {
+    console.log("Attempting to find chat");
+    validate_chat_pin(chat_pin);
+    console.log("Chat found");
+    res.status(200).json({ exists: true });
+  } catch (error) {
+    console.error("Error checking chatroom existence:", error);
+    respond_with_error_json(res, 400, {exists: false, message: error.message});
+  }
+}
 
-    try {
-		console.log("Attempting to find chat");
-        const chat = await Chat.findOne({ pin: chatId });
-		console.log("Chat found");
+// TO validate chat_pin:
+// 1. Validate chat_pin's format.
+// 2. Validate chat's existence
+// 3. Return true if valid, or return false if invalid.
+async function validate_chat_pin (chat_pin) {
+  if (!validate_pin_format(chat_pin)) throw new Error("Invalid chat pin");
+  if (!await Chat.findOne({ pin: chat_pin })) throw new Error("This chat doesn't exist");
+}
 
-        if (chat) {
-			res.json({ exists: true });
-        } else {
-            res.status(404).json({ exists: false, message: "Chatroom not found." });
-        }
-    } catch (error) {
-        console.error("Error checking chatroom existence:", error);
-        res.status(500).json({ message: "An error occurred while checking the chatroom." });
-    }
+function validate_pin_format(chat_pin) {
+   // Check length
+  if (chat_pin.length !== 8) return false;
+   // Ensure it only contains digits
+  if (!/^\d+$/.test(chat_pin)) return false;
+  return true;
 }
 
 async function create_chat (req, res) {

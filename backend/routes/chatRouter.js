@@ -13,7 +13,7 @@ chatRouter.get("/:chat_id", (req, res) => {
 chatRouter.get("/:chat_id/events", subscribe_to_chat);
 
 // Get a poll
-chatRouter.get("/:chat_id/:poll_id", (req, res) => {
+chatRouter.get("/:chat_id/poll/:poll_id", (req, res) => {
     res.send(`Poll ID: ${req.params.poll_id}`);
 });
 

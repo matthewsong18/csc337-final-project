@@ -10,6 +10,10 @@ class UserService {
     return await User.create({ has_account: true, user_name: user_name });
   }
 
+  static async create_guest_user() {
+    return await User.create({});
+  }
+
   static async findUser(username) {
     const user = await User.findOne({ user_name: username });
 

@@ -4,11 +4,11 @@ const { Schema } = mongoose;
 const ChatSchema = new Schema({
 	name: {
 		type: String,
-		required: true,
+		required: false,
 	},
 	pin: {
 		type: Number,
-		required: true,
+		required: false,
 		unique: true,
 	},
 	users: {

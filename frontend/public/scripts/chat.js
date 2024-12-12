@@ -56,7 +56,7 @@ document.getElementById("pollForm").addEventListener("submit", async (event) => 
         }
     }
 
-    const response = await fetch(`/api/chat/${chatId}/poll`, {
+    const response = await fetch(`/chat/${chatId}/poll`, {
         method: "POST",
         headers: {
             "Content-Type": "application/json",

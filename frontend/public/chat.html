@@ -7,11 +7,38 @@
     <title>Chat page</title>
 </head>
 <body>
+	<div class="headerBox">
+		<span id="chatName" contenteditable="true">Chat Name</span>
+		<br>
+		<span id="pinNumber">PIN</span>
+		<input type="button" class="helpButton" id="button" name="button" value="Help" onclick="window.location.href='/help.html'">
+	</div>
     <div>
 		<input type="text" class="chatTextBox" placeholder="Got something interesting to say?">
 	</div>
 	<div>
-		<input type="button" class="helpButton" id="button" name="button" value="Help" onclick="window.location.href='/help.html'">
-		</div>
+		<input type="button" class="chatButton" value="Send" onclick="">
+		<input type="button" class="pollButton" value="Poll" onclick="createPollForm()">
+	</div>
+	
+	<div id="pollFormContainer" class="modal" style="display: none;">
+    <div class="modal-content">
+        <span class="close-button" onclick="closePollForm()">×</span>
+        <h2>Create a Poll</h2>
+        <form id="pollForm">
+            <label for="pollTitle">Poll Title:</label>
+            <input type="text" id="pollTitle" name="pollTitle" required><br><br>
+            <label for="pollOption1">Option 1:</label>
+            <input type="text" id="pollOption1" name="pollOption1" required><br><br>
+            <label for="pollOption2">Option 2:</label>
+            <input type="text" id="pollOption2" name="pollOption2" required><br><br>
+            <div id="additionalOptions"></div>
+            <button type="button" id="addOptionButton">Add Option</button><br><br>
+            <button type="submit">Submit</button>
+        </form>
+    </div>
+</div>
+	
+	<script src="/scripts/chat.js"></script>
 </body>
 </html>

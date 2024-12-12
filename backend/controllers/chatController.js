@@ -1,5 +1,6 @@
 const mongoose = require("mongoose");
 const { v4: uuidv4 } = require('uuid');
+const UserService = require("../services/UserService");
 const { Chat, Message, Poll  } = require("../models/index");
 
 let client_connections = {};
@@ -41,7 +42,7 @@ async function subscribe_to_chat (request, response) {
     const updated_data = stringtify_for_sse(chat_buffer);
     send_data_to_client(response, updated_data);
   } catch (error) {
-    respond_with_error_json(response, error.message);
+    respond_with_error_json(response, 400, {message: error.message});
     throw new Error(`${error.message}`);
   }
 }
@@ -78,11 +79,8 @@ async function validate_chat_existence (chat_id) {
   return true;
 }
 
-function respond_with_error_json (response, error_message) {
-  response.status(400).json({
-    status: 400,
-    message: `${error_message}`,
-  });
+function respond_with_error_json (response, status_code, error_json) {
+  response.status(status_code).json(error_json);
 }
 
 // TO establish sse connection:
@@ -235,6 +233,104 @@ function stringtify_for_sse(raw_data) {
   return `data: ${JSON.stringify(raw_data)}\n\n`;
 }
 
+// TO join a chat:
+// 1. Validate chat_pin.
+// 2. Identify the user based on user_id stored on cookie
+// 3. If there's an id found, use it to link user and chat
+// 4. If not found, assume it's a guest user and create a new User document
+// 5. Repond accordingly to user
+async function join_chat(req, res) {
+	console.log("GET request received");
+  const chat_pin = req.params.chat_id;
+  try {
+    console.log("Attempting to find chat");
+    validate_chat_pin(chat_pin);
+    console.log("Chat found");
+    // Before we have cookie, assume that guest user create chat
+    const new_user = await UserService.create_guest_user();
+    const chat = await Chat.findOne({ pin: chat_pin });
+    // link chat and user together
+    new_user.chats.push(chat._id);
+    chat.users.push(new_user._id);
+    res.status(200).json({ exists: true });
+  } catch (error) {
+    console.error("Error checking chatroom existence:", error);
+    respond_with_error_json(res, 400, {exists: false, message: error.message});
+  }
+}
+
+// TO validate chat_pin:
+// 1. Validate chat_pin's format.
+// 2. Validate chat's existence
+// 3. Return true if valid, or return false if invalid.
+async function validate_chat_pin (chat_pin) {
+  if (!validate_pin_format(chat_pin)) throw new Error("Invalid chat pin");
+  if (!await Chat.findOne({ pin: chat_pin })) throw new Error("This chat doesn't exist");
+}
+
+function validate_pin_format(chat_pin) {
+   // Check length
+  if (chat_pin.length !== 8) return false;
+   // Ensure it only contains digits
+  if (!/^\d+$/.test(chat_pin)) return false;
+  return true;
+}
+
+// TO create a chat:
+// 1. Generate a random chat pin
+// 2. Identify the user based on user_id stored on cookie
+// 3. If there's an id found, use it to link user and chat
+// 4. If not found, assume it's a guest user and create a new User document
+// 5. Respond accordingly to user
+async function create_chat (req, res) {
+  try {
+    console.log("POST request recieved");
+    const pin = await generate_unique_pin();  // Generate a random PIN
+    const chat_name = "Anonymous Chat";  // Set a default chat name
+    console.log("Attempting to create new Chat");
+
+    // Before we have cookie, assume that guest user create chat
+    const new_user = await UserService.create_guest_user();
+
+    // Create a new chat document
+    const new_chat = Chat.create({
+      name: chat_name,
+      pin: pin,
+      users: [new_user._id],  // Only guest user initially
+      message: [], // No messages initially
+    });
+    // Link chat to user
+    new_user.chats.push(new_chat._id);
+    console.log("Chat created successfully");
+    res.status(200).json({ chat_pin: pin });
+  } catch (error) {
+    console.error("Error creating chat:", error);
+    return respond_with_error_json(res, 500, {message: error.message});
+  }
+}
+
+//TO generate unique random pin (and actively retry if a pin was used)
+// 1. Generate a random pin
+// 2. Check if that pin was assigned to any chat documents
+// 3. If yes, re-generate new one and re-check (limit 100 times)
+// 4. If not, return that pin
+async function generate_unique_pin() {
+  let retries = 0;
+  const maxRetries = 100; // Limit to prevent infinite loop
+  let pin;
+  while (retries < maxRetries) {
+    pin = Math.floor(10000000 + Math.random() * 90000000);
+    const existingChat = await Chat.findOne({ pin: pin });
+    if (!existingChat) {
+      console.log(`Generated unique PIN: ${pin}`);
+      return pin;
+    }
+    console.log(`Retry ${retries + 1}: PIN ${pin} already exists`);
+    retries++;
+  }
+  throw new Error("Failed to generate unique PIN after multiple attempts");
+}
+
 module.exports = {
   create_message,
   subscribe_to_chat,
@@ -242,5 +338,7 @@ module.exports = {
   load_message_buffer,
   load_poll_buffer,
   sort_by_timestamp, 
-  validate_timestamp_format
+  validate_timestamp_format,
+  join_chat,
+  create_chat,
 }

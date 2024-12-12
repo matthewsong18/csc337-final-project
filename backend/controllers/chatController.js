@@ -268,39 +268,37 @@ function validate_pin_format(chat_pin) {
   return true;
 }
 
+// TO create a chat:
+// 1. Generate a random chat pin
+// 2. Identify the user based on user_id stored on cookie
+// 3. If there's an id found, use it to link user and chat
+// 4. If not found, assume it's a guest user and create a new User document
+// 5. Respond accordingly to user
 async function create_chat (req, res) {
-	console.log("POST request recieved");
-    const pin = generateRandomPin();  // Generate a random PIN
-    const chatName = "Anonymous Chat";  // Set a default chat name
+  try {
+    console.log("POST request recieved");
+    const pin = await generate_unique_pin();  // Generate a random PIN
+    const chat_name = "Anonymous Chat";  // Set a default chat name
+    console.log("Attempting to create new Chat");
 
-    try {
-		console.log("Attempting to create new Chat")
-        // Create a new chat instance
-        const newChat = new Chat({
-            name: chatName,
-            pin: pin,
-            users: [],  // No users initially
-            message: [], // No messages initially
-        });
-		console.log("Chat created successfully")
+    // Before we have cookie, assume that guest user create chat
+    const new_user = await UserService.create_guest_user();
 
-        // Save the chat to the database
-        try {
-			// Attempt to save the new chat instance to the database
-			await newChat.save();
-			console.log("Chat saved successfully");
-
-			// Send a response after saving the chat
-			res.json({ chatId: pin });
-		} catch (error) {
-			// Log the error details to understand what went wrong
-			console.error("Error saving chat:", error);
-			return res.status(500).json({ message: "An error occurred while creating the chat" });
-		}
-    } catch (error) {
-        console.error("Error creating chat:", error);
-        return res.status(500).json({ message: "An error occurred while creating the chat" });
-    }
+    // Create a new chat document
+    const new_chat = Chat.create({
+      name: chat_name,
+      pin: pin,
+      users: [new_user._id],  // Only guest user initially
+      message: [], // No messages initially
+    });
+    // Link chat to user
+    new_user.chats.push(new_chat._id);
+    console.log("Chat created successfully");
+    res.status(200).json({ chat_pin: pin });
+  } catch (error) {
+    console.error("Error creating chat:", error);
+    return respond_with_error_json(res, 500, {message: error.message});
+  }
 }
 
 //TO generate unique random pin (and actively retry if a pin was used)

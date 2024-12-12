@@ -18,7 +18,7 @@ chatRouter.get("/:chat_id/:poll_id", (req, res) => {
 });
 
 // Join a chat
-chatRouter.get("/join/:chat_id", join_chat);
+chatRouter.get("/:chat_id/join", join_chat);
 
 // Create a new chat
 chatRouter.post("/create", create_chat);

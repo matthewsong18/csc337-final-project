@@ -235,6 +235,66 @@ function stringtify_for_sse(raw_data) {
   return `data: ${JSON.stringify(raw_data)}\n\n`;
 }
 
+async function join_chat(req, res) {
+	console.log("GET request recieved");
+    const chatId = req.params.chat_id;
+
+    try {
+		console.log("Attempting to find chat");
+        const chat = await Chat.findOne({ pin: chatId });
+		console.log("Chat found");
+
+        if (chat) {
+			res.json({ exists: true });
+        } else {
+            res.status(404).json({ exists: false, message: "Chatroom not found." });
+        }
+    } catch (error) {
+        console.error("Error checking chatroom existence:", error);
+        res.status(500).json({ message: "An error occurred while checking the chatroom." });
+    }
+}
+
+async function create_chat (req, res) {
+	console.log("POST request recieved");
+    const pin = generateRandomPin();  // Generate a random PIN
+    const chatName = "Anonymous Chat";  // Set a default chat name
+
+    try {
+		console.log("Attempting to create new Chat")
+        // Create a new chat instance
+        const newChat = new Chat({
+            name: chatName,
+            pin: pin,
+            users: [],  // No users initially
+            message: [], // No messages initially
+        });
+		console.log("Chat created successfully")
+
+        // Save the chat to the database
+        try {
+			// Attempt to save the new chat instance to the database
+			await newChat.save();
+			console.log("Chat saved successfully");
+
+			// Send a response after saving the chat
+			res.json({ chatId: pin });
+		} catch (error) {
+			// Log the error details to understand what went wrong
+			console.error("Error saving chat:", error);
+			return res.status(500).json({ message: "An error occurred while creating the chat" });
+		}
+    } catch (error) {
+        console.error("Error creating chat:", error);
+        return res.status(500).json({ message: "An error occurred while creating the chat" });
+    }
+}
+
+//Utility function to generate PIN
+function generateRandomPin() {
+  return Math.floor(10000000 + Math.random() * 90000000);
+}
+
 module.exports = {
   create_message,
   subscribe_to_chat,
@@ -242,5 +302,7 @@ module.exports = {
   load_message_buffer,
   load_poll_buffer,
   sort_by_timestamp, 
-  validate_timestamp_format
+  validate_timestamp_format,
+  join_chat,
+  create_chat,
 }

@@ -1,6 +1,6 @@
 const express = require("express");
 const path = require("path");
-const { create_message, subscribe_to_chat, join_chat, create_chat, create_message } = require("../controllers/chatController");
+const { create_message, subscribe_to_chat, join_chat, create_chat } = require("../controllers/chatController");
 const chatRouter = express.Router();
 const Chat = require("../models/Chat.js");
 

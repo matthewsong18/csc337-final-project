@@ -1,7 +1,7 @@
 // Join a chat
 async function joinChat() {
     const chatId = document.getElementById("chatPin").value;
-	console.log(`Fetching: /chat/join/${chatId}`);
+	console.log(`Fetching: /chat/${chatId}/join`);
 
     if (!chatId) {
         alert("Please enter a chat PIN to join.");
@@ -10,7 +10,7 @@ async function joinChat() {
 
     try {
 		console.log("Attempting fetch");
-        const response = await fetch(`/chat/join/${chatId}`, {
+        const response = await fetch(`/chat/${chatId}/join`, {
             method: "GET",
             headers: {
                 "Content-Type": "application/json",
@@ -30,7 +30,7 @@ async function joinChat() {
             }
         } else {
             const data = await response.json();
-            alert("Failed to join chatroom.");
+            alert(`Failed to join chatroom with error: ${data.message}`);
         }
     } catch (error) {
         console.error("Error joining chat:", error);
@@ -59,10 +59,10 @@ async function createChat() {
 			console.log("Data recieved");
 
             // Now use the returned chatId to redirect to the created chat page
-            const chatId = data.chatId;  // Get the chatId (random PIN)
+            const chat_pin = data.chat_pin;  // Get the chatId (random PIN)
 
             // Redirect to the newly created chat page using the chatId
-            window.location.href = `/chat/${chatId}`;
+            window.location.href = `/chat/${chat_pin}`;
         } else {
             const data = await response.json();
             console.error("Error creating chat:", data.message || "Creating chat failed.");

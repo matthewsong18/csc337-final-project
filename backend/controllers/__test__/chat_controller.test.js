@@ -86,19 +86,49 @@ describe("chat_controller", () => {
     expect(input_status).toHaveProperty("message_status", true);
   });
 
-  // it("should create a message when given valid inputs", async () => {
-  //   const user = await UserService.createUser("Happy");
-  //   const chat = await Chat.create({ users: [user._id] });
-  //   const message_string = "A test string message";
+  // Testing respond_with_error_json
 
-  //   const response = await request(app).post(
-  //     `/${chat._id}/${user._id}/${message_string}`,
-  //   );
+  it("should return an error json when something goes wrong", async () => {
+    const response = await request(app).post(
+      "/chat/message/1231541/asdfafds/asfasdf",
+    );
 
-  //   expect(response.status).toBe(201);
-  //   expect(response.body).toHaveProperty(
-  //     "message",
-  //     `${message_string}`,
-  //   );
-  // });
+    expect(response.status).toBe(400);
+    expect(response.body).toHaveProperty("chat_id_status", false);
+    expect(response.body).toHaveProperty("user_id_status", false);
+    expect(response.body).toHaveProperty("message_status", true);
+  });
+
+  it("should create a message when given valid inputs", async () => {
+    const user = await UserService.createUser("Happy");
+    const chat = await Chat.create({ users: [user._id] });
+    const message_string = "A test string message";
+
+    const response = await request(app).post(
+      `/chat/message/${chat._id}/${user._id}/${message_string}`,
+    );
+
+    expect(response.status).toBe(201);
+    expect(response.body).toHaveProperty(
+      "message",
+      `${message_string}`,
+    );
+  });
+
+  it("should accept an encoded message", async () => {
+    const user = await UserService.createUser("Happy");
+    const chat = await Chat.create({ users: [user._id] });
+    const message_string = "@$&@#";
+    const encoded_string = encodeURIComponent(message_string);
+
+    const response = await request(app).post(
+      `/chat/message/${chat._id}/${user._id}/${encoded_string}`,
+    );
+
+    expect(response.status).toBe(201);
+    expect(response.body).toHaveProperty(
+      "message",
+      `${message_string}`,
+    );
+  });
 });

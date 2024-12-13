@@ -30,7 +30,7 @@ chatRouter.get("*", (req, res) => {
 });
 
 // Post a message to a chat
-chatRouter.post("/:chat_id/:user_id/:message_content", create_message);
+chatRouter.post("/message/:chat_id/:user_id/:message_content", create_message);
 
 // Set poll title
 chatRouter.post("/:chat_id/:poll_title", (req, res) => {

@@ -13,43 +13,53 @@ const Message = require("../models/Message.js");
 // 7. If saving succeeds, call `addMessageToChat` to associate the message with
 //    the chat.
 const create_message = async (request, response) => {
-  const chat_id = extract_chat_id(request);
-  const user_id = extract_user_id(request);
-  const message = extract_message(request);
-  // const inputs = [chat_id, user_id, message]
+  try {
+    const chat_id = extract_chat_id(request);
+    const user_id = extract_user_id(request);
+    const message = extract_message(request);
 
-  const input_status = await validate_inputs(chat_id, user_id, message);
-  if (input_status.status == 400) {
-    respond_with_error_json(response, input_status);
+    const input_status = await validate_inputs(chat_id, user_id, message);
+    if (input_status.status == 400) {
+      respond_with_error_json(response, input_status);
+      return;
+    }
+
+    const message_id = await save_message(message, user_id);
+    await add_message_to_chat(message_id, chat_id);
+    response.status(201).json({
+      status: 201,
+      message: `${message}`,
+    });
+  } catch (error) {
+    respond_with_error_json(response, {
+      status: 400,
+      error: `${error}`,
+    });
   }
-
-  const message_id = await save_message(message, user_id);
-  if (await add_message_to_chat(message_id, chat_id)) {
-    response.status(201).json({ "message": `${message}` });
-  }
-
-  respond_with_error_json(response, "Failed");
 };
 
 // TO extract the chat_id:
 // 1. Extract chat_id from the request body or query parameters.
 // 2. Return the chat_id.
 const extract_chat_id = (request) => {
-  return { chat_id } = request.params;
+  const { chat_id } = request.params;
+  return chat_id;
 };
 
 // TO extract the user_id:
 // 1. Extract user_id from the request body or query parameters.
 // 2. Return the user_id.
 const extract_user_id = (request) => {
-  return { user_id } = request.params;
+  const { user_id } = request.params;
+  return user_id;
 };
 
 // TO extract the message:
 // 1. Extract message from the request body or query parameters.
 // 2. Return the message.
 const extract_message = (request) => {
-  return { message } = request.params;
+  const { message_content } = request.params;
+  return decodeURIComponent(message_content);
 };
 
 // TO validate the inputs:
@@ -84,11 +94,13 @@ const validate_inputs = async (chat_id, user_id, message) => {
 // 2. Query the database to confirm that chat_id refers to an existing chat.
 // 3. Return true if valid, or return false if invalid.
 const validate_chat_id = async (chat_id) => {
-  const chat = await Chat.findOne({ _id: chat_id });
-  if (!chat) {
+  try {
+    const chat = await Chat.findOne({ _id: chat_id });
+    if (!chat) return false;
+    return true;
+  } catch (_error) {
     return false;
   }
-  return true;
 };
 
 // TO validate user_id:
@@ -96,11 +108,13 @@ const validate_chat_id = async (chat_id) => {
 // 2. Query the database to confirm that user_id refers to an existing user.
 // 3. Return true if valid, or return false if invalid.
 const validate_user_id = async (user_id) => {
-  const user = await User.findOne({ _id: user_id });
-  if (!user) {
+  try {
+    const user = await User.findOne({ _id: user_id });
+    if (!user) return false;
+    return true;
+  } catch (_error) {
     return false;
   }
-  return true;
 };
 
 // TO validate message:

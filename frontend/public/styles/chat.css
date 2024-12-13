@@ -67,7 +67,7 @@ body {
 
 /* Scrollable texting area */
 .texting_area {
-    position: fixed; /* Not fixed */
+    position: fixed;
     top: 12vh; /* Height of the headerBox */
     bottom: 15vh; /* Height of the input_area */
     height: calc(100vh - 25vh); /* Total height minus header and input areas */
@@ -122,10 +122,6 @@ body {
     word-wrap: break-word;
 }
 
-.poll:hover {
-    background: linear-gradient(120deg, #1280f2, #c875f8);
-}
-
 .poll_content {
     width: 30vw;
     padding: 10px;
@@ -141,7 +137,7 @@ body {
     font-weight: bold;
     font-size: calc(0.6vw + 0.5rem);
     padding-top: 5px;
-    color: #02111e; /* Discord blue */
+    color: #02111e; 
 }
 
 .poll_options {
@@ -197,6 +193,7 @@ body {
     width: 5vw;
     height: 4vh;
     font-size: calc(0.6vw + 0.5rem);
+    cursor: pointer; /* Indicate it's clickable */
 }
 
 .vote_button:hover {
@@ -279,6 +276,9 @@ body {
     left: 50%;
     transform: translate(-50%, -50%);
     width: 40vw;
+    max-height: 40vh;
+    height: auto;
+    overflow-y: auto;
     padding: 20px;
     background-color: white;
     border-radius: 10px;
@@ -311,6 +311,26 @@ body {
 #pollFormContainer button:hover {
     background: linear-gradient(120deg, #1280f2, #f653df);
     transform: scale(1.1);
+}
+
+.pollForm {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.poll_option_title {
+    width: 30vw;
+    margin-bottom: 5px;
+}
+
+.optionItem {
+    display: flex;
+    gap: 5px;
+}
+
+.deleteOptionButton {
+    margin-bottom: 5px;
 }
 
 .close-button {

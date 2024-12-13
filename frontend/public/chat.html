@@ -9,7 +9,7 @@
 <body>
 	<div class="headerBox">
         <div id="chat_info">
-            <div id="chatName">Anoynomous Chat</span>
+            <div id="chatName">Anoynomous Chat</div>
             <div id="pinNumber">PIN</div>
         </div>
         <button type="button" class="help_button" onclick="window.location.href='/help.html'">Help</button>
@@ -20,11 +20,11 @@
     </div>
     <div class="input_area">
         <div>
-            <textarea class="chatTextBox" placeholder="Enter your text here..."></textarea>
+            <textarea class="chatTextBox" placeholder="Enter your message here..."></textarea>
         </div>
         <div>
             <input type="button" class="chatButton" value="Send" onclick="">
-            <input type="button" class="pollButton" value="Poll" onclick="createPollForm()">
+            <input type="button" class="pollButton" value="Poll" onclick="openPollForm()">
         </div>
         
         <div id="pollFormContainer" class="modal">
@@ -33,14 +33,24 @@
                 <h2>Create a Poll</h2>
                 <form id="pollForm">
                     <label for="pollTitle">Poll Title:</label>
-                    <input type="text" id="pollTitle" name="pollTitle" required><br><br>
-                    <label for="pollOption1">Option 1:</label>
-                    <input type="text" id="pollOption1" name="pollOption1" required><br><br>
-                    <label for="pollOption2">Option 2:</label>
-                    <input type="text" id="pollOption2" name="pollOption2" required><br><br>
-                    <div id="additionalOptions"></div>
-                    <button type="button" id="addOptionButton">Add Option</button><br><br>
-                    <button type="submit">Submit</button>
+                    <div>
+                        <input type="text" class="poll_option_title" id="pollTitle" name="pollTitle" placeholder="What question do you want to ask?" required>
+                    </div>
+                    <label for="pollOption1">Options:</label>
+                    <div id="additionalOptions">
+                        <div class="optionItem">
+                            <input type="text" class="poll_option_title" id="pollOption1" name="pollOption1" placeholder="Type your answer" required>
+                            <button type="button" class="deleteOptionButton">Delete</button>
+                        </div>
+                        <div class="optionItem">
+                            <input type="text" class="poll_option_title" id="pollOption2" name="pollOption2" placeholder="Type your answer" required>
+                            <button type="button" class="deleteOptionButton">Delete</button>
+                        </div>
+                    </div>
+                    <div>
+                        <button type="button" id="addOptionButton">Add Option</button>
+                        <button type="submit">Submit</button>
+                    </div>
                 </form>
             </div>
         </div>

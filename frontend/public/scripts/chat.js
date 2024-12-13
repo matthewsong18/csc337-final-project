@@ -1,6 +1,14 @@
 const chatNameElement = document.getElementById("chatName");
 const pathSegments = window.location.pathname.split('/');
 const chatId = pathSegments[pathSegments.length - 1];
+const chatInput = document.querySelector(".chatTextBox");
+
+chatInput.addEventListener("input", function () {
+    this.style.height = "auto"; // Reset height to calculate new height
+    const newHeight = Math.min(this.scrollHeight, window.innerHeight * 0.25); // Max height is 25vh
+    this.style.height = newHeight + "px"; // Adjust height based on content
+});
+
 
 const pinNumber = document.getElementById("pinNumber");
 if (chatId) {

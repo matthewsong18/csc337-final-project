@@ -67,14 +67,21 @@ body {
 
 .chatTextBox {
     position: fixed;
-    top: 85vh;
+    bottom: 3vh;
     left: 45%;
     transform: translateX(-50%);
-    height: 10vh;
+
+    height: auto; /* Allow dynamic height adjustment */
+    max-height: 25vh; /* Maximum height before scroll appears */
     width: 80vw;
+    line-height: 1.5;
+    resize: none; /* Disable resizing */;
+    overflow-y: auto; /* Add a vertical scrollbar if content exceeds max-height */
+    box-sizing: border-box;
+
     border: 2px solid #1280f2;
     border-radius: 5px;
-    font-size: 1.5rem;
+    font-size: calc(0.6vw + 0.5rem);
     padding: 10px;
     box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
     background-color: white;

@@ -3,20 +3,25 @@
 const app = require("./app");
 const mongoose = require("mongoose");
 
-const PORT = 3000;
+function run_server(DATABASE_URL, PORT) {
+  start_database_connection(DATABASE_URL);
+  start_listening(PORT);
+}
 
-const mongoURI = "mongodb://localhost:27017/myDatabase";
+function start_database_connection(DATABASE_URL) {
+  mongoose.connect(DATABASE_URL)
+    .then(() => {
+      console.log("Connected to MongoDB on localhost");
+    })
+    .catch((err) => {
+      console.log("Error connecting to MongoDB:", err);
+    });
+}
 
-mongoose.connect(mongoURI)
-  .then(() => {
-    console.log("Connected to MongoDB on localhost");
-  })
-  .catch((err) => {
-    console.log("Error connecting to MongoDB:", err);
+function start_listening(PORT) {
+  app.listen(PORT, () => {
+    console.log(`Achat app - listening on: http://127.0.0.1:${PORT}`);
   });
+}
 
-const server = app.listen(PORT, () => {
-  console.log(`Achat app - listening on: http://localhost:${PORT}`);
-});
-
-module.exports = server; // Export server for manual control if needed
+run_server("mongodb://127.0.0.1:27017/myDatabase", 3000);

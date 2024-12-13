@@ -1,89 +1,172 @@
+// DOM Elements
 const chatNameElement = document.getElementById("chatName");
+const chatInput = document.querySelector(".chatTextBox");
+const pinNumberElement = document.getElementById("pinNumber");
+const addOptionButton = document.getElementById("addOptionButton");
+const pollForm = document.getElementById("pollForm");
+const pollFormContainer = document.getElementById("pollFormContainer");
+const additionalOptionsContainer = document.getElementById("additionalOptions");
+const deleteOptionButtons = document.querySelectorAll(".deleteOptionButton");
+
+// State Variables
 const pathSegments = window.location.pathname.split('/');
 const chatId = pathSegments[pathSegments.length - 1];
-const chatInput = document.querySelector(".chatTextBox");
+let optionCount = 2; // default lowest option counts
 
-// dynamically resize textarea
-chatInput.addEventListener("input", function () {
-    this.style.height = "auto"; // Reset height to calculate new height
-    const newHeight = Math.min(this.scrollHeight, window.innerHeight * 0.25); // Max height is 25vh
-    this.style.height = newHeight + "px"; // Adjust height based on content
-});
-
-
-const pinNumber = document.getElementById("pinNumber");
-if (chatId) {
-    pinNumber.textContent = `PIN: ${chatId}`;
-} else {
-    pinNumber.textContent = "No PIN?";
+// Initialize Page
+function initializePage() {
+    displayChatPin();
+    setupChatInputResize();
+    setupEventListeners();
 }
 
-function createPollForm() {
-    const formContainer = document.getElementById("pollFormContainer");
-    formContainer.style.display = "block";
+// Display the chat's PIN or fallback text
+function displayChatPin() {
+    pinNumberElement.textContent = chatId ? `PIN: ${chatId}` : "No PIN?";
+}
+
+// Resize the chat input dynamically
+function setupChatInputResize() {
+    chatInput.addEventListener("input", resizeChatInput);
+}
+
+function resizeChatInput() {
+    chatInput.style.height = "auto"; // Reset height to calculate new height
+    const maxHeight = Math.min(chatInput.scrollHeight, window.innerHeight * 0.25); // Max height is 25vh
+    chatInput.style.height = `${maxHeight}px`; // Adjust height based on content
+}
+
+// Poll Form Management
+function openPollForm() {
+    pollFormContainer.style.display = "block";
 }
 
 function closePollForm() {
-    const formContainer = document.getElementById("pollFormContainer");
-    formContainer.style.display = "none";
+    pollFormContainer.style.display = "none";
+    resetAllOptions();
 }
 
-let optionCount = 2;
+function resetAllOptions() {
+    optionCount = 2;
+    // delete all current options
+    while (additionalOptionsContainer.firstChild) {
+        additionalOptionsContainer.removeChild(additionalOptionsContainer.firstChild);
+    }
+    // create 2 initial options
+    addPollOption();
+    addPollOption();
+}
 
+// Add a new poll option
 function addPollOption() {
-    optionCount++;
+    if (optionCount <= 10) {
+        optionCount++;
+        const newOptionInput = createInput(`pollOption${optionCount}`, true);
+        const newDeleteButton = createDeleteButton();
+        const newOptionItem = document.createElement("div");
 
-    const newOptionLabel = document.createElement("label");
-    newOptionLabel.setAttribute("for", `pollOption${optionCount}`);
-    newOptionLabel.textContent = `Option ${optionCount}:`;
+        newOptionItem.classList.add("optionItem");
+        newOptionItem.appendChild(newOptionInput);
+        newOptionItem.appendChild(newDeleteButton);
 
-    const newOptionInput = document.createElement("input");
-    newOptionInput.setAttribute("type", "text");
-    newOptionInput.setAttribute("id", `pollOption${optionCount}`);
-    newOptionInput.setAttribute("name", `pollOption${optionCount}`);
-    newOptionInput.setAttribute("required", true);
-
-    const additionalOptionsContainer = document.getElementById("additionalOptions");
-    additionalOptionsContainer.appendChild(newOptionLabel);
-    additionalOptionsContainer.appendChild(newOptionInput);
-    additionalOptionsContainer.appendChild(document.createElement("br"));
-    additionalOptionsContainer.appendChild(document.createElement("br"));
+        additionalOptionsContainer.appendChild(newOptionItem);
+    } else {
+        alert("A poll can't have more than 10 options");
+    }
 }
 
-document.getElementById("addOptionButton").addEventListener("click", addPollOption);
+// Create reusable DOM elements
+function createInput(id, required = false) {
+    const input = document.createElement("input");
+    input.setAttribute("id", id);
+    input.setAttribute("type", "text");
+    input.setAttribute("placeholder", "Type your answer");
+    input.classList.add("poll_option_title");
+    if (required) input.setAttribute("required", true);
 
-document.getElementById("pollForm").addEventListener("submit", async (event) => {
+    return input;
+}
+
+function createDeleteButton() {
+    const deleteButton = document.createElement("button");
+    deleteButton.type = "button";
+    deleteButton.classList.add("deleteOptionButton");
+    deleteButton.textContent = "Delete";
+
+    // Add event listener to delete the option
+    deleteButton.addEventListener("click", () => {
+        if (optionCount > 2) {
+            optionCount -= 1;
+            additionalOptionsContainer.removeChild(deleteButton.parentNode);
+        } else {
+            alert("A poll needs at least 2 options!");
+        }
+    });
+    return deleteButton;
+}
+
+// Submit Poll Data
+async function submitPoll(event) {
     event.preventDefault();
 
     const pollTitle = document.getElementById("pollTitle").value;
-    const options = [];
+    const options = gatherPollOptions();
 
-    for (let i = 1; i <= optionCount; i++) {
-        const optionValue = document.getElementById(`pollOption${i}`).value;
-        if (optionValue) {
-            options.push(optionValue);
-        }
+    if (!options.length) {
+        alert("Please add at least one option.");
+        return;
     }
 
-    const response = await fetch(`/chat/${chatId}/poll`, {
+    try {
+        const response = await sendPollData(pollTitle, options);
+        handlePollResponse(response);
+    } catch (error) {
+        console.error("Error creating poll:", error);
+        alert("An error occurred. Please try again.");
+    }
+}
+
+function gatherPollOptions() {
+    const options = [];
+    for (let i = 1; i <= optionCount; i++) {
+        const optionValue = document.getElementById(`pollOption${i}`).value;
+        if (optionValue) options.push(optionValue);
+    }
+    return options;
+}
+
+async function sendPollData(title, options) {
+    return fetch(`/chat/${chatId}/poll`, {
         method: "POST",
         headers: {
             "Content-Type": "application/json",
         },
-        body: JSON.stringify({
-            pollTitle,
-            options,
-        }),
+        body: JSON.stringify({ pollTitle: title, options }),
     });
+}
 
+function handlePollResponse(response) {
     if (response.ok) {
         alert("Poll created successfully!");
         closePollForm();
     } else {
         alert("Failed to create poll. Please try again.");
     }
-});
+}
 
-document.getElementById("pollForm").addEventListener("submit", async (event) => {
-    //This is where the API request needs to be sent to create a new Poll.
-});
+// Setup Event Listeners for poll form
+function setupEventListeners() {
+    addOptionButton.addEventListener("click", addPollOption);
+    pollForm.addEventListener("submit", submitPoll);
+    deleteOptionButtons.forEach((button) => button.addEventListener("click", (event) => {
+        if (optionCount > 2) {
+            optionCount -= 1;
+            additionalOptionsContainer.removeChild(button.parentNode);
+        } else {
+            alert("A poll needs at least 2 options!");
+        }
+    }));
+}
+
+// Initialize Script
+initializePage();

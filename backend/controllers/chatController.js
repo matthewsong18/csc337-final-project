@@ -50,11 +50,11 @@ async function get_chat(request, response) {
 // 7. Convert raw chat_buffer into valid chunk before sending to client
 async function subscribe_to_chat (request, response) {
   try {
-    const chat_id = extract_chat_id(request);
-    await validate_chat_id(chat_id);
-    const client_id = track_client_connections(response, chat_id);
-    establish_server_sent_events_connection(request, response, chat_id, client_id);
-    const chat_buffer = await load_chat(chat_id, Date.now(), 20);
+    const chat_pin = extract_chat_id(request);
+    await validate_chat_pin(chat_pin);
+    const client_id = track_client_connections(response, chat_pin);
+    establish_server_sent_events_connection(request, response, chat_pin, client_id);
+    const chat_buffer = await load_chat(chat_pin, Date.now(), 20);
     const updated_data = stringtify_for_sse(chat_buffer);
     send_data_to_client(response, updated_data);
   } catch (error) {
@@ -155,10 +155,10 @@ function send_data_to_client (response, data) {
 // 4. Call load_poll_buffer to get initial poll buffer
 // 5. Sort messages and polls by timestamp
 // 6. Return the sorted chat buffer
-async function load_chat (chat_id, timestamp=Date.now(), buffer_size=10) {
-  await validate_chat_id(chat_id);
+async function load_chat (chat_pin, timestamp=Date.now(), buffer_size=10) {
+  await validate_chat_pin(chat_pin);
   validate_timestamp(timestamp);
-  const chat = await Chat.findById(chat_id);
+  const chat = await Chat.findOne({ pin: chat_pin });
   const messages = await load_message_buffer(chat.message, timestamp, buffer_size);
   const polls = await load_poll_buffer(chat.polls, timestamp, buffer_size);
   return sort_by_timestamp(messages, polls, buffer_size);
@@ -287,13 +287,13 @@ async function join_chat(req, res) {
 // 2. Validate chat's existence
 // 3. Return true if valid, or return false if invalid.
 async function validate_chat_pin (chat_pin) {
-  if (!validate_pin_format(chat_pin)) throw new Error("Invalid chat pin");
+  if (!validate_pin_format(chat_pin)) throw new Error(`Invalid chat pin`);
   if (!await Chat.findOne({ pin: chat_pin })) throw new Error("This chat doesn't exist");
 }
 
 function validate_pin_format(chat_pin) {
    // Check length
-  if (chat_pin.length !== 8) return false;
+  if (String(chat_pin).length !== 8) return false;
    // Ensure it only contains digits
   if (!/^\d+$/.test(chat_pin)) return false;
   return true;
@@ -365,4 +365,5 @@ module.exports = {
   validate_timestamp_format,
   join_chat,
   create_chat,
+  generate_unique_pin,
 }

@@ -1,6 +1,6 @@
 /* Description: This is a CSS file that is used to style the home.html
    page on the Achat website. This provides a sytle and format for a join
-   and create chat form as well as a header for a login and help button.
+   and create chat form as well as a header for the login and help button.
    The colors were taken from the color reference identified for the website. */
    
 /* All text in the html file will be the same font */
@@ -10,10 +10,10 @@ html{
 }
 
 body {
-	background-color: #e7f3fd;
-    padding: 1vh;
+	background-color: #f1f8fe;
+    padding: 0px;
+    margin: 0px;
 }
-
 
 #headerBar{
     position: sticky;
@@ -21,21 +21,29 @@ body {
     overflow: hidden;
     display: flex;
     justify-content: space-between;
-    height: 7vh;
-    padding: 1vh 2vh 2vh 2vh;
+    height: 90px;
+    width: 100vw;
 }
 
-.headerButtons{
+.headerButtons {
+    margin: 15px;
     background-color: white;
     border-radius: 20px;
-    font-size: 1.5vh;
+    font-size: calc(0.6vw + 0.5rem);
+    padding: 0.2em 0.8em;
     white-space: nowrap;
-	height: 60%;
-	width: 8%;
+    width: auto;
+    height: 40px;
+    min-height: 1vh;
     text-align: center;
-	color: #02111e;
+    color: #02111e;
     border: none;
-	box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
+}
+
+.headerButtons:hover{
+	transform: scale(1.1);
+	background: linear-gradient(120deg, #1280f2, #f653df);
 }
 
 #bodyContainer{
@@ -45,15 +53,15 @@ body {
     text-align: center;
     align-items: center;
     width: 100vw;
-    height: 80vh;
-
+    height: 60vh;
 }
 #homeLogo {
     position: relative;
     width: 30vw;
     height: auto;
     z-index: 1; 
-    margin-bottom: -6vh;
+    margin-bottom: -7vh;
+	margin-left: -5vh;
 }
 
 #joinOrCreateComponent {
@@ -64,7 +72,7 @@ body {
     align-items: center;
     background-color: #f1f8fe;
     width: 35vw;
-    height: 30vh;
+    height: 35vh;
     border-radius: 5px;
     box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
     overflow: auto;
@@ -98,7 +106,7 @@ body {
 }
 .buttonContainer {
 	text-align: center;
-    padding: 2vh;
+    padding: 3vh 0 1vh 0;
     width: 80%;
 }
 
@@ -110,35 +118,20 @@ body {
     background-color: #c875f8;
 }
 
-.bodyButton{
-	padding: 0.5vw 2vw;
-	border-radius: 10px;
-    font-size: 1.5vh;
+
+.bodyButton {
+    padding: 0.3em 1.5em;
+    font-size: calc(0.8vw + 0.4rem);
     white-space: nowrap;
-	height: 20%;
-	width: 35%;
-}
-
-#createButton{
-    background-color: #1280f2; 
-}
-
-#joinButton{
-    background-color: #c875f8;
-}
-
-.bodyButton{
-	padding: 0.5vw 2vw;
-	border-radius: 10px;
-    font-size: 1.5vh;
-    white-space: nowrap;
-	height: 20%;
-	width: 35%;
+    height: auto;
+    width: auto;
     text-align: center;
-	color: #02111e;
-	border: none;
-	box-shadow:0 8px 16px rgba(0, 0, 0, 0.2);
+    color: #02111e;
+    border: none;
+    border-radius: 10px;
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
 }
+
 
 .bodyButton:hover {
 	transform: scale(1.1);
@@ -164,31 +157,4 @@ body {
 	border-bottom: 2px solid #87127f; 
 	margin: 0 10px; 
 	color: #02111e;
-	border: none;
-	box-shadow:0 8px 16px rgba(0, 0, 0, 0.2);
-}
-
-.bodyButton:hover {
-	transform: scale(1.1);
-	background: linear-gradient(120deg, #1280f2, #f653df);
-}
-
-/* creates the or divider line */
-.divider {
-	display: flex;
-	align-items: center;
-	text-align: center;
-	width: 100%;
-	margin: 3% 0;
-	color: #87127f;
-	font-style:italic;
-    padding: 2vh 0 2vh 0;
-}
-  
-.divider::before,
-.divider::after {
-	content: "";
-	flex-grow: 1;
-	border-bottom: 2px solid #87127f; 
-	margin: 0 10px; 
 }

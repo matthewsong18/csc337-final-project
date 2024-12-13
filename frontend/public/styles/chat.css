@@ -1,28 +1,178 @@
+
+html {
+    font-family: 'Inter', 'sans-serif';
+}
+
+body {
+    background-color: #f1f8fe;
+	margiin: 0;
+	padding: 0;
+}
+
+#chatName {
+	font-family: 'Inter', 'sans-serif';
+	font-weight: bold;
+	font-size: 4.0rem;
+}
+
 .chatTextBox {
     position: fixed;
     top: 85vh;
-    left: 50%;
+    left: 45%;
     transform: translateX(-50%);
     height: 10vh;
-    width: 90vw;
-    border: 2px solid black;
-	font-family: 'Rockwell', serif;
-	font-size: 28px;
+    width: 80vw;
+    border: 2px solid #1280f2;
+    border-radius: 5px;
+    font-size: 1.5rem;
+    padding: 10px;
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
+    background-color: white;
+    color: #02111e;
 }
 
 .helpButton {
     position: fixed;
-    top: 10px;
-    left: 10px;
-    display: block;
-    width: 100px;
-    height: 100px;
-    border: 2px solid black;
-    background-color: lightcoral;
-    color: black;
-    font-family: 'Rockwell', serif;
-    font-size: 28px;
+    top: 3vh;
+    left: 3vh;
+    height: 50px;
+    width: 150px;
+    background-color: white;
+    border: none;
+    border-radius: 20px;
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
+    font-size: 1rem;
     text-align: center;
+    color: #02111e;
     cursor: pointer;
+}
+
+.helpButton:hover {
+    transform: scale(1.1);
+    background: linear-gradient(120deg, #1280f2, #f653df);
+    color: white;
+}
+
+.headerBox {
+    position: fixed;
+    width: 100vw;
+    height: 12vh;
+    top: 0;
+    text-align: center;
+    background: white;
+    border-bottom: 2px solid #1280f2;
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
+    color: #02111e;
+    font-size: 1.5rem;
+    line-height: 0.75;
     font-weight: bold;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+}
+
+.headerBox span {
+    margin: 0;
+    padding: 0;
+}
+
+.chatButton {
+    position: fixed;
+    top: 87vh;
+    left: 90%;
+    transform: translateX(-50%);
+    height: 8vh;
+    width: 8vh;
+    border: none;
+    border-radius: 50%;
+    background-color: #1280f2;
+    color: white;
+    cursor: pointer;
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
+    font-size: 1.5rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.pollButton {
+    position: fixed;
+    top: 87vh;
+    left: 95%;
+    transform: translateX(-50%);
+    height: 8vh;
+    width: 8vh;
+    border: none;
+    border-radius: 50%;
+    background-color: #1280f2;
+    color: white;
+    cursor: pointer;
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
+    font-size: 1.5rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.chatButton:hover {
+    background: linear-gradient(120deg, #1280f2, #f653df);
+}
+
+.pollButton:hover {
+    background: linear-gradient(120deg, #1280f2, #f653df);
+}
+
+#pollFormContainer {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 40vw;
+    padding: 20px;
+    background-color: white;
+    border-radius: 10px;
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
+    border: 2px solid #1280f2;
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+#pollFormContainer input,
+#pollFormContainer button {
+    padding: 10px;
+    border-radius: 5px;
+    border: 2px solid #1280f2;
+    font-size: 1rem;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    outline: none;
+}
+
+#pollFormContainer button {
+    background-color: #1280f2;
+    color: white;
+    cursor: pointer;
+    border: none;
+    transition: transform 0.3s ease;
+}
+
+#pollFormContainer button:hover {
+    background: linear-gradient(120deg, #1280f2, #f653df);
+    transform: scale(1.1);
+}
+
+
+.close-button {
+    color: #aaa;
+    float: right;
+    font-size: 28px;
+    font-weight: bold;
+    cursor: pointer;
+}
+
+.close-button:hover,
+.close-button:focus {
+    color: #1280f2;
 }

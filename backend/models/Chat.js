@@ -2,6 +2,15 @@ const mongoose = require("mongoose");
 const { Schema } = mongoose;
 
 const ChatSchema = new Schema({
+  name: {
+    type: String,
+    required: false,
+  },
+  pin: {
+    type: Number,
+    required: false,
+    unique: true,
+  },
   users: {
     type: [{ type: Schema.Types.ObjectId, ref: "User" }],
     validate: {

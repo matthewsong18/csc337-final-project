@@ -44,6 +44,18 @@ describe("chat_controller", () => {
     await expect(async () => await save_message(null, null)).rejects.toThrow();
   });
 
+  it("should add the message to chat", async () => {
+    const user = await UserService.createUser("test user");
+    chat = await Chat.create({ users: [user._id] });
+    const message = await Message.create({ author: user._id, content: "Hi" });
+
+    await add_message_to_chat(message._id, chat._id);
+
+    chat = await Chat.findOne({ _id: chat._id });
+    const last_message = chat.messages.at(-1);
+    expect(last_message).toStrictEqual(message._id);
+  });
+
   // it("should create a message when given valid inputs", async () => {
   //   const user = await UserService.createUser("Happy");
   //   const chat = await Chat.create({ users: [user._id] });

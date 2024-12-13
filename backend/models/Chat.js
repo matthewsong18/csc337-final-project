@@ -11,7 +11,7 @@ const ChatSchema = new Schema({
       message: "A chat must have at least one user.",
     },
   },
-  message: [{ type: Schema.Types.ObjectId, ref: "Message" }],
+  messages: [{ type: Schema.Types.ObjectId, ref: "Message" }],
   polls: [{ type: Schema.Types.ObjectId, ref: "Poll" }],
 });
 

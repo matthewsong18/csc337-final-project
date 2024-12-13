@@ -2,6 +2,7 @@ const mongoose = require("mongoose");
 const { v4: uuidv4 } = require('uuid');
 const UserService = require("../services/UserService");
 const { Chat, Message, Poll  } = require("../models/index");
+const path = require('path');
 
 let client_connections = {};
 
@@ -22,6 +23,21 @@ function update_clients_in_chat (new_update, chat_id) {
     const updated_data = stringtify_for_sse(new_update)
     send_data_to_client(client.response, updated_data);
   });
+}
+
+// TO get a chat:
+// 1. Extract chat_id from the request.
+// 2. Validate chat_id
+// 3. If input is invalid, respond with 400 and JSON error data and redirect to error page
+// 4. Send chat page to user
+async function get_chat(request, response) {
+  try {
+    const chat_pin = extract_chat_id(request);
+    await validate_chat_pin(chat_pin);
+    response.sendFile(path.join(__dirname, "../../frontend/public/chat.html"));
+  } catch (error) {
+    respond_with_error_json(response, 400, { message: error.message }, true);
+  }
 }
 
 // TO subscribe to a chat:
@@ -79,8 +95,15 @@ async function validate_chat_existence (chat_id) {
   return true;
 }
 
-function respond_with_error_json (response, status_code, error_json) {
-  response.status(status_code).json(error_json);
+function respond_with_error_json (response, status_code, error_json, redirect_to_error_page = false) {
+  if (redirect_to_error_page) {
+    const error_message = encodeURIComponent(error_json.message || "An unexpected error occurred.");
+    const error_page_path = `/error.html?message=${error_message}`;
+
+    response.status(status_code).redirect(error_page_path);
+} else {
+    response.status(status_code).json(error_json);
+}
 }
 
 // TO establish sse connection:
@@ -332,6 +355,7 @@ async function generate_unique_pin() {
 }
 
 module.exports = {
+  get_chat,
   create_message,
   subscribe_to_chat,
   load_chat,

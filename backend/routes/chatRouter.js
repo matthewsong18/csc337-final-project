@@ -1,10 +1,10 @@
 const { Router } = require("express");
-const { create_message } = require("../controllers/chat_controller.js");
 const path = require("path");
 const chatRouter = Router();
-const { create_message, subscribe_to_chat, join_chat, create_chat } = require(
+const { subscribe_to_chat, join_chat, create_chat } = require(
   "../controllers/chatController",
 );
+const { create_message } = require("../controllers/message_controller.js");
 
 // Get a chat
 chatRouter.get("/:chat_id", (req, res) => {

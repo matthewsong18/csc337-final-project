@@ -10,12 +10,14 @@ const {
   save_message,
   add_message_to_chat,
 } = require(
-  "../chat_controller.js",
+  "../message_controller.js",
 );
 
-describe("chat_controller", () => {
+describe("message_controller", () => {
   beforeAll(async () => {
-    await mongoose.connect("mongodb://127.0.0.1:27017/chat_controller_testdb");
+    await mongoose.connect(
+      "mongodb://127.0.0.1:27017/message_controller_testdb",
+    );
   });
 
   afterAll(async () => {
@@ -90,7 +92,7 @@ describe("chat_controller", () => {
 
   it("should return an error json when something goes wrong", async () => {
     const response = await request(app).post(
-      "/chat/message/1231541/asdfafds/asfasdf",
+      "/chat/1231541/asdfafds/asfasdf",
     );
 
     expect(response.status).toBe(400);
@@ -105,7 +107,7 @@ describe("chat_controller", () => {
     const message_string = "A test string message";
 
     const response = await request(app).post(
-      `/chat/message/${chat._id}/${user._id}/${message_string}`,
+      `/chat/${chat._id}/${user._id}/${message_string}`,
     );
 
     expect(response.status).toBe(201);
@@ -122,7 +124,7 @@ describe("chat_controller", () => {
     const encoded_string = encodeURIComponent(message_string);
 
     const response = await request(app).post(
-      `/chat/message/${chat._id}/${user._id}/${encoded_string}`,
+      `/chat/${chat._id}/${user._id}/${encoded_string}`,
     );
 
     expect(response.status).toBe(201);

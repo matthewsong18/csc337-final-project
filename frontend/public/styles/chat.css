@@ -40,7 +40,7 @@ body {
 	font-size: 4.0rem;
 }
 
-.helpButton {
+.help_button {
     position: fixed;
     top: 3vh;
     left: 3vh;
@@ -56,7 +56,7 @@ body {
     cursor: pointer;
 }
 
-.helpButton:hover {
+.help_button:hover {
     transform: scale(1.1);
     background: linear-gradient(120deg, #1280f2, #f653df);
     color: white;
@@ -138,6 +138,7 @@ body {
     display: flex;
     flex-direction: column;
     gap: 20px;
+    display: none;
 }
 
 #pollFormContainer input,

@@ -74,6 +74,7 @@ body {
     width: 100vw;
     text-align: left;
     overflow-y: auto; /* Enable scrolling */
+    scroll-behavior: smooth; /* Enable smooth scrolling */
     padding: 10px;
     box-sizing: border-box;
     background-color: #f1f8fe;

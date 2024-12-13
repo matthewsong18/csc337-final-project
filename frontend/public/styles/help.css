@@ -106,3 +106,28 @@ main {
 #close-popup:hover {
     transform: scale(1.2);
 }
+
+.headerButton {
+	position: fixed;
+    top: 20;
+    left: 20;
+    margin: 0;
+    margin: 15px;
+    background-color: white;
+    border-radius: 20px;
+    font-size: calc(0.6vw + 0.5rem);
+    padding: 0.2em 0.8em;
+    white-space: nowrap;
+    width: auto;
+    height: 40px;
+    min-height: 1vh;
+    text-align: center;
+    color: #02111e;
+    border: none;
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
+}
+
+.headerButton:hover{
+	transform: scale(1.1);
+	background: linear-gradient(120deg, #1280f2, #f653df);
+}

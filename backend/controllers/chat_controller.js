@@ -1,4 +1,5 @@
 const Chat = require("../models/Chat.js");
+const ChatService = require("../services/ChatService.js");
 const Message = require("../models/Message.js");
 
 // TO create a message:
@@ -131,7 +132,11 @@ const save_message = async (message, user_id) => {
 // 2. If updating the chat fails, return an error object with failure details.
 // 3. If updating succeeds, return success confirmation.
 const add_message_to_chat = async (message_id, chat_id) => {
-  throw new Error("add_message_to_chat not yet implemented");
+  try {
+    await ChatService.add_message(chat_id, message_id);
+  } catch (error) {
+    throw error;
+  }
 };
 
 module.exports = {

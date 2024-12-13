@@ -2,30 +2,34 @@ const request = require("supertest");
 const mongoose = require("mongoose");
 const express = require("express");
 const axios = require("axios");
-const app = require("../../app"); 
+const app = require("../../app");
 const UserService = require("../../services/UserService");
 const { Chat, Message, Poll, PollOption, User } = require("../../models/index");
-const { load_chat, load_message_buffer, load_poll_buffer, 
-        sort_by_timestamp, validate_timestamp_format, generate_unique_pin 
-      } = require("../chatController");
+const {
+  load_chat,
+  load_message_buffer,
+  load_poll_buffer,
+  sort_by_timestamp,
+  validate_timestamp_format,
+  generate_unique_pin,
+} = require("../chatController");
 const { subscribe_to_chat } = require("../chatController");
 
 describe("chatController", () => {
-
   beforeAll(async () => {
     await mongoose.connect("mongodb://localhost:27017/testdb");
   });
 
   afterAll(async () => {
-      await mongoose.connection.close();
+    await mongoose.connection.close();
   });
-  
+
   beforeEach(async () => {
     await User.deleteMany({});
     await Chat.deleteMany({});
     await Message.deleteMany({});
     await Poll.deleteMany({});
-    await PollOption.deleteMany({})
+    await PollOption.deleteMany({});
   });
 
   // Validate timestamp format
@@ -33,9 +37,15 @@ describe("chatController", () => {
     const timestamp_1 = validate_timestamp_format("2022-02-26T16:37:48.244Z"); // createdAt format
     const timestamp_2 = validate_timestamp_format("2024-12-06T12:00:00Z"); // Date format
     const timestamp_no_ms = validate_timestamp_format("2024-12-06T12:00:00Z");
-    const timestamp_no_timezone = validate_timestamp_format("2024-12-06T12:00:00");
-    const timestamp_offset = validate_timestamp_format("2024-12-06T12:00:00+05:30");
-    const timestamp_no_separator = validate_timestamp_format("2024-12-06 12:00:00Z");
+    const timestamp_no_timezone = validate_timestamp_format(
+      "2024-12-06T12:00:00",
+    );
+    const timestamp_offset = validate_timestamp_format(
+      "2024-12-06T12:00:00+05:30",
+    );
+    const timestamp_no_separator = validate_timestamp_format(
+      "2024-12-06 12:00:00Z",
+    );
     const timestamp_nonstring = validate_timestamp_format(Date.now());
     expect(timestamp_1).toBe(true);
     expect(timestamp_2).toBe(true);
@@ -49,10 +59,16 @@ describe("chatController", () => {
   it("should return false when timestamp is invalid", () => {
     const timestamp_null = validate_timestamp_format(null);
     const timestamp_undefined = validate_timestamp_format(undefined);
-    const timestamp_malformed = validate_timestamp_format("2024-12-06A12:00:00G");
+    const timestamp_malformed = validate_timestamp_format(
+      "2024-12-06A12:00:00G",
+    );
     const timestamp_string = validate_timestamp_format("hello world");
-    const timestamp_wrong_order = validate_timestamp_format("12:00:00T2024-12-06");
-    const timestamp_extra_characters = validate_timestamp_format("2024-12-06T12:00:00Zabc");
+    const timestamp_wrong_order = validate_timestamp_format(
+      "12:00:00T2024-12-06",
+    );
+    const timestamp_extra_characters = validate_timestamp_format(
+      "2024-12-06T12:00:00Zabc",
+    );
     const timestamp_empty_string = validate_timestamp_format("");
     expect(timestamp_null).toBe(false);
     expect(timestamp_undefined).toBe(false);
@@ -69,11 +85,11 @@ describe("chatController", () => {
     const user_1 = await UserService.createUser("Alice");
     const user_2 = await UserService.create_guest_user();
     for (let i = 0; i < 10; i++) {
-        const message = await Message.create({
-            author: i % 2 == 0 ? user_1._id : user_2._id,
-            content: `Message #${i+1}`,
-        });
-        message_ids.push(message._id);
+      const message = await Message.create({
+        author: i % 2 == 0 ? user_1._id : user_2._id,
+        content: `Message #${i + 1}`,
+      });
+      message_ids.push(message._id);
     }
     const messages = await load_message_buffer(message_ids, Date.now(), 8);
     // validate all fields desire
@@ -84,7 +100,7 @@ describe("chatController", () => {
     expect(message_1.content).toBe("Message #1");
     expect(message_1.createdAt).toBeDefined();
     expect(validate_timestamp_format(message_1.createdAt)).toBeTruthy();
-    
+
     let message_2 = messages[1];
     expect(message_2.author).toBeDefined();
     expect(message_2.author._id == user_2._id.toString()).toEqual(true);
@@ -111,24 +127,24 @@ describe("chatController", () => {
     const user_3 = await UserService.createUser("Bob");
     const user_4 = await UserService.createUser("Charlie");
     for (let i = 0; i < 8; i++) {
-        const poll_option = await PollOption.create({
-            title: `Option #${i+1}`,
-        })
-        poll_option_ids.push(poll_option._id);
+      const poll_option = await PollOption.create({
+        title: `Option #${i + 1}`,
+      });
+      poll_option_ids.push(poll_option._id);
     }
     const poll_1 = await Poll.create({
-        title: "Poll Title 1",
-        options: poll_option_ids.slice(0, 4),
-        users_voted: [user_1, user_2, user_3, user_4],
+      title: "Poll Title 1",
+      options: poll_option_ids.slice(0, 4),
+      users_voted: [user_1, user_2, user_3, user_4],
     });
     poll_ids.push(poll_1._id);
     const poll_2 = await Poll.create({
-        title: "Poll Title 2",
-        options: poll_option_ids.slice(4),
-        users_voted: [user_1, user_2, user_3],
+      title: "Poll Title 2",
+      options: poll_option_ids.slice(4),
+      users_voted: [user_1, user_2, user_3],
     });
     poll_ids.push(poll_2._id);
-    
+
     const polls = await load_poll_buffer(poll_ids, Date.now(), 8);
     // validate all fields desire
     expect(polls[0].title).toBeDefined();
@@ -139,7 +155,7 @@ describe("chatController", () => {
     expect(polls[0].users_voted.length).toBe(4);
     expect(polls[0].createdAt).toBeDefined();
     expect(validate_timestamp_format(polls[0].createdAt)).toBeTruthy();
-    
+
     expect(polls[1].title).toBeDefined();
     expect(polls[1].title).toBe("Poll Title 2");
     expect(polls[1].options).toBeDefined();
@@ -165,15 +181,15 @@ describe("chatController", () => {
     const poll_ids = [];
     // Create messages with different timestamps
     const message1 = await Message.create({
-        author: user._id,
-        content: "Message 1",
-        createdAt: new Date("2024-12-08T10:00:00Z"),
+      author: user._id,
+      content: "Message 1",
+      createdAt: new Date("2024-12-08T10:00:00Z"),
     });
     message_ids.push(message1._id);
     const message2 = await Message.create({
-        author: user._id,
-        content: "Message 2",
-        createdAt: new Date("2024-12-08T10:02:00Z"),
+      author: user._id,
+      content: "Message 2",
+      createdAt: new Date("2024-12-08T10:02:00Z"),
     });
     message_ids.push(message2._id);
     // Create polls with different timestamps
@@ -181,15 +197,15 @@ describe("chatController", () => {
     const pollOption2 = await PollOption.create({ title: "Option 2" });
 
     const poll1 = await Poll.create({
-        title: "Poll 1",
-        options: [pollOption1._id],
-        createdAt: new Date("2024-12-08T10:01:30Z"),
+      title: "Poll 1",
+      options: [pollOption1._id],
+      createdAt: new Date("2024-12-08T10:01:30Z"),
     });
     poll_ids.push(poll1._id);
     const poll2 = await Poll.create({
-        title: "Poll 2",
-        options: [pollOption2._id],
-        createdAt: new Date("2024-12-08T10:00:30Z"),
+      title: "Poll 2",
+      options: [pollOption2._id],
+      createdAt: new Date("2024-12-08T10:00:30Z"),
     });
     poll_ids.push(poll2._id);
     // Combine messages and polls
@@ -204,7 +220,7 @@ describe("chatController", () => {
     expect(sorted[1].createdAt).toBe(polls[1].createdAt); // Poll 2
     expect(sorted[2].createdAt).toBe(polls[0].createdAt); // Poll 1
     expect(sorted[3].createdAt).toBe(messages[1].createdAt); // Message 2
-    
+
     // Check buffer size
     expect(sorted.length).toBe(4);
   });
@@ -221,7 +237,7 @@ describe("chatController", () => {
         const invalid_chat_pin = "123"; // Not a valid pin format
         await load_chat(invalid_chat_pin, Date().now, 10);
     } catch (err) {
-        error = err;
+      error = err;
     }
     expect(error).toBeDefined();    
     expect(error.message).toBe("Invalid chat pin");
@@ -233,12 +249,12 @@ describe("chatController", () => {
         const valid_but_nonexistent_pin = await generate_unique_pin();
         await load_chat(valid_but_nonexistent_pin, Date().now);
     } catch (err) {
-        error = err;
+      error = err;
     }
-    expect(error).toBeDefined();    
+    expect(error).toBeDefined();
     expect(error.message).toBe("This chat doesn't exist");
   });
-  
+
   it("should throw an error for an invalid timestamp format", async () => {
     let error;
     try {
@@ -248,9 +264,9 @@ describe("chatController", () => {
         const invalid_timestamp = "invalid-date";
         await load_chat(chat.pin, invalid_timestamp);
     } catch (err) {
-        error = err;
+      error = err;
     }
-    expect(error).toBeDefined();    
+    expect(error).toBeDefined();
     expect(error.message).toBe("Timestamp's format is invalid");
   });
 
@@ -264,9 +280,9 @@ describe("chatController", () => {
         let future = now.setDate(now.getDate() + 3); // Add 3 days
         await load_chat(chat.pin, future);
     } catch (err) {
-        error = err;
+      error = err;
     }
-    expect(error).toBeDefined();    
+    expect(error).toBeDefined();
     expect(error.message).toBe("Timestamp requested is in the future");
   });
 
@@ -309,7 +325,7 @@ describe("chatController", () => {
       pin: pin,
       message: [message1._id, message2._id],
       polls: [poll._id],
-      users: [user]
+      users: [user],
     });
 
     // Call load_chat
@@ -319,11 +335,12 @@ describe("chatController", () => {
     expect(result[0].content).toBe("Message 1");
     expect(result[1].title).toBe("Poll 1");
     expect(result[2].content).toBe("Message 2");
-    expect(result.every((item) => validate_timestamp_format(item.createdAt))).toBeTruthy();
+    expect(result.every((item) => validate_timestamp_format(item.createdAt)))
+      .toBeTruthy();
   });
 
   // Check subscribe_to_chat function for streaming
-  it('should set proper headers and send initial chat buffer', async () => {
+  it("should set proper headers and send initial chat buffer", async () => {
     const user = await UserService.createUser("Test User");
 
     // Create messages and polls
@@ -354,7 +371,7 @@ describe("chatController", () => {
       pin: pin,
       message: [message1._id, message2._id],
       polls: [poll._id],
-      users: [user]
+      users: [user],
     });
     const foundChat = await Chat.findOne({ pin: chat.pin });
     console.log("Chat found in DB:", foundChat);
@@ -362,7 +379,7 @@ describe("chatController", () => {
     // create a server
     const app = express();
     app.get(`/chat/:chat_id/events`, subscribe_to_chat);
-    const server = app.listen(3009, 'localhost', () => {
+    const server = app.listen(3009, "localhost", () => {
       console.log(`Achat app - listening on: http://localhost:3009`);
       console.log(`/chat/${chat.pin}/events`);
     })
@@ -372,11 +389,11 @@ describe("chatController", () => {
     // Create an AbortController instance to close the request
     const controller = new AbortController();
     const signal = controller.signal;
-    
+
     const response = await axios({
-      method: 'GET',
+      method: "GET",
       url: req_url,
-      responseType: 'stream',
+      responseType: "stream",
       signal,
     });
 
@@ -388,22 +405,20 @@ describe("chatController", () => {
 
     // check response data
     // Create a buffer to store the streamed data
-    let receivedData = '';
+    let receivedData = "";
     // listen for updates
-    response.data.on('data', (chunk) => {
-        receivedData += chunk.toString(); // Accumulate the chunks
-        expect(receivedData).toContain('data: '); // Ensure it follows the SSE format
-        const parsedData = JSON.parse(receivedData.split('data: ')[1]); // Extract and parse the data
-        expect(parsedData.length).toBe(3);
-        expect(parsedData[0]._id == message1._id.toString()).toBe(true);
-        expect(parsedData[1]._id == poll._id.toString()).toBe(true);
-        expect(parsedData[2]._id == message2._id.toString()).toBe(true);
-        controller.abort(); // close the request
-        server.close(() => {
-          console.log('Server closed');
-        });
+    response.data.on("data", (chunk) => {
+      receivedData += chunk.toString(); // Accumulate the chunks
+      expect(receivedData).toContain("data: "); // Ensure it follows the SSE format
+      const parsedData = JSON.parse(receivedData.split("data: ")[1]); // Extract and parse the data
+      expect(parsedData.length).toBe(3);
+      expect(parsedData[0]._id == message1._id.toString()).toBe(true);
+      expect(parsedData[1]._id == poll._id.toString()).toBe(true);
+      expect(parsedData[2]._id == message2._id.toString()).toBe(true);
+      controller.abort(); // close the request
+      server.close(() => {
+        console.log("Server closed");
+      });
     });
   });
-
-  
 });

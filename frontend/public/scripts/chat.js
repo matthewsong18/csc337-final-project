@@ -47,7 +47,7 @@ function closePollForm() {
 }
 
 function resetAllOptions() {
-    optionCount = 2;
+    optionCount = 0; // reset optionCount
     // delete all current options
     while (additionalOptionsContainer.firstChild) {
         additionalOptionsContainer.removeChild(additionalOptionsContainer.firstChild);

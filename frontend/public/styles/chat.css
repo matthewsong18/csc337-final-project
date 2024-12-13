@@ -42,24 +42,26 @@ body {
 
 .help_button {
     position: fixed;
-    top: 3vh;
-    left: 3vh;
-    height: 50px;
-    width: 150px;
+    top: 15px;
+    left: 15px;
+    height: 40px;
+    min-height: 1vh;
+    width: auto;
     background-color: white;
     border: none;
     border-radius: 20px;
     box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
-    font-size: 1rem;
+    font-size: calc(0.6vw + 0.5rem);
     text-align: center;
     color: #02111e;
     cursor: pointer;
+    padding: 0.2em 0.8em;
+    white-space: nowrap;
 }
 
 .help_button:hover {
     transform: scale(1.1);
     background: linear-gradient(120deg, #1280f2, #f653df);
-    color: white;
 }
 
 .chatTextBox {

@@ -78,10 +78,40 @@ function createSenderInfo(author, time) {
     senderName.textContent = author;
     const timestamp = document.createElement("div");
     timestamp.setAttribute("id", "timestamp");
-    timestamp.textContent = time;
+    timestamp.textContent = formatTimestamp(time);
     senderInfo.append(senderName, timestamp);
     return senderInfo;
 }
+
+function formatTimestamp(timestamp) {
+    const date = new Date(timestamp);
+    const now = new Date();
+
+    const day = date.getDate();
+    const month = date.getMonth() + 1; // Months are 0-indexed
+    const year = date.getFullYear() % 100; // Get the last two digits of the year
+
+    const hour = date.getHours();
+    const minute = date.getMinutes().toString().padStart(2, "0");
+    const ampm = hour >= 12 ? "PM" : "AM";
+    const formattedHour = hour % 12 || 12; // Convert to 12-hour format
+
+    // Check if the date matches today or yesterday
+    const isToday =
+        date.toDateString() === now.toDateString();
+    const isYesterday =
+        date.toDateString() === new Date(now.setDate(now.getDate() - 1)).toDateString();
+
+    if (isToday) {
+        return `Today at ${formattedHour}:${minute} ${ampm}`;
+    } else if (isYesterday) {
+        return `Yesterday at ${formattedHour}:${minute} ${ampm}`;
+    }
+
+    // Default to MM/DD/YY format
+    return `${month}/${day}/${year}, ${formattedHour}:${minute} ${ampm}`;
+}
+
 
 function createPollContent(pollData) {
     // Destructure pollData

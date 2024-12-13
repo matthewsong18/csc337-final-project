@@ -1,8 +1,14 @@
 const express = require("express");
 const path = require("path");
-const { create_message, subscribe_to_chat, join_chat, create_chat } = require("../controllers/chatController");
+
+const { create_message, subscribe_to_chat, 
+    join_chat_guest, join_chat_user, 
+    create_chat_guest, create_chat_user
+    } = require("../controllers/chatController");
+
 const chatRouter = express.Router();
 const Chat = require("../models/Chat.js");
+const { create_guest_user } = require("../services/UserService.js");
 
 // Get a chat
 chatRouter.get("/:chat_id", (req, res) => {
@@ -17,11 +23,17 @@ chatRouter.get("/:chat_id/poll/:poll_id", (req, res) => {
     res.send(`Poll ID: ${req.params.poll_id}`);
 });
 
-// Join a chat
-chatRouter.get("/:chat_id/join", join_chat);
+// Join a chat as a guest
+chatRouter.get("/:chat_pin/join/guest", join_chat_guest);
 
-// Create a new chat
-chatRouter.post("/create", create_chat);
+// Join a chat as a user
+chatRouter.get("/:username/:chat_pin/join/user", join_chat_user);
+
+// Create a new chat as guest
+chatRouter.post("/create/guest", create_chat_guest);
+
+// Create a new chat as user
+chatRouter.post("/create/:username/:chat_name", create_chat_user);
 
 // Post a message to a chat
 chatRouter.post("/:chat_id/:user_id/:message_content", create_message);

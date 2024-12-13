@@ -28,6 +28,8 @@ describe("chat_controller", () => {
     await Message.deleteMany({});
   });
 
+  // Testing save_message
+
   it("should save a message", async () => {
     const user = await UserService.createUser("test_user_1");
     expect(user).toBeDefined();
@@ -44,6 +46,8 @@ describe("chat_controller", () => {
     await expect(async () => await save_message(null, null)).rejects.toThrow();
   });
 
+  // Testing add_message_to_chat
+
   it("should add the message to chat", async () => {
     const user = await UserService.createUser("test user");
     chat = await Chat.create({ users: [user._id] });
@@ -54,6 +58,32 @@ describe("chat_controller", () => {
     chat = await Chat.findOne({ _id: chat._id });
     const last_message = chat.messages.at(-1);
     expect(last_message).toStrictEqual(message._id);
+  });
+
+  // Testing validate_inputs
+
+  it("should return false when inputs are invalid", async () => {
+    const input_status = await validate_inputs(null, null, null);
+
+    expect(input_status).toBeDefined();
+    expect(input_status).toHaveProperty("status", 400);
+    expect(input_status).toHaveProperty("chat_id_status", false);
+    expect(input_status).toHaveProperty("user_id_status", false);
+    expect(input_status).toHaveProperty("message_status", false);
+  });
+
+  it("should return true when inputs are valid", async () => {
+    const user = await UserService.createUser("test user");
+    chat = await Chat.create({ users: [user._id] });
+    const message = "Test string";
+
+    const input_status = await validate_inputs(chat._id, user._id, message);
+
+    expect(input_status).toBeDefined();
+    expect(input_status).toHaveProperty("status", 200);
+    expect(input_status).toHaveProperty("chat_id_status", true);
+    expect(input_status).toHaveProperty("user_id_status", true);
+    expect(input_status).toHaveProperty("message_status", true);
   });
 
   // it("should create a message when given valid inputs", async () => {

@@ -80,7 +80,7 @@ body {
 }
 
 /* Style the message */
-.message {
+.message_container {
     display: flex;
     flex-direction: column;
     align-items: flex-start;
@@ -91,7 +91,7 @@ body {
     font-family: 'Arial', sans-serif;
 }
 
-.message:hover {
+.message_container:hover {
     background: linear-gradient(120deg, #1280f2, #c875f8);
 }
 
@@ -121,6 +121,83 @@ body {
     font-size: 0.9rem;
     flex-grow: 1;
     word-wrap: break-word;
+}
+
+.poll:hover {
+    background: linear-gradient(120deg, #1280f2, #c875f8);
+}
+
+.poll_content {
+    width: 30vw;
+    padding: 10px;
+}
+
+.poll_header {
+    margin-bottom: 10px;
+    border-bottom: 1px solid #40444b; /* Subtle border for separation */
+    padding-bottom: 5px;
+}
+
+.poll_title {
+    font-weight: bold;
+    font-size: calc(1vw);
+    padding-top: 5px;
+    color: #02111e; /* Discord blue */
+}
+
+.poll_options {
+    margin: 10px 0;
+}
+
+.poll_option {
+    display: flex;
+    justify-content: space-between;
+    padding: 8px 10px;
+    border-radius: 5px;
+    background-color: #36393f; /* Slightly darker box */
+    margin-bottom: 5px;
+    cursor: pointer; /* Indicate it's clickable */
+    transition: background-color 0.2s;
+}
+
+.poll_option:hover {
+    background-color: #40444b; /* Slight hover effect */
+}
+
+.option_text {
+    font-size: 1rem;
+    color: #dcddde; /* Lighter gray for text */
+}
+
+.vote_count {
+    font-size: 0.85rem;
+    color: #99aab5; /* Subtle gray for vote count */
+}
+
+.poll_footer {
+    margin-top: 10px;
+    border-top: 1px solid #40444b;
+    padding-top: 5px;
+    font-size: 0.9rem;
+    color: #99aab5; /* Subtle gray */
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.vote_button {
+    background-color: #1280f2;
+    color: white;
+    border-radius: 5px;
+    border-width: 0;
+    padding: 5px;
+    width: 5vw;
+    height: 4vh;
+    font-size: calc(0.6vw + 0.5rem);
+}
+
+.vote_button:hover {
+    background-color: rgb(12, 110, 247);
 }
 
 .chatTextBox {

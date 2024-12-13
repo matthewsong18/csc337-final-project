@@ -1,5 +1,6 @@
 const Chat = require("../models/Chat.js");
 const ChatService = require("../services/ChatService.js");
+const User = require("../models/User.js");
 const Message = require("../models/Message.js");
 
 // TO create a message:
@@ -17,8 +18,9 @@ const create_message = async (request, response) => {
   const message = extract_message(request);
   // const inputs = [chat_id, user_id, message]
 
-  if (!await validate_inputs(chat_id, user_id, message)) {
-    respond_with_error_json(response, "Inputs were bad");
+  const input_status = await validate_inputs(chat_id, user_id, message);
+  if (input_status.status == 400) {
+    respond_with_error_json(response, input_status);
   }
 
   const message_id = await save_message(message, user_id);
@@ -58,23 +60,23 @@ const extract_message = (request) => {
 const validate_inputs = async (chat_id, user_id, message) => {
   const chat_id_status = await validate_chat_id(chat_id);
   const user_id_status = await validate_user_id(user_id);
-  const message_status = await validate_message(message);
-  const status = 200;
+  const message_status = validate_message(message);
+  status = 200;
 
   if (
-    chat_id_status instanceof Error ||
-    user_id_status instanceof Error ||
-    message_status instanceof Error
+    !chat_id_status ||
+    !user_id_status ||
+    !message_status
   ) {
     status = 400;
   }
 
-  return json({
+  return {
     status: status,
-    chat_id: chat_id_status,
-    user_id: user_id_status,
-    message: message_status,
-  });
+    chat_id_status: chat_id_status,
+    user_id_status: user_id_status,
+    message_status: message_status,
+  };
 };
 
 // TO validate chat_id:
@@ -82,7 +84,11 @@ const validate_inputs = async (chat_id, user_id, message) => {
 // 2. Query the database to confirm that chat_id refers to an existing chat.
 // 3. Return true if valid, or return false if invalid.
 const validate_chat_id = async (chat_id) => {
-  throw new Error("validate_chat_id not yet implemented");
+  const chat = await Chat.findOne({ _id: chat_id });
+  if (!chat) {
+    return false;
+  }
+  return true;
 };
 
 // TO validate user_id:
@@ -90,22 +96,27 @@ const validate_chat_id = async (chat_id) => {
 // 2. Query the database to confirm that user_id refers to an existing user.
 // 3. Return true if valid, or return false if invalid.
 const validate_user_id = async (user_id) => {
-  throw new Error("validate_user_id not yet implemented");
+  const user = await User.findOne({ _id: user_id });
+  if (!user) {
+    return false;
+  }
+  return true;
 };
 
 // TO validate message:
 // 1. Check that message exists and is in the correct format.
 // 2. Return true if valid, or return false if invalid.
-const validate_message = async (message) => {
-  throw new Error("validate_message not yet implemented");
+const validate_message = (message_string) => {
+  if (message_string == null) return false;
+  return true;
 };
 
 // TO respond with 400 and JSON error data:
 // 1. Accept response and JSON error message.
 // 2. Send 400 status
 // 3. Send JSON with error message
-const respond_with_error_json = async (response, error_message) => {
-  throw new Error("respond_with_error_json not yet implemented");
+const respond_with_error_json = (response, error_message) => {
+  response.status(400).json(error_message);
 };
 
 // TO save a message:
@@ -130,7 +141,6 @@ const save_message = async (message, user_id) => {
 // TO add a message to chat:
 // 1. Call ChatService to add message_id to chat.
 // 2. If updating the chat fails, return an error object with failure details.
-// 3. If updating succeeds, return success confirmation.
 const add_message_to_chat = async (message_id, chat_id) => {
   try {
     await ChatService.add_message(chat_id, message_id);

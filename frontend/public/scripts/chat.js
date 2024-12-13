@@ -1,5 +1,6 @@
 // DOM Elements
 const chatNameElement = document.getElementById("chatName");
+const textingArea = document.querySelector(".texting_area");
 const chatInput = document.querySelector(".chatTextBox");
 const pinNumberElement = document.getElementById("pinNumber");
 const addOptionButton = document.getElementById("addOptionButton");
@@ -11,11 +12,13 @@ const deleteOptionButtons = document.querySelectorAll(".deleteOptionButton");
 // State Variables
 const pathSegments = window.location.pathname.split('/');
 const chatId = pathSegments[pathSegments.length - 1];
+let event_source;
 let optionCount = 2; // default lowest option counts
 
 // Initialize Page
 function initializePage() {
     displayChatPin();
+    loadChat();
     setupChatInputResize();
     setupEventListeners();
 }
@@ -23,6 +26,166 @@ function initializePage() {
 // Display the chat's PIN or fallback text
 function displayChatPin() {
     pinNumberElement.textContent = chatId ? `PIN: ${chatId}` : "No PIN?";
+}
+
+function loadChat() {
+    event_source = new EventSource(`http://localhost:3000/chat/${chatId}/event`);
+    event_source.addEventListener("message", (event) => {
+        console.log("listening for update");
+        let chat_data = JSON.parse(event.data);
+        console.log(chat_data);
+        // assume only initial load is an array of objects
+        if (Array.isArray(chat_data)) populateChat(chat_data);
+        else renderChatElement(chat_data);
+    });
+}
+
+function renderChatElement(item) {
+    if (item.options) renderPoll(item);
+    else if (item.content) renderMessage(item);
+    // Scroll to the bottom of the chat container
+    textingArea.scrollTop = textingArea.scrollHeight;
+}
+
+function populateChat(initial_chat) {
+    console.log("populate chat");
+    for (item of initial_chat) {
+        renderChatElement(item);
+    }
+}
+
+// Render a poll
+function renderPoll(poll) {
+    console.log("render poll");
+    const container = createContainer();
+    const senderInfo = createSenderInfo("Bob", poll.createdAt);
+    const pollContent = createPollContent(poll);
+    container.append(senderInfo, pollContent);
+    textingArea.appendChild(container);
+}
+
+function createContainer() {
+    const container = document.createElement("div");
+    container.classList.add("message_container");
+    return container;
+}
+
+function createSenderInfo(author, time) {
+    const senderInfo = document.createElement("div");
+    senderInfo.classList.add("sender_info");
+    const senderName = document.createElement("div");
+    senderName.setAttribute("id", "sender_name");
+    senderName.textContent = author;
+    const timestamp = document.createElement("div");
+    timestamp.setAttribute("id", "timestamp");
+    timestamp.textContent = time;
+    senderInfo.append(senderName, timestamp);
+    return senderInfo;
+}
+
+function createPollContent(pollData) {
+    // Destructure pollData
+    const { title, options, users_voted } = pollData;
+
+    // Create the main poll container
+    const pollContent = document.createElement("div");
+    pollContent.classList.add("poll_content");
+    const pollHeader = createPollHeader(title);
+    const pollOptionsForm = createPollOptionsForm(options);
+    const pollFooter = createPollFooter(users_voted);
+    pollContent.appendChild(pollHeader);
+    pollContent.appendChild(pollOptionsForm);
+    pollContent.appendChild(pollFooter);
+    return pollContent;
+}
+
+function createPollHeader(title) {
+    const pollHeader = document.createElement("div");
+    pollHeader.classList.add("poll_header");
+
+    const pollTitle = document.createElement("div");
+    pollTitle.classList.add("poll_title");
+    pollTitle.textContent = title;
+
+    pollHeader.appendChild(pollTitle);
+    return pollHeader;
+}
+
+function createPollOptionsForm(options) {
+    // Create the poll options form
+    const pollOptionsForm = document.createElement("form");
+    pollOptionsForm.classList.add("poll_options");
+
+    options.forEach(option => {
+        // Create option label
+        const optionLabel = document.createElement("label");
+        optionLabel.classList.add("poll_option");
+
+        // Option text
+        const optionText = document.createElement("span");
+        optionText.classList.add("option_text");
+        optionText.textContent = option.title;
+
+        // Option count and checkbox container
+        const optionContainer = document.createElement("div");
+
+        const optionCount = document.createElement("span");
+        optionCount.classList.add("poll_option_count");
+        optionCount.textContent = `${option.vote_count} votes`;
+
+        const optionInput = document.createElement("input");
+        optionInput.type = "checkbox";
+        optionInput.name = "vote_option";
+        optionInput.value = option.title;
+
+        // Append count and input to container
+        optionContainer.appendChild(optionCount);
+        optionContainer.appendChild(optionInput);
+
+        // Append text and container to label
+        optionLabel.appendChild(optionText);
+        optionLabel.appendChild(optionContainer);
+
+        // Append label to form
+        pollOptionsForm.appendChild(optionLabel);
+    });
+
+    return pollOptionsForm;
+}
+
+function createPollFooter(users_voted) {
+    const pollFooter = document.createElement("div");
+    pollFooter.classList.add("poll_footer");
+
+    const voteCount = document.createElement("span");
+    voteCount.classList.add("vote_count");
+    voteCount.textContent = `Total Votes: ${users_voted.length}`;
+
+    const voteButton = document.createElement("button");
+    voteButton.type = "submit";
+    voteButton.classList.add("vote_button");
+    voteButton.textContent = "Vote";
+
+    pollFooter.appendChild(voteCount);
+    pollFooter.appendChild(voteButton);
+    return pollFooter;
+}
+
+// Render a message
+function renderMessage(message) {
+    console.log("render message");
+    const container = createContainer();
+    const senderInfo = createSenderInfo(message.author, message.createdAt);
+    const messageContent = createMessageContent(message.content);
+    container.append(senderInfo, messageContent);
+    textingArea.appendChild(container);
+}
+
+function createMessageContent(content) {
+    const messageContent = document.createElement("div");
+    messageContent.classList.add("message_content");
+    messageContent.textContent = content;
+    return messageContent;
 }
 
 // Resize the chat input dynamically

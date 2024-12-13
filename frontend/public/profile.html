@@ -9,8 +9,26 @@
 
 <body>
     <div class="welcomeMessage" id="welcomeMessage">Profile Page</div>
-	<div><input type="button" class="chatroomButton" id="button" name="button" value="Join Chatroom" onclick="window.location.href='/chat.html'"></div>
-	<div><input type="button" class="helpButton" id="button" name="button" value="Help" onclick="window.location.href='/help.html'"></div>
+	<div id="bodyContainer">
+
+    	<img id ="homeLogo" src="/img/AChat.png" alt="AChat Logo"><br>
+
+		<div id = "joinOrCreateComponent"> 
+			<input type="text" id="chatPin" placeholder="PIN #">
+
+			<div class="buttonContainer">
+				<input type="button" class="bodyButton" id="joinButton" value="Join Chat" onclick="joinChat()"><br>
+				<div class="divider"> OR </div>
+				<input type="button" class="bodyButton" id="createButton" value="Create Chat" onclick="createChat()"><br>
+			</div>
+		</div>
+	</div>
+	
+	<div class="savedChats">
+		<h2>Your Chats:</h2>
+	</div>
+	
 	<script src="/scripts/profile.js"></script>
+	<script src="/scripts/home.js"></script>
 </body>
 </html>

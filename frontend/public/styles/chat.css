@@ -19,7 +19,6 @@ body {
     border-bottom: 2px solid #1280f2;
     box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
     color: #02111e;
-    font-size: 1.5rem;
     line-height: 0.75;
     font-weight: bold;
     margin: 0;
@@ -29,15 +28,17 @@ body {
     justify-content: center;
 }
 
-.headerBox span {
+#chatName {
+	font-weight: bold;
+	font-size: 4.0rem;
     margin: 0;
     padding: 0;
 }
 
-#chatName {
-	font-family: 'Inter', 'sans-serif';
-	font-weight: bold;
-	font-size: 4.0rem;
+#pinNumber {
+    font-size: 1.5rem;
+    margin: 0;
+    padding-top: 5px;
 }
 
 .help_button {

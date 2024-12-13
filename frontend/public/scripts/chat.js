@@ -3,6 +3,7 @@ const pathSegments = window.location.pathname.split('/');
 const chatId = pathSegments[pathSegments.length - 1];
 const chatInput = document.querySelector(".chatTextBox");
 
+// dynamically resize textarea
 chatInput.addEventListener("input", function () {
     this.style.height = "auto"; // Reset height to calculate new height
     const newHeight = Math.min(this.scrollHeight, window.innerHeight * 0.25); // Max height is 25vh

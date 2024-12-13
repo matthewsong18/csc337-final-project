@@ -65,6 +65,64 @@ body {
     background: linear-gradient(120deg, #1280f2, #f653df);
 }
 
+/* Scrollable texting area */
+.texting_area {
+    position: fixed; /* Not fixed */
+    top: 12vh; /* Height of the headerBox */
+    bottom: 15vh; /* Height of the input_area */
+    height: calc(100vh - 25vh); /* Total height minus header and input areas */
+    width: 100vw;
+    text-align: left;
+    overflow-y: auto; /* Enable scrolling */
+    padding: 10px;
+    box-sizing: border-box;
+    background-color: #f1f8fe;
+}
+
+/* Style the message */
+.message {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    margin-bottom: 15px;
+    padding: 10px;
+    border-radius: 5px;
+    color: #fff; /* White text for visibility */
+    font-family: 'Arial', sans-serif;
+}
+
+.message:hover {
+    background: linear-gradient(120deg, #1280f2, #c875f8);
+}
+
+.sender_info {
+    display: flex;
+    gap: 5px;
+    margin-right: 15px;
+    text-align: left;
+}
+
+#sender_name {
+    font-weight: bold;
+    color: #02111e9b; /* Discord blue for usernames */
+    font-size: calc(1vw);
+    /* margin-bottom: 2px; */
+}
+
+#timestamp {
+    font-size: calc(1vw);
+    color: #8b8c8e; /* Slightly lighter text for contrast */
+}
+
+.message_content {
+    padding: 10px;
+    line-height: 1.4;
+    color: #02111e; 
+    font-size: 0.9rem;
+    flex-grow: 1;
+    word-wrap: break-word;
+}
+
 .chatTextBox {
     position: fixed;
     bottom: 3vh;

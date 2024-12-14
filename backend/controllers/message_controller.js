@@ -13,29 +13,22 @@ const Message = require("../models/Message.js");
 // 7. If saving succeeds, call `addMessageToChat` to associate the message with
 //    the chat.
 const create_message = async (request, response) => {
-  try {
+  
     const chat_id = extract_chat_id(request);
     const user_id = extract_user_id(request);
     const message = extract_message(request);
 
     const input_status = await validate_inputs(chat_id, user_id, message);
     if (input_status.status == 400) {
-      respond_with_error_json(response, input_status);
+      // respond_with_error_json(response, input_status);
+      throw new Error(`${input_status}`);
       return;
     }
-
+    
     const message_id = await save_message(message, user_id);
+    
     await add_message_to_chat(message_id, chat_id);
-    response.status(201).json({
-      status: 201,
-      message: `${message}`,
-    });
-  } catch (error) {
-    respond_with_error_json(response, {
-      status: 400,
-      error: `${error}`,
-    });
-  }
+    return message_id;
 };
 
 // TO extract the chat_id:
@@ -95,7 +88,7 @@ const validate_inputs = async (chat_id, user_id, message) => {
 // 3. Return true if valid, or return false if invalid.
 const validate_chat_id = async (chat_id) => {
   try {
-    const chat = await Chat.findOne({ _id: chat_id });
+    const chat = await Chat.findOne({ pin: chat_id });
     if (!chat) return false;
     return true;
   } catch (_error) {

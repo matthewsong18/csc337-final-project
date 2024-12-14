@@ -93,9 +93,9 @@ describe("chatController", () => {
       });
       message_ids.push(message._id);
     }
-    const messages = await load_message_buffer(message_ids, Date.now(), 8);
+    const messages = await load_message_buffer(message_ids, Date.now(), 10);
     // validate all fields desire
-    let message_1 = messages[0];
+    let message_1 = messages[9];
     expect(message_1.author).toBeDefined();
     expect(message_1.author._id == user_1._id.toString()).toBe(true);
     expect(message_1.content).toBeDefined();
@@ -103,7 +103,7 @@ describe("chatController", () => {
     expect(message_1.createdAt).toBeDefined();
     expect(validate_timestamp_format(message_1.createdAt)).toBeTruthy();
 
-    let message_2 = messages[1];
+    let message_2 = messages[8];
     expect(message_2.author).toBeDefined();
     expect(message_2.author._id == user_2._id.toString()).toEqual(true);
     expect(message_2.content).toBeDefined();
@@ -112,7 +112,7 @@ describe("chatController", () => {
     expect(validate_timestamp_format(message_2.createdAt)).toBeTruthy();
 
     // check buffer size
-    expect(messages.length).toBe(8);
+    expect(messages.length).toBe(10);
   });
 
   it("should return an empty array when there's no message id", async () => {
@@ -149,22 +149,22 @@ describe("chatController", () => {
 
     const polls = await load_poll_buffer(poll_ids, Date.now(), 8);
     // validate all fields desire
-    expect(polls[0].title).toBeDefined();
-    expect(polls[0].title).toBe("Poll Title 1");
-    expect(polls[0].options).toBeDefined();
-    expect(polls[0].options[0]._id == poll_option_ids[0].toString()).toBe(true);
-    expect(polls[0].users_voted).toBeDefined();
-    expect(polls[0].users_voted.length).toBe(4);
-    expect(polls[0].createdAt).toBeDefined();
+    expect(polls[1].title).toBeDefined();
+    expect(polls[1].title).toBe("Poll Title 1");
+    expect(polls[1].options).toBeDefined();
+    expect(polls[1].options[0]._id == poll_option_ids[0].toString()).toBe(true);
+    expect(polls[1].users_voted).toBeDefined();
+    expect(polls[1].users_voted.length).toBe(4);
+    expect(polls[1].createdAt).toBeDefined();
     expect(validate_timestamp_format(polls[0].createdAt)).toBeTruthy();
 
-    expect(polls[1].title).toBeDefined();
-    expect(polls[1].title).toBe("Poll Title 2");
-    expect(polls[1].options).toBeDefined();
-    expect(polls[1].options[0]._id == poll_option_ids[4].toString()).toBe(true);
-    expect(polls[1].users_voted).toBeDefined();
-    expect(polls[1].users_voted.length).toBe(3);
-    expect(polls[1].createdAt).toBeDefined();
+    expect(polls[0].title).toBeDefined();
+    expect(polls[0].title).toBe("Poll Title 2");
+    expect(polls[0].options).toBeDefined();
+    expect(polls[0].options[0]._id == poll_option_ids[4].toString()).toBe(true);
+    expect(polls[0].users_voted).toBeDefined();
+    expect(polls[0].users_voted.length).toBe(3);
+    expect(polls[0].createdAt).toBeDefined();
     expect(validate_timestamp_format(polls[1].createdAt)).toBeTruthy();
 
     // check buffer size
@@ -188,6 +188,7 @@ describe("chatController", () => {
       createdAt: new Date("2024-12-08T10:00:00Z"),
     });
     message_ids.push(message1._id);
+
     const message2 = await Message.create({
       author: user._id,
       content: "Message 2",
@@ -217,11 +218,11 @@ describe("chatController", () => {
     // Sort combined array by timestamp
     const sorted = sort_by_timestamp(messages, polls, 4);
 
-    // Validate the order
-    expect(sorted[0].createdAt).toBe(messages[0].createdAt); // Message 1
+    // Validate the order (oldest -> newest)
+    expect(sorted[0].createdAt).toBe(messages[1].createdAt); // Message 1
     expect(sorted[1].createdAt).toBe(polls[1].createdAt); // Poll 2
     expect(sorted[2].createdAt).toBe(polls[0].createdAt); // Poll 1
-    expect(sorted[3].createdAt).toBe(messages[1].createdAt); // Message 2
+    expect(sorted[3].createdAt).toBe(messages[0].createdAt); // Message 2
 
     // Check buffer size
     expect(sorted.length).toBe(4);

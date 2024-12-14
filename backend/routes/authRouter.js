@@ -1,5 +1,5 @@
 const { Router } = require("express");
-const { getUserByName, user_signup } = require("../controllers/userController");
+const { getUserByName, user_signup, get_chat_history } = require("../controllers/userController");
 const path = require("path");
 const authRouter = Router();
 
@@ -13,6 +13,9 @@ authRouter.get("/login", (req, res) => {
 
 // Get into user profile
 authRouter.get("/login/:username", getUserByName);
+
+// Get user's chat id
+authRouter.get("/chats/:username", get_chat_history);
 
 // Handle undefined routes
 authRouter.get("*", (req, res) => {

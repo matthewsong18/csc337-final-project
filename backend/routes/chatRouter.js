@@ -11,7 +11,7 @@ const { get_chat, subscribe_to_chat,
 const { create_message } = require("../controllers/message_controller.js");
 
 // Get a chat
-chatRouter.get("/:chat_id", get_chat);
+chatRouter.get("/:chat_id/:user_id", get_chat);
 
 // Establish a SSE connection
 chatRouter.get("/:chat_id/events", subscribe_to_chat);

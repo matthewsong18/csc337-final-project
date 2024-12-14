@@ -301,7 +301,8 @@ async function join_chat(user, chat_pin, res){
 
     // link chat and user together
     await update_chat_history(user, chat);
-    res.status(200).json({ exists: true });
+    res.status(200).json({ exists: true,  chat_pin: chat.pin, user_id: user._id });
+
   } catch (error) {
     console.error("Error checking chatroom existence:", error);
     respond_with_error_json(res, 400, {
@@ -373,7 +374,7 @@ async function create_chat (user, chat_name, res) {
     // Link chat to user
     await update_chat_history(user, new_chat);
 
-    res.status(200).json({ chat_pin: pin });
+    res.status(200).json({ chat_pin: pin, user_id: user._id });
   } catch (error) {
     console.error("Error creating chat:", error);
     return respond_with_error_json(res, 500, { message: error.message });
@@ -439,7 +440,7 @@ module.exports = {
   create_chat_guest,
   create_chat_user,
   join_chat_guest,
-  join_chat_user
+  join_chat_user,
   join_chat,
   create_chat,
   generate_unique_pin,

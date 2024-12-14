@@ -1,15 +1,13 @@
 const { Router } = require("express");
 const path = require("path");
 const chatRouter = Router();
-const { subscribe_to_chat, join_chat, create_chat } = require(
+const { get_chat, subscribe_to_chat, join_chat, create_chat } = require(
   "../controllers/chatController",
 );
 const { create_message } = require("../controllers/message_controller.js");
 
 // Get a chat
-chatRouter.get("/:chat_id", (req, res) => {
-  res.sendFile(path.join(__dirname, "../../frontend/public/chat.html"));
-});
+chatRouter.get("/:chat_id", get_chat);
 
 // Establish a SSE connection
 chatRouter.get("/:chat_id/events", subscribe_to_chat);

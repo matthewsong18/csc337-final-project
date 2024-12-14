@@ -1,7 +1,8 @@
 const mongoose = require("mongoose");
 const { v4: uuidv4 } = require("uuid");
 const UserService = require("../services/UserService");
-const { Chat, Message, Poll } = require("../models/index");
+const { Chat, Message, Poll  } = require("../models/index");
+const path = require('path');
 
 let client_connections = {};
 
@@ -24,6 +25,21 @@ function update_clients_in_chat(new_update, chat_id) {
   });
 }
 
+// TO get a chat:
+// 1. Extract chat_id from the request.
+// 2. Validate chat_id
+// 3. If input is invalid, respond with 400 and JSON error data and redirect to error page
+// 4. Send chat page to user
+async function get_chat(request, response) {
+  try {
+    const chat_pin = extract_chat_id(request);
+    await validate_chat_pin(chat_pin);
+    response.sendFile(path.join(__dirname, "../../frontend/public/chat.html"));
+  } catch (error) {
+    respond_with_error_json(response, 400, { message: error.message }, true);
+  }
+}
+
 // TO subscribe to a chat:
 // 1. Extract chat_id from the request.
 // 2. Validate chat_id
@@ -34,16 +50,11 @@ function update_clients_in_chat(new_update, chat_id) {
 // 7. Convert raw chat_buffer into valid chunk before sending to client
 async function subscribe_to_chat(request, response) {
   try {
-    const chat_id = extract_chat_id(request);
-    await validate_chat_id(chat_id);
-    const client_id = track_client_connections(response, chat_id);
-    establish_server_sent_events_connection(
-      request,
-      response,
-      chat_id,
-      client_id,
-    );
-    const chat_buffer = await load_chat(chat_id, Date.now(), 20);
+    const chat_pin = extract_chat_id(request);
+    await validate_chat_pin(chat_pin);
+    const client_id = track_client_connections(response, chat_pin);
+    establish_server_sent_events_connection(request, response, chat_pin, client_id);
+    const chat_buffer = await load_chat(chat_pin, Date.now(), 20);
     const updated_data = stringtify_for_sse(chat_buffer);
     send_data_to_client(response, updated_data);
   } catch (error) {
@@ -86,8 +97,15 @@ async function validate_chat_existence(chat_id) {
   return true;
 }
 
-function respond_with_error_json(response, status_code, error_json) {
-  response.status(status_code).json(error_json);
+function respond_with_error_json (response, status_code, error_json, redirect_to_error_page = false) {
+  if (redirect_to_error_page) {
+    const error_message = encodeURIComponent(error_json.message || "An unexpected error occurred.");
+    const error_page_path = `/error.html?message=${error_message}`;
+
+    response.status(status_code).redirect(error_page_path);
+} else {
+    response.status(status_code).json(error_json);
+}
 }
 
 // TO establish sse connection:
@@ -146,15 +164,11 @@ function send_data_to_client(response, data) {
 // 4. Call load_poll_buffer to get initial poll buffer
 // 5. Sort messages and polls by timestamp
 // 6. Return the sorted chat buffer
-async function load_chat(chat_id, timestamp = Date.now(), buffer_size = 10) {
-  await validate_chat_id(chat_id);
+async function load_chat (chat_pin, timestamp=Date.now(), buffer_size=10) {
+  await validate_chat_pin(chat_pin);
   validate_timestamp(timestamp);
-  const chat = await Chat.findById(chat_id);
-  const messages = await load_message_buffer(
-    chat.messages,
-    timestamp,
-    buffer_size,
-  );
+  const chat = await Chat.findOne({ pin: chat_pin });
+  const messages = await load_message_buffer(chat.messages, timestamp, buffer_size);
   const polls = await load_poll_buffer(chat.polls, timestamp, buffer_size);
   return sort_by_timestamp(messages, polls, buffer_size);
 }
@@ -287,17 +301,15 @@ async function join_chat(req, res) {
 // 1. Validate chat_pin's format.
 // 2. Validate chat's existence
 // 3. Return true if valid, or return false if invalid.
-async function validate_chat_pin(chat_pin) {
-  if (!validate_pin_format(chat_pin)) throw new Error("Invalid chat pin");
-  if (!await Chat.findOne({ pin: chat_pin })) {
-    throw new Error("This chat doesn't exist");
-  }
+async function validate_chat_pin (chat_pin) {
+  if (!validate_pin_format(chat_pin)) throw new Error(`Invalid chat pin`);
+  if (!await Chat.findOne({ pin: chat_pin })) throw new Error("This chat doesn't exist");
 }
 
 function validate_pin_format(chat_pin) {
-  // Check length
-  if (chat_pin.length !== 8) return false;
-  // Ensure it only contains digits
+   // Check length
+  if (String(chat_pin).length !== 8) return false;
+   // Ensure it only contains digits
   if (!/^\d+$/.test(chat_pin)) return false;
   return true;
 }
@@ -358,6 +370,7 @@ async function generate_unique_pin() {
 }
 
 module.exports = {
+  get_chat,
   create_message,
   subscribe_to_chat,
   load_chat,
@@ -367,4 +380,5 @@ module.exports = {
   validate_timestamp_format,
   join_chat,
   create_chat,
-};
+  generate_unique_pin,
+}

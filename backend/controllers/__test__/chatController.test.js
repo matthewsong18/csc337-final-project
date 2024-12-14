@@ -11,6 +11,7 @@ const {
   load_poll_buffer,
   sort_by_timestamp,
   validate_timestamp_format,
+  generate_unique_pin,
 } = require("../chatController");
 const { subscribe_to_chat } = require("../chatController");
 
@@ -82,7 +83,7 @@ describe("chatController", () => {
   it("should return an array of objects of messages sorted by timestamp, buffer size", async () => {
     let message_ids = [];
     const user_1 = await UserService.createUser("Alice");
-    const user_2 = await User.create({});
+    const user_2 = await UserService.create_guest_user();
     for (let i = 0; i < 10; i++) {
       const message = await Message.create({
         author: i % 2 == 0 ? user_1._id : user_2._id,
@@ -122,7 +123,7 @@ describe("chatController", () => {
     let poll_ids = [];
     let poll_option_ids = [];
     const user_1 = await UserService.createUser("Alice");
-    const user_2 = await User.create({});
+    const user_2 = await UserService.create_guest_user();
     const user_3 = await UserService.createUser("Bob");
     const user_4 = await UserService.createUser("Charlie");
     for (let i = 0; i < 8; i++) {
@@ -230,23 +231,23 @@ describe("chatController", () => {
   });
 
   // check load chat with all functions combined
-  it("should throw an error for an invalid chat ID", async () => {
+  it("should throw an error for an invalid chat pin", async () => {
     let error;
     try {
-      const invalid_chat_id = "123"; // Not a valid ObjectId format
-      await load_chat(invalid_chat_id, Date().now, 10);
+        const invalid_chat_pin = "123"; // Not a valid pin format
+        await load_chat(invalid_chat_pin, Date().now, 10);
     } catch (err) {
       error = err;
     }
-    expect(error).toBeDefined();
-    expect(error.message).toBe("Invalid chat id");
+    expect(error).toBeDefined();    
+    expect(error.message).toBe("Invalid chat pin");
   });
 
   it("should throw an error for a non-existent chat", async () => {
     let error;
     try {
-      const valid_but_nonexistent_id = new mongoose.Types.ObjectId();
-      await load_chat(valid_but_nonexistent_id, Date().now);
+        const valid_but_nonexistent_pin = await generate_unique_pin();
+        await load_chat(valid_but_nonexistent_pin, Date().now);
     } catch (err) {
       error = err;
     }
@@ -257,15 +258,11 @@ describe("chatController", () => {
   it("should throw an error for an invalid timestamp format", async () => {
     let error;
     try {
-      const user = await User.create({});
-      const chat = await Chat.create({
-        title: "Test Chat",
-        messages: [],
-        polls: [],
-        users: [user],
-      });
-      const invalid_timestamp = "invalid-date";
-      await load_chat(chat._id, invalid_timestamp);
+        const user = await UserService.create_guest_user();
+        const pin = await generate_unique_pin();
+        const chat = await Chat.create({ title: "Test Chat", pin: pin, messages: [], polls: [], users: [user._id]});
+        const invalid_timestamp = "invalid-date";
+        await load_chat(chat.pin, invalid_timestamp);
     } catch (err) {
       error = err;
     }
@@ -276,16 +273,12 @@ describe("chatController", () => {
   it("should throw an error if the timestamp is in the future", async () => {
     let error;
     try {
-      const user = await User.create({});
-      const chat = await Chat.create({
-        title: "Test Chat",
-        messages: [],
-        polls: [],
-        users: [user],
-      });
-      let now = new Date();
-      let future = now.setDate(now.getDate() + 3); // Add 3 days
-      await load_chat(chat._id, future);
+        const user = await UserService.create_guest_user();
+        const pin = await generate_unique_pin();
+        const chat = await Chat.create({ title: "Test Chat", pin: pin, messages: [], polls: [], users: [user._id]});
+        let now = new Date();
+        let future = now.setDate(now.getDate() + 3); // Add 3 days
+        await load_chat(chat.pin, future);
     } catch (err) {
       error = err;
     }
@@ -294,14 +287,10 @@ describe("chatController", () => {
   });
 
   it("should return an empty array if no messages or polls exist in the chat", async () => {
-    const user = await User.create({});
-    const chat = await Chat.create({
-      title: "Empty Chat",
-      messages: [],
-      polls: [],
-      users: [user],
-    });
-    const result = await load_chat(chat._id, Date.now());
+    const user = await UserService.create_guest_user();
+    const pin = await generate_unique_pin();
+    const chat = await Chat.create({ title: "Empty Chat", pin: pin, messages: [], polls: [], users: [user._id] });
+    const result = await load_chat(chat.pin, Date.now());
     expect(result.length).toBe(0);
   });
 
@@ -330,16 +319,18 @@ describe("chatController", () => {
     });
 
     // Create chat
+    const pin = await generate_unique_pin();
     const chat = await Chat.create({
       title: "Test Chat",
+      pin: pin,
       messages: [message1._id, message2._id],
       polls: [poll._id],
-      users: [user],
+      users: [user._id],
     });
 
     // Call load_chat
-    const result = await load_chat(chat._id, Date.now());
-
+    const result = await load_chat(chat.pin, Date.now());
+    console.log(result);
     expect(result.length).toBe(3); // 2 messages + 1 poll
     expect(result[0].content).toBe("Message 1");
     expect(result[1].title).toBe("Poll 1");
@@ -374,13 +365,15 @@ describe("chatController", () => {
     });
 
     // Create chat
+    const pin = await generate_unique_pin();
     const chat = await Chat.create({
       title: "Test Chat",
+      pin: pin,
       messages: [message1._id, message2._id],
       polls: [poll._id],
-      users: [user],
+      users: [user._id],
     });
-    const foundChat = await Chat.findById(chat._id);
+    const foundChat = await Chat.findOne({ pin: chat.pin });
     console.log("Chat found in DB:", foundChat);
 
     // create a server
@@ -388,10 +381,11 @@ describe("chatController", () => {
     app.get(`/chat/:chat_id/events`, subscribe_to_chat);
     const server = app.listen(3009, "localhost", () => {
       console.log(`Achat app - listening on: http://localhost:3009`);
-      console.log(`/chat/${chat._id}/events`);
-    });
+      console.log(`/chat/${chat.pin}/events`);
+    })
+   
 
-    const req_url = `http://localhost:3009/chat/${chat._id}/events`;
+    const req_url = `http://localhost:3009/chat/${chat.pin}/events`;
     // Create an AbortController instance to close the request
     const controller = new AbortController();
     const signal = controller.signal;

@@ -260,7 +260,7 @@ describe("chatController", () => {
     try {
         const user = await UserService.create_guest_user();
         const pin = await generate_unique_pin();
-        const chat = await Chat.create({ title: "Test Chat", pin: pin, message: [], polls: [], users: [user]});
+        const chat = await Chat.create({ title: "Test Chat", pin: pin, messages: [], polls: [], users: [user]});
         const invalid_timestamp = "invalid-date";
         await load_chat(chat.pin, invalid_timestamp);
     } catch (err) {
@@ -275,7 +275,7 @@ describe("chatController", () => {
     try {
         const user = await UserService.create_guest_user();
         const pin = await generate_unique_pin();
-        const chat = await Chat.create({ title: "Test Chat", pin: pin, message: [], polls: [], users: [user]});
+        const chat = await Chat.create({ title: "Test Chat", pin: pin, messages: [], polls: [], users: [user]});
         let now = new Date();
         let future = now.setDate(now.getDate() + 3); // Add 3 days
         await load_chat(chat.pin, future);
@@ -289,7 +289,7 @@ describe("chatController", () => {
   it("should return an empty array if no messages or polls exist in the chat", async () => {
     const user = await UserService.create_guest_user();
     const pin = await generate_unique_pin();
-    const chat = await Chat.create({ title: "Empty Chat", pin: pin, message: [], polls: [], users: [user] });
+    const chat = await Chat.create({ title: "Empty Chat", pin: pin, messages: [], polls: [], users: [user] });
     const result = await load_chat(chat.pin, Date.now());
     expect(result.length).toBe(0);
   });
@@ -323,14 +323,14 @@ describe("chatController", () => {
     const chat = await Chat.create({
       title: "Test Chat",
       pin: pin,
-      message: [message1._id, message2._id],
+      messages: [message1._id, message2._id],
       polls: [poll._id],
       users: [user],
     });
 
     // Call load_chat
     const result = await load_chat(chat.pin, Date.now());
-
+    console.log(result);
     expect(result.length).toBe(3); // 2 messages + 1 poll
     expect(result[0].content).toBe("Message 1");
     expect(result[1].title).toBe("Poll 1");
@@ -369,7 +369,7 @@ describe("chatController", () => {
     const chat = await Chat.create({
       title: "Test Chat",
       pin: pin,
-      message: [message1._id, message2._id],
+      messages: [message1._id, message2._id],
       polls: [poll._id],
       users: [user],
     });

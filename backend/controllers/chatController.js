@@ -168,7 +168,7 @@ async function load_chat (chat_pin, timestamp=Date.now(), buffer_size=10) {
   await validate_chat_pin(chat_pin);
   validate_timestamp(timestamp);
   const chat = await Chat.findOne({ pin: chat_pin });
-  const messages = await load_message_buffer(chat.message, timestamp, buffer_size);
+  const messages = await load_message_buffer(chat.messages, timestamp, buffer_size);
   const polls = await load_poll_buffer(chat.polls, timestamp, buffer_size);
   return sort_by_timestamp(messages, polls, buffer_size);
 }

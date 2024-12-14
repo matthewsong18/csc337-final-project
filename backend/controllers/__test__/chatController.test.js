@@ -260,7 +260,7 @@ describe("chatController", () => {
     try {
         const user = await UserService.create_guest_user();
         const pin = await generate_unique_pin();
-        const chat = await Chat.create({ title: "Test Chat", pin: pin, messages: [], polls: [], users: [user]});
+        const chat = await Chat.create({ title: "Test Chat", pin: pin, messages: [], polls: [], users: [user._id]});
         const invalid_timestamp = "invalid-date";
         await load_chat(chat.pin, invalid_timestamp);
     } catch (err) {

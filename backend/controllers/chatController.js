@@ -1,7 +1,7 @@
 const mongoose = require("mongoose");
 const { v4: uuidv4 } = require("uuid");
 const UserService = require("../services/UserService");
-const { Chat, Message, Poll  } = require("../models/index");
+const { Chat, Message, Poll, User  } = require("../models/index");
 const { create_message } = require("./message_controller.js");
 const path = require('path');
 

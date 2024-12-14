@@ -454,6 +454,21 @@ async function generate_unique_pin() {
   throw new Error("Failed to generate unique PIN after multiple attempts");
 }
 
+async function get_user_info(req, res){
+  try {
+    const { user_id } = req.params; 
+    const user = await User.findById(user_id);
+
+    if (!user) {
+        return res.status(404).json({ error: "User not found" });
+    }
+    res.status(200).json(user);
+
+  } catch (error) {
+      console.error("Error fetching user:", error);
+      res.status(500).json({ error: "Internal server error" });
+  }
+}
 module.exports = {
   get_chat,
   message_post,
@@ -471,4 +486,5 @@ module.exports = {
   join_chat,
   create_chat,
   generate_unique_pin,
+  get_user_info,
 };

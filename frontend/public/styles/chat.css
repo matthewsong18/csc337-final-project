@@ -41,10 +41,19 @@ body {
     padding-top: 5px;
 }
 
-.help_button {
+#help_button {
+    position: fixed;
+    top: 15px;
+    right: 15px;
+}
+
+#profileButton {
     position: fixed;
     top: 15px;
     left: 15px;
+}
+
+.buttonHeader{
     height: 40px;
     min-height: 1vh;
     width: auto;
@@ -60,7 +69,7 @@ body {
     white-space: nowrap;
 }
 
-.help_button:hover {
+button:hover {
     transform: scale(1.1);
     background: linear-gradient(120deg, #1280f2, #f653df);
 }

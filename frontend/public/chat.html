@@ -9,13 +9,17 @@
 </head>
 
 <body>
+
     <div class="headerBox">
         <div id="chat_info">
             <div id="chatName">Anoynomous Chat</div>
             <div id="pinNumber">PIN</div>
         </div>
-        <button type="button" class="help_button" onclick="window.location.href='/help.html'">Help</button>
+        
+        <button type="button" class = "buttonHeader" id="help_button" onclick="window.location.href='/help.html'">Help</button>
         <!--  Add a button to go to profile page but dynamically only for users with account-->
+        <button type="button" class = "buttonHeader" id="profileButton" style="display: none;">Profile</button>
+
     </div>
     <div class="texting_area">
 

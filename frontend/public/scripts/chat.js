@@ -427,3 +427,49 @@ async function POST_message(message_content) {
     },
   );
 }
+
+async function show_profile_button(){
+
+  try {
+    const response = await fetch(
+      `/chat/${user_id}/getuser/info`,
+      {
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json",
+        },
+      },
+    );
+
+    if (response.ok) {
+      console.log("Good response");
+      const data = await response.json();
+      console.log("Data received");
+
+      if (data.has_account){
+          // get the username
+          const username = data.user_name;
+          document.getElementById("profileButton").style.display = "inline";
+          document.getElementById("profileButton").onclick = () => {
+            window.location.href = `/profile/${username}`;
+        };
+        
+        /* Converts to a home button for guest users */
+        } else{
+          document.getElementById("profileButton").textContent = "Home";
+          document.getElementById("profileButton").style.display = "inline";
+          document.getElementById("profileButton").onclick = () => {
+            window.location.href = `../../home.html`;
+        };
+        }
+      }
+
+    } catch (error) {
+        console.error("Error getting user info:", error);
+        alert("An error occurred. Please try again.");
+    }
+}
+
+window.onload = () => {
+	show_profile_button();
+};

@@ -61,8 +61,8 @@ const extract_user_id = (request) => {
 // 1. Extract message from the request body or query parameters.
 // 2. Return the message.
 const extract_message = (request) => {
-  const { message_content } = request.params;
-  return decodeURIComponent(message_content);
+  const { message } = request.body;
+  return message;
 };
 
 // TO validate the inputs:

@@ -406,24 +406,23 @@ initializePage();
 // 3. We should POST the message to the server
 async function send_message() {
   const message_content = document.getElementById("message").value;
-  const encoded_message = encodeURIComponent(message_content);
-
   console.log(user_id);
-  const response = await POST_message(encoded_message);
+  const response = await POST_message(message_content);
   if (response.status != 201) {
     alert("Message failed to send.");
   }
   document.getElementById("message").value = "";
 }
 
-async function POST_message(encoded_message) {
+async function POST_message(message_content) {
   return await fetch(
-    `/chat/${chat_pin}/${user_id}/${encoded_message}`,
+    `/chat/message/${chat_pin}/${user_id}`,
     {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
       },
+      body: JSON.stringify({ message: message_content }),
     },
   );
 }

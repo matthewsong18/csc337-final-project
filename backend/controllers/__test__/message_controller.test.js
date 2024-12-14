@@ -94,9 +94,10 @@ describe("message_controller", () => {
   // Testing respond_with_error_json
 
   it("should return an error json when something goes wrong", async () => {
-    const response = await request(app).post(
-      "/chat/1231541/asdfafds/asfasdf",
-    );
+    const response = await request(app)
+      .post("/chat/message/1231541/asdfafds")
+      .send({ message: "nonsense message" })
+      .set("Content-Type", "application/json");
 
     expect(response.status).toBe(400);
     expect(response.body).toHaveProperty("chat_pin_status", false);
@@ -110,9 +111,10 @@ describe("message_controller", () => {
     const chat = await Chat.create({ users: [user._id], pin: pin });
     const message_string = "A test string message";
 
-    const response = await request(app).post(
-      `/chat/${chat.pin}/${user._id}/${message_string}`,
-    );
+    const response = await request(app)
+      .post(`/chat/message/${chat.pin}/${user._id}`)
+      .send({message: message_string})
+      .set("Content-Type", "application/json");
     try {
       expect(response.status).toBe(201);
       expect(response.body).toHaveProperty(
@@ -131,11 +133,12 @@ describe("message_controller", () => {
     const pin = await generate_unique_pin();
     const chat = await Chat.create({ users: [user._id], pin: pin });
     const message_string = "@$&@#";
-    const encoded_string = encodeURIComponent(message_string);
+    // const encoded_string = encodeURIComponent(message_string);
 
-    const response = await request(app).post(
-      `/chat/${chat.pin}/${user._id}/${encoded_string}`,
-    );
+    const response = await request(app)
+    .post(`/chat/message/${chat.pin}/${user._id}`)
+    .send({message: message_string})
+    .set("Content-Type", "application/json");
 
     try {
       expect(response.status).toBe(201);

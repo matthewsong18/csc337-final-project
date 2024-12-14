@@ -37,7 +37,7 @@ chatRouter.post("/create/guest", create_chat_guest);
 chatRouter.post("/create/:username/:chat_name", create_chat_user);
 
 // Post a message to a chat
-chatRouter.post("/:chat_pin/:user_id/:message_content", message_post);
+chatRouter.post("/message/:chat_pin/:user_id", message_post);
 
 // Set poll title
 chatRouter.post("/:chat_id/:poll_title", (req, res) => {

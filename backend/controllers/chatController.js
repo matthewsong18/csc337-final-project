@@ -244,8 +244,9 @@ async function load_message_buffer(message_ids, timestamp, buffer_size) {
   if (is_empty_array(message_ids)) return [];
   const messages = await Message.find({
     _id: { $in: message_ids },
-    createdAt: { $lte: new Date(timestamp) }, // Filter messages before the given timestamp
+    createdAt: { $lte: new Date(timestamp) }, // Filter messages after the given timestamp
   })
+    .sort({ createdAt: -1 }) // latest -> newest
     .limit(buffer_size)
     .populate("author", "user_name has_account")
     .select("author content createdAt");
@@ -270,6 +271,7 @@ async function load_poll_buffer(poll_ids, timestamp, buffer_size) {
     _id: { $in: poll_ids },
     createdAt: { $lte: new Date(timestamp) }, // Filter polls before the given timestamp
   })
+    .sort({ createdAt: -1 }) // latest -> oldest
     .limit(buffer_size)
     .populate("options", "title vote_count")
     .populate("users_voted", "user_name")
@@ -284,7 +286,7 @@ async function load_poll_buffer(poll_ids, timestamp, buffer_size) {
 function sort_by_timestamp(messages, polls, buffer_size) {
   const chat_history = [...messages, ...polls];
   if (is_empty_array(chat_history)) return chat_history;
-  // Sort by createdAt in ascending order (latest -> oldest)
+  // Sort by createdAt in ascending order (oldest -> latest)
   chat_history.sort((a, b) => new Date(a.createdAt) - new Date(b.createdAt));
   if (buffer_size >= chat_history.length) return chat_history;
   return chat_history.slice(buffer_size);

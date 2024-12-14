@@ -8,6 +8,8 @@ const { get_chat, subscribe_to_chat,
     create_chat_guest, create_chat_user
     } = require("../controllers/chatController");
 
+const {create_poll, } = require("../controllers/pollController.js");
+
 const { create_message } = require("../controllers/message_controller.js");
 
 // Get a chat
@@ -36,10 +38,12 @@ chatRouter.post("/create/:username/:chat_name", create_chat_user);
 // Post a message to a chat
 chatRouter.post("/:chat_id/:user_id/:message_content", create_message);
 
-// Set poll title
-chatRouter.post("/:chat_id/:poll_title", (req, res) => {
-  res.send("user set a poll title");
-});
+// // Set poll title
+// chatRouter.post("/:chat_id/:poll_title", (req, res) => {
+//   res.send("user set a poll title");
+// });
+
+chatRouter.post("/:chat_id/poll", create_poll);
 
 // Create a poll option
 chatRouter.post("/:chat_id/poll/:poll_id/:poll_option", (req, res) => {
@@ -57,3 +61,4 @@ chatRouter.get("*", (req, res) => {
 });
 
 module.exports = chatRouter;
+

@@ -340,12 +340,12 @@ function gatherPollOptions() {
 }
 
 async function sendPollData(title, options) {
-    return fetch(`/chat/${chatId}/poll`, {
+    return await fetch(`/chat/${chatId}/poll`, {
         method: "POST",
         headers: {
             "Content-Type": "application/json",
         },
-        body: JSON.stringify({ pollTitle: title, options }),
+        body: JSON.stringify({ poll_title: title, poll_options: options }),
     });
 }
 

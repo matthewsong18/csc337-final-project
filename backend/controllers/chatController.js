@@ -1,13 +1,13 @@
 const mongoose = require("mongoose");
-const { v4: uuidv4 } = require('uuid');
+const { v4: uuidv4 } = require("uuid");
 const UserService = require("../services/UserService");
-const { Chat, Message, Poll  } = require("../models/index");
+const { Chat, Message, Poll } = require("../models/index");
 
 let client_connections = {};
 
 // Implemented by Matthew
 // Include update_clients_in_chat before the function's end
-function create_message (request, response) {
+function create_message(request, response) {
   const { new_message, chat_id } = request.params;
   update_clients_in_chat(new_message, chat_id);
   response.send("User post message");
@@ -15,11 +15,11 @@ function create_message (request, response) {
 
 // TO update all clients in a chat:
 // 1. Extract a list of client objects in that chat
-// 2. Send new message/poll to all clients connected in that chat 
-function update_clients_in_chat (new_update, chat_id) {
+// 2. Send new message/poll to all clients connected in that chat
+function update_clients_in_chat(new_update, chat_id) {
   let clients = client_connections[chat_id];
-  clients.forEach(client => {
-    const updated_data = stringtify_for_sse(new_update)
+  clients.forEach((client) => {
+    const updated_data = stringtify_for_sse(new_update);
     send_data_to_client(client.response, updated_data);
   });
 }
@@ -32,17 +32,22 @@ function update_clients_in_chat (new_update, chat_id) {
 // 5. Track client connection (track_client_connections)
 // 6. Call load_chat to get initial chat buffer
 // 7. Convert raw chat_buffer into valid chunk before sending to client
-async function subscribe_to_chat (request, response) {
+async function subscribe_to_chat(request, response) {
   try {
     const chat_id = extract_chat_id(request);
     await validate_chat_id(chat_id);
     const client_id = track_client_connections(response, chat_id);
-    establish_server_sent_events_connection(request, response, chat_id, client_id);
+    establish_server_sent_events_connection(
+      request,
+      response,
+      chat_id,
+      client_id,
+    );
     const chat_buffer = await load_chat(chat_id, Date.now(), 20);
     const updated_data = stringtify_for_sse(chat_buffer);
     send_data_to_client(response, updated_data);
   } catch (error) {
-    respond_with_error_json(response, 400, {message: error.message});
+    respond_with_error_json(response, 400, { message: error.message });
     throw new Error(`${error.message}`);
   }
 }
@@ -50,7 +55,7 @@ async function subscribe_to_chat (request, response) {
 // TO extract the chat_id:
 // 1. Extract chat_id from the request body or query parameters.
 // 2. Return the chat_id.
-function extract_chat_id (request) {
+function extract_chat_id(request) {
   return request.params.chat_id;
 }
 
@@ -58,45 +63,54 @@ function extract_chat_id (request) {
 // 1. Validate chat_id's format.
 // 2. Validate chat's existence
 // 3. Return true if valid, or return false if invalid.
-async function validate_chat_id (chat_id) {
+async function validate_chat_id(chat_id) {
   if (!validate_id_format(chat_id)) throw new Error("Invalid chat id");
-  if (!await validate_chat_existence(chat_id)) throw new Error("This chat doesn't exist");
+  if (!await validate_chat_existence(chat_id)) {
+    throw new Error("This chat doesn't exist");
+  }
 }
 
 // TO validate chat_id format:
 // 1. Use mongoose.Types.ObjectId.isValid(chat_id);
 // 2. Return true if valid and false otherwise
-function validate_id_format (id) {
+function validate_id_format(id) {
   return mongoose.Types.ObjectId.isValid(id);
 }
 
 // TO validate chat_id existence:
 // 1. Query the database to confirm that chat_id refers to an existing chat.
 // 2. Return true if exists and false otherwise
-async function validate_chat_existence (chat_id) {
+async function validate_chat_existence(chat_id) {
   const existing_chat = await Chat.findById(chat_id);
   if (!existing_chat || existing_chat === null) return false;
   return true;
 }
 
-function respond_with_error_json (response, status_code, error_json) {
+function respond_with_error_json(response, status_code, error_json) {
   response.status(status_code).json(error_json);
 }
 
 // TO establish sse connection:
 // 1. Write correct SSE header
 // 2. Handle the closing of client request
-function establish_server_sent_events_connection (request, response, chat_id, client_id) {
+function establish_server_sent_events_connection(
+  request,
+  response,
+  chat_id,
+  client_id,
+) {
   // Set headers
-  response.setHeader('Content-Type', 'text/event-stream');
-  response.setHeader('Connection', 'keep-alive');
-  response.setHeader('Cache-Control', 'no-cache');
+  response.setHeader("Content-Type", "text/event-stream");
+  response.setHeader("Connection", "keep-alive");
+  response.setHeader("Cache-Control", "no-cache");
   // Close connection when client closes request
   request.on("close", () => {
     // Remove the client from the chat_id's client_connections
-    client_connections[chat_id] = client_connections[chat_id].filter(client => client.id !== client_id);
+    client_connections[chat_id] = client_connections[chat_id].filter((client) =>
+      client.id !== client_id
+    );
     response.end(); // close the connection
-})
+  });
 }
 
 // TO track client connection:
@@ -104,24 +118,24 @@ function establish_server_sent_events_connection (request, response, chat_id, cl
 // 2. If not create a new one
 // 3. Use a uuid for each client
 // 4. Store the client object in the chat array
-function track_client_connections (response, chat_id) {
+function track_client_connections(response, chat_id) {
   // Check if the chat is present in client_connections
   if (!client_connections[chat_id]) {
-      client_connections[chat_id] = [];
+    client_connections[chat_id] = [];
   }
   // Use a unique id for each client
-  const client_id = uuidv4(); 
+  const client_id = uuidv4();
   // Add the client to the client_connections object
   client_connections[chat_id].push({
-      id: client_id,
-      response
+    id: client_id,
+    response,
   });
   return client_id;
 }
 
 // TO send data to client:
 // 1. Use res.write(data);
-function send_data_to_client (response, data) {
+function send_data_to_client(response, data) {
   response.write(data);
 }
 
@@ -132,23 +146,30 @@ function send_data_to_client (response, data) {
 // 4. Call load_poll_buffer to get initial poll buffer
 // 5. Sort messages and polls by timestamp
 // 6. Return the sorted chat buffer
-async function load_chat (chat_id, timestamp=Date.now(), buffer_size=10) {
+async function load_chat(chat_id, timestamp = Date.now(), buffer_size = 10) {
   await validate_chat_id(chat_id);
   validate_timestamp(timestamp);
   const chat = await Chat.findById(chat_id);
-  const messages = await load_message_buffer(chat.message, timestamp, buffer_size);
+  const messages = await load_message_buffer(
+    chat.messages,
+    timestamp,
+    buffer_size,
+  );
   const polls = await load_poll_buffer(chat.polls, timestamp, buffer_size);
   return sort_by_timestamp(messages, polls, buffer_size);
-  
 }
 
 // TO validate timestamp:
 // 1. Validate timestamp's format
 // 2. Validate if timestamp is in the future
 // 3. Return true if valid and false otherwise
-function validate_timestamp (timestamp) {
-  if (!validate_timestamp_format(timestamp)) throw new Error("Timestamp's format is invalid");
-  if (!validate_if_timestamp_is_future(timestamp)) throw new Error("Timestamp requested is in the future");
+function validate_timestamp(timestamp) {
+  if (!validate_timestamp_format(timestamp)) {
+    throw new Error("Timestamp's format is invalid");
+  }
+  if (!validate_if_timestamp_is_future(timestamp)) {
+    throw new Error("Timestamp requested is in the future");
+  }
 }
 
 // TO check for valid timestamp format
@@ -156,7 +177,7 @@ function validate_timestamp (timestamp) {
 // 2. Handle validation when timestamp is of type Date
 // 3. Validate if timestamp can be converted to a Date object
 // 4. Return true if valid and false otherwise
-function validate_timestamp_format (timestamp) {
+function validate_timestamp_format(timestamp) {
   if (timestamp === null) {
     return false;
   }
@@ -179,15 +200,15 @@ function validate_if_timestamp_is_future(timestamp) {
 // 1. Validate the id array length
 // 2. Get desired message data by querying Message schema
 // 3. Return that message buffer
-async function load_message_buffer (message_ids, timestamp, buffer_size) {
+async function load_message_buffer(message_ids, timestamp, buffer_size) {
   if (is_empty_array(message_ids)) return [];
   const messages = await Message.find({
     _id: { $in: message_ids },
     createdAt: { $lte: new Date(timestamp) }, // Filter messages before the given timestamp
   })
-  .limit(buffer_size)
-  .populate("author", "user_name has_account")
-  .select("author content createdAt")
+    .limit(buffer_size)
+    .populate("author", "user_name has_account")
+    .select("author content createdAt");
   return messages;
 }
 
@@ -195,7 +216,7 @@ async function load_message_buffer (message_ids, timestamp, buffer_size) {
 // 1. Check the length of array
 // 2. Return true if it's 0
 // 3. Return false otherwise
-function is_empty_array (array_input) {
+function is_empty_array(array_input) {
   return array_input.length === 0;
 }
 
@@ -203,16 +224,16 @@ function is_empty_array (array_input) {
 // 1. Validate id array length
 // 2. Get desired poll data by querying Poll schema
 // 3. Return that poll buffer
-async function load_poll_buffer (poll_ids, timestamp, buffer_size) {
+async function load_poll_buffer(poll_ids, timestamp, buffer_size) {
   if (is_empty_array(poll_ids)) return [];
   const polls = await Poll.find({
-    _id: { $in: poll_ids},
+    _id: { $in: poll_ids },
     createdAt: { $lte: new Date(timestamp) }, // Filter polls before the given timestamp
   })
-  .limit(buffer_size)
-  .populate("options", "title vote_count")
-  .populate("users_voted", "user_name")
-  .select("title options users_voted createdAt") // no need to get chat._id
+    .limit(buffer_size)
+    .populate("options", "title vote_count")
+    .populate("users_voted", "user_name")
+    .select("title options users_voted createdAt"); // no need to get chat._id
   return polls;
 }
 
@@ -220,11 +241,11 @@ async function load_poll_buffer (poll_ids, timestamp, buffer_size) {
 // 1. Validate the length of messages and polls arrays
 // 2. Sort them using built-in sort() method using createdAt property
 // 3. Return the sorted chat buffer
-function sort_by_timestamp (messages, polls, buffer_size) {
+function sort_by_timestamp(messages, polls, buffer_size) {
   const chat_history = [...messages, ...polls];
   if (is_empty_array(chat_history)) return chat_history;
   // Sort by createdAt in ascending order (latest -> oldest)
-  chat_history.sort((a, b) => new Date(a.createdAt) - new Date(b.createdAt)); 
+  chat_history.sort((a, b) => new Date(a.createdAt) - new Date(b.createdAt));
   if (buffer_size >= chat_history.length) return chat_history;
   return chat_history.slice(buffer_size);
 }
@@ -240,7 +261,7 @@ function stringtify_for_sse(raw_data) {
 // 4. If not found, assume it's a guest user and create a new User document
 // 5. Repond accordingly to user
 async function join_chat(req, res) {
-	console.log("GET request received");
+  console.log("GET request received");
   const chat_pin = req.params.chat_id;
   try {
     console.log("Attempting to find chat");
@@ -255,7 +276,10 @@ async function join_chat(req, res) {
     res.status(200).json({ exists: true });
   } catch (error) {
     console.error("Error checking chatroom existence:", error);
-    respond_with_error_json(res, 400, {exists: false, message: error.message});
+    respond_with_error_json(res, 400, {
+      exists: false,
+      message: error.message,
+    });
   }
 }
 
@@ -263,15 +287,17 @@ async function join_chat(req, res) {
 // 1. Validate chat_pin's format.
 // 2. Validate chat's existence
 // 3. Return true if valid, or return false if invalid.
-async function validate_chat_pin (chat_pin) {
+async function validate_chat_pin(chat_pin) {
   if (!validate_pin_format(chat_pin)) throw new Error("Invalid chat pin");
-  if (!await Chat.findOne({ pin: chat_pin })) throw new Error("This chat doesn't exist");
+  if (!await Chat.findOne({ pin: chat_pin })) {
+    throw new Error("This chat doesn't exist");
+  }
 }
 
 function validate_pin_format(chat_pin) {
-   // Check length
+  // Check length
   if (chat_pin.length !== 8) return false;
-   // Ensure it only contains digits
+  // Ensure it only contains digits
   if (!/^\d+$/.test(chat_pin)) return false;
   return true;
 }
@@ -282,11 +308,11 @@ function validate_pin_format(chat_pin) {
 // 3. If there's an id found, use it to link user and chat
 // 4. If not found, assume it's a guest user and create a new User document
 // 5. Respond accordingly to user
-async function create_chat (req, res) {
+async function create_chat(req, res) {
   try {
     console.log("POST request recieved");
-    const pin = await generate_unique_pin();  // Generate a random PIN
-    const chat_name = "Anonymous Chat";  // Set a default chat name
+    const pin = await generate_unique_pin(); // Generate a random PIN
+    const chat_name = "Anonymous Chat"; // Set a default chat name
     console.log("Attempting to create new Chat");
 
     // Before we have cookie, assume that guest user create chat
@@ -296,7 +322,7 @@ async function create_chat (req, res) {
     const new_chat = Chat.create({
       name: chat_name,
       pin: pin,
-      users: [new_user._id],  // Only guest user initially
+      users: [new_user._id], // Only guest user initially
       message: [], // No messages initially
     });
     // Link chat to user
@@ -305,7 +331,7 @@ async function create_chat (req, res) {
     res.status(200).json({ chat_pin: pin });
   } catch (error) {
     console.error("Error creating chat:", error);
-    return respond_with_error_json(res, 500, {message: error.message});
+    return respond_with_error_json(res, 500, { message: error.message });
   }
 }
 
@@ -337,8 +363,8 @@ module.exports = {
   load_chat,
   load_message_buffer,
   load_poll_buffer,
-  sort_by_timestamp, 
+  sort_by_timestamp,
   validate_timestamp_format,
   join_chat,
   create_chat,
-}
+};

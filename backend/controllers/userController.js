@@ -56,7 +56,7 @@ async function get_chat_history(req, res) {
       }
 
       const chatDocuments = await Chat.find({ users: user._id });
-      res.status(200).json(chatDocuments);
+      res.status(200).json({chats: chatDocuments, user_id: user._id});
 
   } catch (error) {
 

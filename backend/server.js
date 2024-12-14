@@ -11,7 +11,7 @@ function run_server(DATABASE_URL, PORT) {
 function start_database_connection(DATABASE_URL) {
   mongoose.connect(DATABASE_URL)
     .then(() => {
-      console.log("Connected to MongoDB on localhost");
+      console.log("Connected to MongoDB on 127.0.0.1");
     })
     .catch((err) => {
       console.log("Error connecting to MongoDB:", err);
@@ -19,7 +19,7 @@ function start_database_connection(DATABASE_URL) {
 }
 
 function start_listening(PORT) {
-  app.listen(PORT, () => {
+  app.listen(PORT, "127.0.0.1", () => {
     console.log(`Achat app - listening on: http://127.0.0.1:${PORT}`);
   });
 }

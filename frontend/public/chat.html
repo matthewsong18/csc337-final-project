@@ -8,37 +8,53 @@
 </head>
 <body>
 	<div class="headerBox">
-		<span id="chatName" contenteditable="true">Chat Name</span>
-		<br>
-		<span id="pinNumber">PIN</span>
-		<input type="button" class="helpButton" id="button" name="button" value="Help" onclick="window.location.href='/help.html'">
-	</div>
-    <div>
-		<input type="text" class="chatTextBox" placeholder="Got something interesting to say?">
-	</div>
-	<div>
-		<input type="button" class="chatButton" value="Send" onclick="">
-		<input type="button" class="pollButton" value="Poll" onclick="createPollForm()">
-	</div>
-	
-	<div id="pollFormContainer" class="modal" style="display: none;">
-    <div class="modal-content">
-        <span class="close-button" onclick="closePollForm()">×</span>
-        <h2>Create a Poll</h2>
-        <form id="pollForm">
-            <label for="pollTitle">Poll Title:</label>
-            <input type="text" id="pollTitle" name="pollTitle" required><br><br>
-            <label for="pollOption1">Option 1:</label>
-            <input type="text" id="pollOption1" name="pollOption1" required><br><br>
-            <label for="pollOption2">Option 2:</label>
-            <input type="text" id="pollOption2" name="pollOption2" required><br><br>
-            <div id="additionalOptions"></div>
-            <button type="button" id="addOptionButton">Add Option</button><br><br>
-            <button type="submit">Submit</button>
-        </form>
+        <div id="chat_info">
+            <div id="chatName">Anoynomous Chat</div>
+            <div id="pinNumber">PIN</div>
+        </div>
+        <button type="button" class="help_button" onclick="window.location.href='/help.html'">Help</button>
+        <!--  Add a button to go to profile page but dynamically only for users with account-->
     </div>
-</div>
-	
+    <div class="texting_area">
+
+    </div>
+    <div class="input_area">
+        <div>
+            <textarea class="chatTextBox" placeholder="Enter your message here..."></textarea>
+        </div>
+        <div>
+            <input type="button" class="chatButton" value="Send" onclick="">
+            <input type="button" class="pollButton" value="Poll" onclick="openPollForm()">
+        </div>
+        
+        <div id="pollFormContainer" class="modal">
+            <div class="modal-content">
+                <span class="close-button" onclick="closePollForm()">×</span>
+                <h2>Create a Poll</h2>
+                <form id="pollForm">
+                    <label for="pollTitle">Poll Title:</label>
+                    <div>
+                        <input type="text" class="poll_option_title" id="pollTitle" name="pollTitle" placeholder="What question do you want to ask?" required>
+                    </div>
+                    <label for="pollOption1">Options:</label>
+                    <div id="additionalOptions">
+                        <div class="optionItem">
+                            <input type="text" class="poll_option_title" id="pollOption1" name="pollOption1" placeholder="Type your answer" required>
+                            <button type="button" class="deleteOptionButton">Delete</button>
+                        </div>
+                        <div class="optionItem">
+                            <input type="text" class="poll_option_title" id="pollOption2" name="pollOption2" placeholder="Type your answer" required>
+                            <button type="button" class="deleteOptionButton">Delete</button>
+                        </div>
+                    </div>
+                    <div>
+                        <button type="button" id="addOptionButton">Add Option</button>
+                        <button type="submit">Submit</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
 	<script src="/scripts/chat.js"></script>
 </body>
 </html>

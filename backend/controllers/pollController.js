@@ -30,8 +30,7 @@ async function create_poll(req, res) {
 
         // Respond with the saved poll
         console.log(JSON.stringify(savedPoll));
-        res.status(201);
-        return (savedPoll);
+        res.status(200).json(savedPoll);
 
     } catch (error) {
         console.error("Error creating poll:", error);

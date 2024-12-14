@@ -30,6 +30,7 @@ function displayChatPin() {
 }
 
 function loadChat() {
+	console.log("Loading chat");
     event_source = new EventSource(`http://localhost:3000/chat/${chatId}/events`);
     event_source.addEventListener("message", (event) => {
         console.log("listening for update");
@@ -39,11 +40,20 @@ function loadChat() {
         if (Array.isArray(chat_data)) populateChat(chat_data);
         else renderChatElement(chat_data);
     });
+	console.log("Chat loaded");
+}
+
+function sendMessage() {
+	console.log("Send button pressed");
+	contents = document.getElementById("chatText");
+	renderChatElement(contents);
 }
 
 function renderChatElement(item) {
+	console.log("Rendering chat");
     if (item.options) renderPoll(item);
     else if (item.content) renderMessage(item);
+	loadChat();
     // Scroll to the bottom of the chat container
     autoScroll();
 }
@@ -125,13 +135,19 @@ function formatTimestamp(timestamp) {
 
 
 function createPollContent(pollData) {
-    // Destructure pollData
     const { title, options, users_voted } = pollData;
+
+    // Check if options is an array and not empty
+    if (!Array.isArray(options) || options.length === 0) {
+        console.error("Invalid or empty options:", options);
+        return;  // Prevent further processing if options is invalid
+    }
 
     // Create the main poll container
     const pollContent = document.createElement("div");
     pollContent.classList.add("poll_content");
     const pollHeader = createPollHeader(title);
+	console.log("Options:", options); // Log options to check if it's valid
     const pollOptionsForm = createPollOptionsForm(options);
     const pollFooter = createPollFooter(users_voted);
     pollContent.appendChild(pollHeader);
@@ -153,6 +169,12 @@ function createPollHeader(title) {
 }
 
 function createPollOptionsForm(options) {
+    // Check if options is a valid array
+    if (!Array.isArray(options)) {
+        console.error("Invalid options array:", options);
+        return;
+    }
+
     // Create the poll options form
     const pollOptionsForm = document.createElement("form");
     pollOptionsForm.classList.add("poll_options");
@@ -353,6 +375,7 @@ function handlePollResponse(response) {
     if (response.ok) {
         alert("Poll created successfully!");
         closePollForm();
+		renderPoll(response);
     } else {
         alert("Failed to create poll. Please try again.");
     }

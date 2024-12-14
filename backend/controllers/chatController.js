@@ -427,6 +427,28 @@ async function generate_unique_pin() {
   throw new Error("Failed to generate unique PIN after multiple attempts");
 }
 
+function generateUniquePollId() {
+	return 5;
+}
+
+async function new_poll(request, response) {
+	console.log("Create poll request recieved", request);
+    const { pollTitle, options } = request.body;
+	console.log("Body created");
+    const pollId = generateUniquePollId();
+	console.log("Generated ID: ", pollId);
+    const poll = {
+        poll_id: pollId,
+        pollTitle: pollTitle,
+        options: options.map(option => ({ title: option, vote_count: 0 })),
+        users_voted: []
+    };
+
+    //savePollToChat(request.params.chat_id, poll);
+
+    response.status(201).json(poll);
+}
+
 module.exports = {
   get_chat,
   create_message,
@@ -436,7 +458,7 @@ module.exports = {
   load_poll_buffer,
   sort_by_timestamp,
   validate_timestamp_format,
-  
+  new_poll,
   create_chat_guest,
   create_chat_user,
   join_chat_guest,

@@ -43,12 +43,6 @@ function loadChat() {
 	console.log("Chat loaded");
 }
 
-function sendMessage() {
-	console.log("Send button pressed");
-	contents = document.getElementById("chatText");
-	renderChatElement(contents);
-}
-
 function renderChatElement(item) {
 	console.log("Rendering chat");
     if (item.options) renderPoll(item);
@@ -77,10 +71,10 @@ function populateChat(initial_chat) {
 
 // Render a poll
 function renderPoll(poll) {
-    console.log("render poll");
+    console.log("render poll: ", poll);
     const container = createContainer();
     const senderInfo = createSenderInfo("Bob", poll.createdAt);
-    const pollContent = createPollContent(poll);
+    const pollContent = createPollContent(poll);  // Poll data is passed here
     container.append(senderInfo, pollContent);
     textingArea.appendChild(container);
 }
@@ -345,7 +339,15 @@ async function submitPoll(event) {
 
     try {
         const response = await sendPollData(pollTitle, options);
-        handlePollResponse(response);
+		console.log("Response recieved: ", response);
+        
+        // Check if the response is OK (status 200-299)
+        if (response.ok) {
+            const pollData = await response.json();
+            handlePollResponse(pollData);
+        } else {
+            throw new Error('Failed to create poll');
+        }
     } catch (error) {
         console.error("Error creating poll:", error);
         alert("An error occurred. Please try again.");
@@ -362,6 +364,11 @@ function gatherPollOptions() {
 }
 
 async function sendPollData(title, options) {
+	console.log("Sending poll data");
+	console.log("Chat ID: ", chatId);
+	console.log("Title: ", title);
+	console.log("options: ", options);
+	console.log(JSON.stringify({ pollTitle: title, options}));
     return fetch(`/chat/${chatId}/poll`, {
         method: "POST",
         headers: {
@@ -371,11 +378,11 @@ async function sendPollData(title, options) {
     });
 }
 
-function handlePollResponse(response) {
-    if (response.ok) {
+function handlePollResponse(pollData) {
+    if (pollData) {
         alert("Poll created successfully!");
         closePollForm();
-		renderPoll(response);
+        renderPoll(pollData);  // Now passing the poll data to renderPoll
     } else {
         alert("Failed to create poll. Please try again.");
     }

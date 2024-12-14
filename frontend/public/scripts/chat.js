@@ -405,7 +405,7 @@ async function send_message() {
 
   console.log(user_id);
   const response = await POST_message(encoded_message);
-  if (response.status != 200) {
+  if (response.status != 201) {
     alert("Message failed to send.");
   }
 }

@@ -3,10 +3,14 @@ const path = require("path");
 
 const chatRouter = Router();
 
-const { get_chat, subscribe_to_chat, 
-    join_chat_guest, join_chat_user, 
-    create_chat_guest, create_chat_user
-    } = require("../controllers/chatController");
+const {
+  get_chat,
+  subscribe_to_chat,
+  join_chat_guest,
+  join_chat_user,
+  create_chat_guest,
+  create_chat_user,
+} = require("../controllers/chatController");
 
 const { create_message } = require("../controllers/message_controller.js");
 
@@ -34,7 +38,7 @@ chatRouter.post("/create/guest", create_chat_guest);
 chatRouter.post("/create/:username/:chat_name", create_chat_user);
 
 // Post a message to a chat
-chatRouter.post("/:chat_id/:user_id/:message_content", create_message);
+chatRouter.post("/:chat_pin/:user_id/:message_content", create_message);
 
 // Set poll title
 chatRouter.post("/:chat_id/:poll_title", (req, res) => {

@@ -14,18 +14,19 @@ const Message = require("../models/Message.js");
 //    the chat.
 const create_message = async (request, response) => {
   try {
-    const chat_id = extract_chat_id(request);
+    const chat_pin = extract_chat_id(request);
     const user_id = extract_user_id(request);
     const message = extract_message(request);
 
-    const input_status = await validate_inputs(chat_id, user_id, message);
+    const input_status = await validate_inputs(chat_pin, user_id, message);
     if (input_status.status == 400) {
       respond_with_error_json(response, input_status);
       return;
     }
 
+    const chat = await Chat.findOne({ pin: chat_pin });
     const message_id = await save_message(message, user_id);
-    await add_message_to_chat(message_id, chat_id);
+    await add_message_to_chat(message_id, chat._id);
     response.status(201).json({
       status: 201,
       message: `${message}`,
@@ -42,8 +43,8 @@ const create_message = async (request, response) => {
 // 1. Extract chat_id from the request body or query parameters.
 // 2. Return the chat_id.
 const extract_chat_id = (request) => {
-  const { chat_id } = request.params;
-  return chat_id;
+  const { chat_pin } = request.params;
+  return chat_pin;
 };
 
 // TO extract the user_id:
@@ -67,14 +68,14 @@ const extract_message = (request) => {
 // 2. Validate user_id.
 // 3. Validate message.
 // 4. Return true if both are valid, or respond with 400 and JSON error data.
-const validate_inputs = async (chat_id, user_id, message) => {
-  const chat_id_status = await validate_chat_id(chat_id);
+const validate_inputs = async (chat_pin, user_id, message) => {
+  const chat_pin_status = await validate_chat_pin(chat_pin);
   const user_id_status = await validate_user_id(user_id);
   const message_status = validate_message(message);
   status = 200;
 
   if (
-    !chat_id_status ||
+    !chat_pin_status ||
     !user_id_status ||
     !message_status
   ) {
@@ -83,7 +84,7 @@ const validate_inputs = async (chat_id, user_id, message) => {
 
   return {
     status: status,
-    chat_id_status: chat_id_status,
+    chat_pin_status: chat_pin_status,
     user_id_status: user_id_status,
     message_status: message_status,
   };
@@ -93,9 +94,9 @@ const validate_inputs = async (chat_id, user_id, message) => {
 // 1. Check that chat_id exists and is in the correct format.
 // 2. Query the database to confirm that chat_id refers to an existing chat.
 // 3. Return true if valid, or return false if invalid.
-const validate_chat_id = async (chat_id) => {
+const validate_chat_pin = async (chat_pin) => {
   try {
-    const chat = await Chat.findOne({ _id: chat_id });
+    const chat = await Chat.findOne({ pin: chat_pin });
     if (!chat) return false;
     return true;
   } catch (_error) {
@@ -169,7 +170,7 @@ module.exports = {
   extract_user_id,
   extract_message,
   validate_inputs,
-  validate_chat_id,
+  validate_chat_pin,
   validate_user_id,
   validate_message,
   respond_with_error_json,

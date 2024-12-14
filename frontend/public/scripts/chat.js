@@ -89,7 +89,11 @@ function createSenderInfo(author, time) {
   senderInfo.classList.add("sender_info");
   const senderName = document.createElement("div");
   senderName.setAttribute("id", "sender_name");
-  senderName.textContent = author;
+  if (author.user_name) {
+    senderName.textContent = author.user_name;
+  } else { // display unique id for guest
+    senderName.textContent = `guest_${author._id.substring(0, 6)}`;
+  }
   const timestamp = document.createElement("div");
   timestamp.setAttribute("id", "timestamp");
   timestamp.textContent = formatTimestamp(time);

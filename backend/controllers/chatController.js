@@ -2,7 +2,7 @@ const mongoose = require("mongoose");
 const { v4: uuidv4 } = require("uuid");
 const UserService = require("../services/UserService");
 
-const { Chat, Message, Poll, User  } = require("../models/index");
+const { Chat, Message, Poll, PollOption, User  } = require("../models/index");
 const path = require('path');
 //const Poll = require('../models/Poll.js');
 
@@ -428,29 +428,58 @@ async function generate_unique_pin() {
   throw new Error("Failed to generate unique PIN after multiple attempts");
 }
 
-function generateUniquePollId() {
-	return Math.floor(10000000 + Math.random() * 90000000);
-}
+async function new_poll(req, res) {
+  try {
+    const pollData = req.body;
 
-async function new_poll(request, response) {
-	console.log("Create poll request recieved");
-    const { pollTitle, options } = request.body;
-	console.log("Body created");
-    const pollId = generateUniquePollId();
-	console.log("Generated ID: ", pollId);
-    const poll = {
-        poll_id: pollId,
-        pollTitle: pollTitle,
-        options: options.map(option => ({ title: option, vote_count: 0 })),
-        users_voted: []
+    // Ensure options is an array of strings or objects with a title property
+    const options = await Promise.all(
+      pollData.options.map(option => {
+        // If the option is an object, extract the title
+        const optionTitle = option && option.title ? option.title : option;
+
+        // Check if the title is available before proceeding
+        if (!optionTitle) {
+          throw new Error('Poll option title is required');
+        }
+
+        return PollOption.create({
+          title: optionTitle,
+          vote_count: 0,
+        });
+      })
+    );
+
+    // Create the Poll document with references to the PollOption documents
+    const newPoll = {
+      title: pollData.pollTitle,
+      options: options.map(option => option._id), // Store the ObjectId references
+      users_voted: [],  // Track users who voted
     };
 
-    response.status(201).json(poll);
+    // Save the new poll
+    const poll = await Poll.create(newPoll);
+
+    // Return the newly created poll
+    res.json(poll);
+
+  } catch (error) {
+    console.error("Error creating poll:", error);
+    return res.status(500).json({ error: error.message || "Failed to create poll" });
+  }
 }
 
 async function getPollById(pollId) {
     try {
-        const poll = await Poll.findById(pollId);  // Find the poll by its unique ID
+        console.log("Searching for poll: ", pollId);
+
+        // Fetch poll by ID and populate the options field with full PollOption documents
+        const poll = await Poll.findById(pollId).populate('options');
+
+        if (!poll) {
+            throw new Error('Poll not found');
+        }
+
         return poll;
     } catch (error) {
         console.error('Error fetching poll:', error);
@@ -459,38 +488,43 @@ async function getPollById(pollId) {
 }
 
 async function vote_option(request, response) {
-	const { chat_id, poll_id } = request.params;
+    const { chat_id, poll_id } = request.params;
     const { selectedOptions } = request.body;
 
-    getPollById(poll_id)
-        .then(poll => {
-            if (!poll) {
-                return response.status(404).send("Poll not found.");
+    try {
+        // Fetch the poll by its MongoDB ID (not pollID field)
+        const poll = await Poll.findById(poll_id).populate('options');
+
+        if (!poll) {
+            return response.status(404).send("Poll not found.");
+        }
+
+        // Update vote counts for selected options
+        const updatedOptions = [];
+        selectedOptions.forEach(optionTitle => {
+            const option = poll.options.find(opt => opt.title === optionTitle);
+            if (option) {
+                option.vote_count += 1;
+                updatedOptions.push(option);
+                console.log("Updated Option: ", option);
+                console.log("Updated Count: ", option.vote_count);
             }
-
-            // Update vote counts for selected options
-            selectedOptions.forEach(optionTitle => {
-                const option = poll.options.find(opt => opt.title === optionTitle);
-                if (option) {
-                    option.vote_count += 1;
-					console.log("Option: ", option);
-					console.log("Count: ", option.vote_count);
-                }
-            });
-
-            savePoll(poll)
-                .then(updatedPoll => {
-                    response.json(updatedPoll); // Return the updated poll with new vote counts
-                })
-                .catch(error => {
-                    console.error("Error saving poll:", error);
-                    response.status(500).send("Failed to save poll.");
-                });
-        })
-        .catch(error => {
-            console.error("Error fetching poll:", error);
-            result.status(500).send("Internal server error.");
         });
+
+        // Save the updated PollOption documents (since PollOption is a referenced model)
+        const savePromises = updatedOptions.map(option => option.save());
+
+        // Wait for all option updates to finish, then save the poll document
+        await Promise.all(savePromises);
+
+        // After updating the options, save the poll itself (optional if only options are modified)
+        const updatedPoll = await poll.save();
+
+        response.json(updatedPoll); // Return the updated poll with new vote counts
+    } catch (error) {
+        console.error("Error fetching or saving poll:", error);
+        response.status(500).send("Internal server error.");
+    }
 }
 
 module.exports = {

@@ -71,7 +71,7 @@ function populateChat(initial_chat) {
 
 // Render a poll
 function renderPoll(poll) {
-    console.log("render poll: ", poll);
+    console.log("Poll options in renderPoll:", poll.options);
     const container = createContainer();
     const senderInfo = createSenderInfo("User", new Date().toISOString());
 	console.log("Time Created: ", poll.createdAt);
@@ -141,10 +141,10 @@ function createPollContent(pollData) {
     // Create the main poll container
     const pollContent = document.createElement("div");
     pollContent.classList.add("poll_content");
-    const pollHeader = createPollHeader(title);
 	console.log("Options:", options); // Log options to check if it's valid
     const pollOptionsForm = createPollOptionsForm(options);
     const pollFooter = createPollFooter(users_voted, pollData);
+	const pollHeader= createPollHeader(title);
     pollContent.appendChild(pollHeader);
     pollContent.appendChild(pollOptionsForm);
     pollContent.appendChild(pollFooter);
@@ -164,27 +164,25 @@ function createPollHeader(title) {
 }
 
 function createPollOptionsForm(options) {
-    // Check if options is a valid array
+    // Ensure options is a valid array
     if (!Array.isArray(options)) {
         console.error("Invalid options array:", options);
         return;
     }
 
-    // Create the poll options form
+    console.log("Options at createPollOptionsForm: ", options);
+
     const pollOptionsForm = document.createElement("form");
     pollOptionsForm.classList.add("poll_options");
 
     options.forEach(option => {
-        // Create option label
         const optionLabel = document.createElement("label");
         optionLabel.classList.add("poll_option");
 
-        // Option text
         const optionText = document.createElement("span");
         optionText.classList.add("option_text");
         optionText.textContent = option.title;
 
-        // Option count and checkbox container
         const optionContainer = document.createElement("div");
 
         const optionCount = document.createElement("span");
@@ -196,15 +194,12 @@ function createPollOptionsForm(options) {
         optionInput.name = "vote_option";
         optionInput.value = option.title;
 
-        // Append count and input to container
         optionContainer.appendChild(optionCount);
         optionContainer.appendChild(optionInput);
 
-        // Append text and container to label
         optionLabel.appendChild(optionText);
         optionLabel.appendChild(optionContainer);
 
-        // Append label to form
         pollOptionsForm.appendChild(optionLabel);
     });
 
@@ -212,6 +207,7 @@ function createPollOptionsForm(options) {
 }
 
 function createPollFooter(users_voted, pollData) {
+	console.log("Poll data: ", pollData);
     const pollFooter = document.createElement("div");
     pollFooter.classList.add("poll_footer");
 
@@ -233,7 +229,7 @@ function createPollFooter(users_voted, pollData) {
 
         if (selectedOptions.length > 0) {
             try {
-                const response = await submitVotes(pollData.id, selectedOptions);
+                const response = await submitVotes(pollData._id, selectedOptions);
                 if (response.ok) {
                     alert("Your vote has been submitted!");
                 } else {
@@ -255,6 +251,8 @@ function createPollFooter(users_voted, pollData) {
 
 // Submit votes to the server
 async function submitVotes(pollId, selectedOptions) {
+	console.log("pollId: ", pollId);
+	console.log("selectedOptions: ", selectedOptions);
     const response = await fetch(`/chat/${chatId}/poll/${pollId}/vote`, {
         method: "POST",
         headers: {
@@ -376,12 +374,10 @@ async function submitPoll(event) {
 
     try {
         const response = await sendPollData(pollTitle, options);
-		console.log("Response recieved: ", response);
-        
-        // Check if the response is OK (status 200-299)
+
         if (response.ok) {
             const pollData = await response.json();
-            handlePollResponse(pollData);
+            handlePollResponse(pollData);  // Directly handle the poll response
         } else {
             throw new Error('Failed to create poll');
         }
@@ -391,21 +387,24 @@ async function submitPoll(event) {
     }
 }
 
+
 function gatherPollOptions() {
     const options = [];
     for (let i = 1; i <= optionCount; i++) {
         const optionValue = document.getElementById(`pollOption${i}`).value;
-        if (optionValue) options.push(optionValue);
+        if (optionValue) {
+            options.push({ title: optionValue, vote_count: 0 }); // Initialize vote_count to 0
+        }
     }
     return options;
 }
 
 async function sendPollData(title, options) {
-	console.log("Sending poll data");
-	console.log("Chat ID: ", chatId);
-	console.log("Title: ", title);
-	console.log("options: ", options);
-	console.log(JSON.stringify({ pollTitle: title, options}));
+    console.log("Sending poll data");
+    console.log("Chat ID: ", chatId);
+    console.log("Title: ", title);
+    console.log("Options: ", options);
+
     return fetch(`/chat/${chatId}/poll`, {
         method: "POST",
         headers: {
@@ -414,6 +413,7 @@ async function sendPollData(title, options) {
         body: JSON.stringify({ pollTitle: title, options }),
     });
 }
+
 
 function handlePollResponse(pollData) {
     if (pollData) {

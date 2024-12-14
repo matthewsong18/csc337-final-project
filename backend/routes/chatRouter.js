@@ -51,7 +51,7 @@ chatRouter.post("/:chat_id/poll/:poll_title", (req, res) => {
 //});
 
 // Vote for a poll option
-chatRouter.post("/:chat_id/poll/:poll_id/vote/", vote_option);
+chatRouter.post("/:chat_id/poll/:poll_id/vote", vote_option);
 
 // Handle undefined routes
 chatRouter.get("*", (req, res) => {

@@ -2,16 +2,28 @@ const mongoose = require("mongoose");
 const { v4: uuidv4 } = require("uuid");
 const UserService = require("../services/UserService");
 const { Chat, Message, Poll  } = require("../models/index");
+const { create_message } = require("./message_controller.js");
 const path = require('path');
 
 let client_connections = {};
 
 // Implemented by Matthew
 // Include update_clients_in_chat before the function's end
-function create_message(request, response) {
-  const { new_message, chat_id } = request.params;
-  update_clients_in_chat(new_message, chat_id);
-  response.send("User post message");
+async function message_post(request, response) {
+  try {
+    const message_id = await create_message(request, response);
+    const { chat_id } = request.params;
+    await validate_chat_pin(chat_id);
+    
+    const message_document = await Message.findById(message_id)
+      .populate("author", "user_name has_account")
+      .select("author content createdAt"); 
+    update_clients_in_chat(message_document, chat_id);
+    // Explicitly send a response to the request
+    response.status(200).json({ message: "Message created and broadcasted successfully." });
+  } catch(error) {
+    respond_with_error_json(response, 400, { message: error.message });
+  }
 }
 
 // TO update all clients in a chat:
@@ -371,7 +383,7 @@ async function generate_unique_pin() {
 
 module.exports = {
   get_chat,
-  create_message,
+  message_post,
   subscribe_to_chat,
   load_chat,
   load_message_buffer,

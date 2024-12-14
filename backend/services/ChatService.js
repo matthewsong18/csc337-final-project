@@ -2,7 +2,7 @@ const Chat = require("../models/Chat.js");
 
 class ChatService {
   static async add_message(chat_id, message_id) {
-    const chat = await Chat.findOne({ _id: chat_id });
+    const chat = await Chat.findOne({ pin: chat_id });
     if (!chat) {
       throw new Error("Chat does not exist");
     }

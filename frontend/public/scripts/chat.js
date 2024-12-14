@@ -30,7 +30,7 @@ function displayChatPin() {
 }
 
 function loadChat() {
-    event_source = new EventSource(`http://localhost:3000/chat/${chatId}/event`);
+    event_source = new EventSource(`http://localhost:3000/chat/${chatId}/events`);
     event_source.addEventListener("message", (event) => {
         console.log("listening for update");
         let chat_data = JSON.parse(event.data);

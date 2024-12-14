@@ -11,7 +11,7 @@ const deleteOptionButtons = document.querySelectorAll(".deleteOptionButton");
 
 // State Variables
 const pathSegments = window.location.pathname.split("/");
-const chatId = pathSegments[pathSegments.length - 2];
+const chat_pin = pathSegments[pathSegments.length - 2];
 const user_id = pathSegments[pathSegments.length - 1];
 let autoScrollEnabled = true;
 let event_source;
@@ -27,11 +27,13 @@ function initializePage() {
 
 // Display the chat's PIN or fallback text
 function displayChatPin() {
-  pinNumberElement.textContent = chatId ? `PIN: ${chatId}` : "No PIN?";
+  pinNumberElement.textContent = chat_pin ? `PIN: ${chat_pin}` : "No PIN?";
 }
 
 function loadChat() {
-  event_source = new EventSource(`http://localhost:3000/chat/${chatId}/events`);
+  event_source = new EventSource(
+    `http://localhost:3000/chat/${chat_pin}/events`,
+  );
   event_source.addEventListener("message", (event) => {
     console.log("listening for update");
     let chat_data = JSON.parse(event.data);
@@ -341,7 +343,7 @@ function gatherPollOptions() {
 }
 
 async function sendPollData(title, options) {
-  return fetch(`/chat/${chatId}/poll`, {
+  return fetch(`/chat/${chat_pin}/poll`, {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
@@ -410,7 +412,7 @@ async function send_message() {
 
 async function POST_message(encoded_message) {
   return await fetch(
-    `/chat/${chatId}/${user_id}/${encoded_message}`,
+    `/chat/${chat_pin}/${user_id}/${encoded_message}`,
     {
       method: "POST",
       headers: {

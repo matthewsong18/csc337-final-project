@@ -5,7 +5,8 @@ const chatRouter = Router();
 
 const { get_chat, subscribe_to_chat, 
     join_chat_guest, join_chat_user, 
-    create_chat_guest, create_chat_user, new_poll
+    create_chat_guest, create_chat_user, 
+	new_poll, vote_option
     } = require("../controllers/chatController");
 
 const { create_message } = require("../controllers/message_controller.js");
@@ -50,9 +51,7 @@ chatRouter.post("/:chat_id/poll/:poll_id/:poll_option", (req, res) => {
 });
 
 // Vote for a poll option
-chatRouter.post("/:chat_id/poll/:poll_id/vote/:poll_option_id", (req, res) => {
-  res.send("User vote a poll option");
-});
+chatRouter.post("/:chat_id/poll/:poll_id/vote/:poll_option_id", vote_option);
 
 // Handle undefined routes
 chatRouter.get("*", (req, res) => {

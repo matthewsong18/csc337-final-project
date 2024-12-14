@@ -144,7 +144,7 @@ function createPollContent(pollData) {
     const pollHeader = createPollHeader(title);
 	console.log("Options:", options); // Log options to check if it's valid
     const pollOptionsForm = createPollOptionsForm(options);
-    const pollFooter = createPollFooter(users_voted);
+    const pollFooter = createPollFooter(users_voted, pollData);
     pollContent.appendChild(pollHeader);
     pollContent.appendChild(pollOptionsForm);
     pollContent.appendChild(pollFooter);
@@ -211,7 +211,7 @@ function createPollOptionsForm(options) {
     return pollOptionsForm;
 }
 
-function createPollFooter(users_voted) {
+function createPollFooter(users_voted, pollData) {
     const pollFooter = document.createElement("div");
     pollFooter.classList.add("poll_footer");
 
@@ -224,9 +224,45 @@ function createPollFooter(users_voted) {
     voteButton.classList.add("vote_button");
     voteButton.textContent = "Vote";
 
+    voteButton.addEventListener("click", async (event) => {
+        event.preventDefault();
+        
+        const selectedOptions = [];
+        const checkboxes = document.querySelectorAll(".poll_options input[type='checkbox']:checked");
+        checkboxes.forEach(checkbox => selectedOptions.push(checkbox.value));
+
+        if (selectedOptions.length > 0) {
+            try {
+                const response = await submitVotes(pollData.id, selectedOptions);
+                if (response.ok) {
+                    alert("Your vote has been submitted!");
+                } else {
+                    alert("Failed to submit vote.");
+                }
+            } catch (error) {
+                console.error("Error submitting vote:", error);
+                alert("An error occurred. Please try again.");
+            }
+        } else {
+            alert("Please select at least one option to vote.");
+        }
+    });
+
     pollFooter.appendChild(voteCount);
     pollFooter.appendChild(voteButton);
     return pollFooter;
+}
+
+// Submit votes to the server
+async function submitVotes(pollId, selectedOptions) {
+    const response = await fetch(`/chat/${chatId}/poll/${pollId}/vote`, {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ selectedOptions }),
+    });
+    return response;
 }
 
 // Render a message

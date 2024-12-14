@@ -4,6 +4,7 @@ const UserService = require("../services/UserService");
 
 const { Chat, Message, Poll, User  } = require("../models/index");
 const path = require('path');
+const Poll = require('../models/Poll.js');
 
 let client_connections = {};
 
@@ -445,6 +446,51 @@ async function new_poll(request, response) {
     };
 
     response.status(201).json(poll);
+}
+
+async function getPollById(pollId) {
+    try {
+        const poll = await Poll.findById(pollId);  // Find the poll by its unique ID
+        return poll;
+    } catch (error) {
+        console.error('Error fetching poll:', error);
+        throw new Error('Poll not found');
+    }
+}
+
+async function vote_option(request, response) {
+	const { chat_id, poll_id } = request.params;
+    const { selectedOptions } = request.body;
+
+    // Assuming you have a function to get the poll by its ID and update the vote counts
+    getPollById(poll_id)
+        .then(poll => {
+            if (!poll) {
+                return response.status(404).send("Poll not found.");
+            }
+
+            // Update vote counts for selected options
+            selectedOptions.forEach(optionTitle => {
+                const option = poll.options.find(opt => opt.title === optionTitle);
+                if (option) {
+                    option.vote_count += 1;
+                }
+            });
+
+            // Save the updated poll (this depends on your database/model)
+            savePoll(poll)
+                .then(updatedPoll => {
+                    response.json(updatedPoll); // Return the updated poll with new vote counts
+                })
+                .catch(error => {
+                    console.error("Error saving poll:", error);
+                    response.status(500).send("Failed to save poll.");
+                });
+        })
+        .catch(error => {
+            console.error("Error fetching poll:", error);
+            result.status(500).send("Internal server error.");
+        });
 }
 
 module.exports = {

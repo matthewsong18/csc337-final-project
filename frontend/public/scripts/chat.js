@@ -412,6 +412,7 @@ async function send_message() {
   if (response.status != 201) {
     alert("Message failed to send.");
   }
+  document.getElementById("message").value = "";
 }
 
 async function POST_message(encoded_message) {

@@ -12,6 +12,7 @@ const {
 } = require(
   "../message_controller.js",
 );
+const { generate_unique_pin } = require("../chatController.js");
 
 describe("message_controller", () => {
   beforeAll(async () => {
@@ -52,7 +53,8 @@ describe("message_controller", () => {
 
   it("should add the message to chat", async () => {
     const user = await UserService.createUser("test user");
-    chat = await Chat.create({ users: [user._id] });
+    const pin = await generate_unique_pin();
+    let chat = await Chat.create({ users: [user._id], pin: pin });
     const message = await Message.create({ author: user._id, content: "Hi" });
 
     await add_message_to_chat(message._id, chat._id);
@@ -69,21 +71,22 @@ describe("message_controller", () => {
 
     expect(input_status).toBeDefined();
     expect(input_status).toHaveProperty("status", 400);
-    expect(input_status).toHaveProperty("chat_id_status", false);
+    expect(input_status).toHaveProperty("chat_pin_status", false);
     expect(input_status).toHaveProperty("user_id_status", false);
     expect(input_status).toHaveProperty("message_status", false);
   });
 
   it("should return true when inputs are valid", async () => {
     const user = await UserService.createUser("test user");
-    chat = await Chat.create({ users: [user._id] });
+    const pin = await generate_unique_pin();
+    const chat = await Chat.create({ users: [user._id], pin: pin });
     const message = "Test string";
 
-    const input_status = await validate_inputs(chat._id, user._id, message);
+    const input_status = await validate_inputs(chat.pin, user._id, message);
 
     expect(input_status).toBeDefined();
     expect(input_status).toHaveProperty("status", 200);
-    expect(input_status).toHaveProperty("chat_id_status", true);
+    expect(input_status).toHaveProperty("chat_pin_status", true);
     expect(input_status).toHaveProperty("user_id_status", true);
     expect(input_status).toHaveProperty("message_status", true);
   });
@@ -96,41 +99,54 @@ describe("message_controller", () => {
     );
 
     expect(response.status).toBe(400);
-    expect(response.body).toHaveProperty("chat_id_status", false);
+    expect(response.body).toHaveProperty("chat_pin_status", false);
     expect(response.body).toHaveProperty("user_id_status", false);
     expect(response.body).toHaveProperty("message_status", true);
   });
 
   it("should create a message when given valid inputs", async () => {
     const user = await UserService.createUser("Happy");
-    const chat = await Chat.create({ users: [user._id] });
+    const pin = await generate_unique_pin();
+    const chat = await Chat.create({ users: [user._id], pin: pin });
     const message_string = "A test string message";
 
     const response = await request(app).post(
-      `/chat/${chat._id}/${user._id}/${message_string}`,
+      `/chat/${chat.pin}/${user._id}/${message_string}`,
     );
-
-    expect(response.status).toBe(201);
-    expect(response.body).toHaveProperty(
-      "message",
-      `${message_string}`,
-    );
+    try {
+      expect(response.status).toBe(201);
+      expect(response.body).toHaveProperty(
+        "message",
+        `${message_string}`,
+      );
+    } catch (error) {
+      const json = JSON.stringify(response.body, null, 2);
+      error.message = `${error.message}\n${json}`;
+      throw error;
+    }
   });
 
   it("should accept an encoded message", async () => {
     const user = await UserService.createUser("Happy");
-    const chat = await Chat.create({ users: [user._id] });
+    const pin = await generate_unique_pin();
+    const chat = await Chat.create({ users: [user._id], pin: pin });
     const message_string = "@$&@#";
     const encoded_string = encodeURIComponent(message_string);
 
     const response = await request(app).post(
-      `/chat/${chat._id}/${user._id}/${encoded_string}`,
+      `/chat/${chat.pin}/${user._id}/${encoded_string}`,
     );
 
-    expect(response.status).toBe(201);
-    expect(response.body).toHaveProperty(
-      "message",
-      `${message_string}`,
-    );
+    try {
+      expect(response.status).toBe(201);
+      expect(response.body).toHaveProperty(
+        "message",
+        `${message_string}`,
+      );
+    } catch (error) {
+      const json = JSON.stringify(response.body, null, 2);
+      error.message = `${error.message}\n${json}`;
+      throw error;
+    }
   });
 });

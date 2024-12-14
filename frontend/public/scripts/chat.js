@@ -401,11 +401,14 @@ async function send_message() {
   const message_content = document.getElementById("chatTextBox").value;
   const encoded_message = encodeURIComponent(message_content);
 
-  POST_message(encoded_message);
+  const response = await POST_message(encoded_message);
+  if (response.status != 201) {
+    alert("Message failed to send.");
+  }
 }
 
 async function POST_message(encoded_message) {
-  const response = await fetch(
+  return await fetch(
     `/chat/${chatId}/${user_id}/${encoded_message}`,
     {
       method: "POST",

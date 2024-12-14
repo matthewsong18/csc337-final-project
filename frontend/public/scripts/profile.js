@@ -105,10 +105,12 @@ async function loadChatHistory() {
 		}
 	
 		// Get all chats
-		const chats = await response.json();
+		const data = await response.json();
+		const chats = await data.chats;
+		const user_id = await data.user_id;
 
 		// Populate table with chat history
-		await renderChatTable(chats);
+		await renderChatTable(chats, user_id);
 
 	} catch (err) {
 		console.error("Error loading chat history:", err);
@@ -117,10 +119,9 @@ async function loadChatHistory() {
 }
 
 // Function to render the chat documents into the table
-async function renderChatTable(chats) {
+async function renderChatTable(chats, user_id) {
 	const tableBody = document.querySelector("#chatHistory tbody");
   
-	// Clear the existing rows (in case of rerendering)
 	tableBody.innerHTML = "";
   
 	chats.forEach(chat => {
@@ -137,7 +138,7 @@ async function renderChatTable(chats) {
   
 	  const usersCell = document.createElement("td");
 	  usersCell.textContent = chat.users.length || "No Users";
-	  row.setAttribute("onclick", `window.location.href = '../Chat/${chat.pin}'`);
+	  row.setAttribute("onclick", `window.location.href = '../Chat/${chat.pin}/${user_id}'`);
 	  row.appendChild(usersCell);
 
 	  // Append the row to the table body

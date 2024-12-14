@@ -1,13 +1,17 @@
 const { Router } = require("express");
 const path = require("path");
+
 const chatRouter = Router();
-const { get_chat, subscribe_to_chat, join_chat, create_chat, message_post } = require(
-  "../controllers/chatController",
-);
+const { get_chat, subscribe_to_chat, 
+    join_chat_guest, join_chat_user, 
+    create_chat_guest, create_chat_user,
+  message_post
+    } = require("../controllers/chatController");
+
 const { create_message } = require("../controllers/message_controller.js");
 
 // Get a chat
-chatRouter.get("/:chat_id", get_chat);
+chatRouter.get("/:chat_id/:user_id", get_chat);
 
 // Establish a SSE connection
 chatRouter.get("/:chat_id/events", subscribe_to_chat);
@@ -17,11 +21,17 @@ chatRouter.get("/:chat_id/poll/:poll_id", (req, res) => {
   res.send(`Poll ID: ${req.params.poll_id}`);
 });
 
-// Join a chat
-chatRouter.get("/:chat_id/join", join_chat);
+// Join a chat as a guest
+chatRouter.get("/:chat_pin/join/guest", join_chat_guest);
 
-// Create a new chat
-chatRouter.post("/create", create_chat);
+// Join a chat as a user
+chatRouter.get("/:username/:chat_pin/join/user", join_chat_user);
+
+// Create a new chat as guest
+chatRouter.post("/create/guest", create_chat_guest);
+
+// Create a new chat as user
+chatRouter.post("/create/:username/:chat_name", create_chat_user);
 
 // Post a message to a chat
 chatRouter.post("/:chat_id/:user_id/:message_content", message_post);

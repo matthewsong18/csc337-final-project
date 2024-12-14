@@ -444,8 +444,6 @@ async function new_poll(request, response) {
         users_voted: []
     };
 
-    //savePollToChat(request.params.chat_id, poll);
-
     response.status(201).json(poll);
 }
 

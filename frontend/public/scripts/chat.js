@@ -73,8 +73,9 @@ function populateChat(initial_chat) {
 function renderPoll(poll) {
     console.log("render poll: ", poll);
     const container = createContainer();
-    const senderInfo = createSenderInfo("Bob", poll.createdAt);
-    const pollContent = createPollContent(poll);  // Poll data is passed here
+    const senderInfo = createSenderInfo("User", new Date().toISOString());
+	console.log("Time Created: ", poll.createdAt);
+    const pollContent = createPollContent(poll);
     container.append(senderInfo, pollContent);
     textingArea.appendChild(container);
 }

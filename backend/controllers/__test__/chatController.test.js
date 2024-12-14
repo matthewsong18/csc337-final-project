@@ -275,7 +275,7 @@ describe("chatController", () => {
     try {
         const user = await UserService.create_guest_user();
         const pin = await generate_unique_pin();
-        const chat = await Chat.create({ title: "Test Chat", pin: pin, messages: [], polls: [], users: [user]});
+        const chat = await Chat.create({ title: "Test Chat", pin: pin, messages: [], polls: [], users: [user._id]});
         let now = new Date();
         let future = now.setDate(now.getDate() + 3); // Add 3 days
         await load_chat(chat.pin, future);
@@ -289,7 +289,7 @@ describe("chatController", () => {
   it("should return an empty array if no messages or polls exist in the chat", async () => {
     const user = await UserService.create_guest_user();
     const pin = await generate_unique_pin();
-    const chat = await Chat.create({ title: "Empty Chat", pin: pin, messages: [], polls: [], users: [user] });
+    const chat = await Chat.create({ title: "Empty Chat", pin: pin, messages: [], polls: [], users: [user._id] });
     const result = await load_chat(chat.pin, Date.now());
     expect(result.length).toBe(0);
   });
@@ -325,7 +325,7 @@ describe("chatController", () => {
       pin: pin,
       messages: [message1._id, message2._id],
       polls: [poll._id],
-      users: [user],
+      users: [user._id],
     });
 
     // Call load_chat
@@ -371,7 +371,7 @@ describe("chatController", () => {
       pin: pin,
       messages: [message1._id, message2._id],
       polls: [poll._id],
-      users: [user],
+      users: [user._id],
     });
     const foundChat = await Chat.findOne({ pin: chat.pin });
     console.log("Chat found in DB:", foundChat);

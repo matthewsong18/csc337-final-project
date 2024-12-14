@@ -1,26 +1,27 @@
-const express = require("express");
+const { Router } = require("express");
 const path = require("path");
 
-const { create_message, subscribe_to_chat, 
+const chatRouter = Router();
+const { subscribe_to_chat, 
     join_chat_guest, join_chat_user, 
     create_chat_guest, create_chat_user
-    } = require("../controllers/chatController");
+    } = require(
+  "../controllers/chatController",
+);
 
-const chatRouter = express.Router();
-const Chat = require("../models/Chat.js");
-const { create_guest_user } = require("../services/UserService.js");
+const { create_message } = require("../controllers/message_controller.js");
 
 // Get a chat
 chatRouter.get("/:chat_id", (req, res) => {
-    res.sendFile(path.join(__dirname, "../../frontend/public/chat.html"))
+  res.sendFile(path.join(__dirname, "../../frontend/public/chat.html"));
 });
 
-// Establish a SSE connection 
+// Establish a SSE connection
 chatRouter.get("/:chat_id/events", subscribe_to_chat);
 
 // Get a poll
 chatRouter.get("/:chat_id/poll/:poll_id", (req, res) => {
-    res.send(`Poll ID: ${req.params.poll_id}`);
+  res.send(`Poll ID: ${req.params.poll_id}`);
 });
 
 // Join a chat as a guest
@@ -40,22 +41,22 @@ chatRouter.post("/:chat_id/:user_id/:message_content", create_message);
 
 // Set poll title
 chatRouter.post("/:chat_id/:poll_title", (req, res) => {
-    res.send("user set a poll title");
+  res.send("user set a poll title");
 });
 
 // Create a poll option
 chatRouter.post("/:chat_id/poll/:poll_id/:poll_option", (req, res) => {
-    res.send("User created a poll option");
+  res.send("User created a poll option");
 });
 
 // Vote for a poll option
 chatRouter.post("/:chat_id/poll/:poll_id/vote/:poll_option_id", (req, res) => {
-    res.send("User vote a poll option")
+  res.send("User vote a poll option");
 });
 
 // Handle undefined routes
 chatRouter.get("*", (req, res) => {
-    res.sendFile(path.join(__dirname, "../../frontend/public/error.html"))
-})
+  res.sendFile(path.join(__dirname, "../../frontend/public/error.html"));
+});
 
 module.exports = chatRouter;

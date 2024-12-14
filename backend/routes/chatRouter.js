@@ -45,13 +45,13 @@ chatRouter.post("/:chat_id/poll/:poll_title", (req, res) => {
 });
 
 // Create a poll option
-chatRouter.post("/:chat_id/poll/:poll_id/:poll_option", (req, res) => {
-	console.log("Creating poll option");
-  res.send("User created a poll option");
-});
+//chatRouter.post("/:chat_id/poll/:poll_id/:poll_option", (req, res) => {
+	//console.log("Creating poll option");
+  //res.send("User created a poll option");
+//});
 
 // Vote for a poll option
-chatRouter.post("/:chat_id/poll/:poll_id/vote/:poll_option_id", vote_option);
+chatRouter.post("/:chat_id/poll/:poll_id/vote/", vote_option);
 
 // Handle undefined routes
 chatRouter.get("*", (req, res) => {

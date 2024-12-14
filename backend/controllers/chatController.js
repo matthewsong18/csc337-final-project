@@ -4,7 +4,7 @@ const UserService = require("../services/UserService");
 
 const { Chat, Message, Poll, User  } = require("../models/index");
 const path = require('path');
-const Poll = require('../models/Poll.js');
+//const Poll = require('../models/Poll.js');
 
 let client_connections = {};
 
@@ -429,11 +429,11 @@ async function generate_unique_pin() {
 }
 
 function generateUniquePollId() {
-	return 5;
+	return Math.floor(10000000 + Math.random() * 90000000);
 }
 
 async function new_poll(request, response) {
-	console.log("Create poll request recieved", request);
+	console.log("Create poll request recieved");
     const { pollTitle, options } = request.body;
 	console.log("Body created");
     const pollId = generateUniquePollId();
@@ -462,7 +462,6 @@ async function vote_option(request, response) {
 	const { chat_id, poll_id } = request.params;
     const { selectedOptions } = request.body;
 
-    // Assuming you have a function to get the poll by its ID and update the vote counts
     getPollById(poll_id)
         .then(poll => {
             if (!poll) {
@@ -474,10 +473,11 @@ async function vote_option(request, response) {
                 const option = poll.options.find(opt => opt.title === optionTitle);
                 if (option) {
                     option.vote_count += 1;
+					console.log("Option: ", option);
+					console.log("Count: ", option.vote_count);
                 }
             });
 
-            // Save the updated poll (this depends on your database/model)
             savePoll(poll)
                 .then(updatedPoll => {
                     response.json(updatedPoll); // Return the updated poll with new vote counts
@@ -510,5 +510,6 @@ module.exports = {
   join_chat,
   create_chat,
   generate_unique_pin,
+  vote_option
 }
 

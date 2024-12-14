@@ -454,8 +454,13 @@ async function show_profile_button(){
             window.location.href = `/profile/${username}`;
         };
         
+        /* Converts to a home button for guest users */
         } else{
-          console.log("ERROR");
+          document.getElementById("profileButton").textContent = "Home";
+          document.getElementById("profileButton").style.display = "inline";
+          document.getElementById("profileButton").onclick = () => {
+            window.location.href = `../../home.html`;
+        };
         }
       }
 

@@ -21,7 +21,7 @@ const create_message = async (request, response) => {
     const input_status = await validate_inputs(chat_pin, user_id, message);
     if (input_status.status == 400) {
       respond_with_error_json(response, input_status);
-      return;
+      throw new Error(`${input_status}`);
     }
 
     const chat = await Chat.findOne({ pin: chat_pin });
@@ -31,11 +31,13 @@ const create_message = async (request, response) => {
       status: 201,
       message: `${message}`,
     });
+    return message_id;
   } catch (error) {
     respond_with_error_json(response, {
       status: 400,
       error: `${error}`,
     });
+    throw error;
   }
 };
 

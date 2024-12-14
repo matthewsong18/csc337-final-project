@@ -16,7 +16,7 @@ const user_id = pathSegments[pathSegments.length - 1];
 let autoScrollEnabled = true;
 let event_source;
 let optionCount = 2; // default lowest option counts
-const PORT = process.env.PORT || 3000;
+const PORT = window.location.port;
 
 // Initialize Page
 function initializePage() {

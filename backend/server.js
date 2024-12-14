@@ -24,4 +24,5 @@ function start_listening(PORT) {
   });
 }
 
-run_server("mongodb://127.0.0.1:27017/myDatabase", 3000);
+const PORT = process.env.PORT || 3000;
+run_server("mongodb://127.0.0.1:27017/myDatabase", PORT);

@@ -1,7 +1,7 @@
 // Join a chat
 async function joinChat() {
     const chatId = document.getElementById("chatPin").value;
-	console.log(`Fetching: /chat/${chatId}/join`);
+	console.log(`Fetching: /chat/${chatId}/join/guest`);
 
     if (!chatId) {
         alert("Please enter a chat PIN to join.");
@@ -10,7 +10,7 @@ async function joinChat() {
 
     try {
 		console.log("Attempting fetch");
-        const response = await fetch(`/chat/${chatId}/join`, {
+        const response = await fetch(`/chat/${chatId}/join/guest`, {
             method: "GET",
             headers: {
                 "Content-Type": "application/json",
@@ -45,7 +45,7 @@ async function createChat() {
 
     try {
 		console.log("Attempting fetch");
-        const response = await fetch("/chat/create", {
+        const response = await fetch("/chat/create/guest", {
             method: "POST",
             headers: {
                 "Content-Type": "application/json",

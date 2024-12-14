@@ -44,13 +44,13 @@ body {
 #help_button {
     position: fixed;
     top: 15px;
-    left: 15px;
+    right: 15px;
 }
 
 #profileButton {
     position: fixed;
     top: 15px;
-    left: 95vw;
+    left: 15px;
 }
 
 .buttonHeader{

@@ -398,9 +398,10 @@ initializePage();
 // 2. We should encode the message
 // 3. We should POST the message to the server
 async function send_message() {
-  const message_content = document.getElementById("chatTextBox").value;
+  const message_content = document.getElementById("message").value;
   const encoded_message = encodeURIComponent(message_content);
 
+  console.log(user_id);
   const response = await POST_message(encoded_message);
   if (response.status != 200) {
     alert("Message failed to send.");

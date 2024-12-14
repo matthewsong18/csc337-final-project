@@ -331,6 +331,7 @@ async function submitPoll(event) {
 
   try {
     const response = await sendPollData(pollTitle, options);
+    // renderPoll(response);
     handlePollResponse(response);
   } catch (error) {
     console.error("Error creating poll:", error);
@@ -348,7 +349,7 @@ function gatherPollOptions() {
 }
 
 async function sendPollData(title, options) {
-    return await fetch(`/chat/${chatId}/poll`, {
+    return await fetch(`/chat/${chat_pin}/poll/post/create`, {
         method: "POST",
         headers: {
             "Content-Type": "application/json",

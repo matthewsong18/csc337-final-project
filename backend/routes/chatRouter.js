@@ -44,7 +44,7 @@ chatRouter.post("/:chat_pin/:user_id/:message_content", message_post);
 //   res.send("user set a poll title");
 // });
 
-chatRouter.post("/:chat_id/poll", create_poll);
+chatRouter.post("/:chat_id/poll/post/create", create_poll);
 
 // Create a poll option
 chatRouter.post("/:chat_id/poll/:poll_id/:poll_option", (req, res) => {

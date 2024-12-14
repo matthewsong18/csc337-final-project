@@ -1,13 +1,15 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-	<link rel="stylesheet" href="/styles/chat.css">
+    <link rel="stylesheet" href="/styles/chat.css">
     <title>Chat page</title>
 </head>
+
 <body>
-	<div class="headerBox">
+    <div class="headerBox">
         <div id="chat_info">
             <div id="chatName">Anoynomous Chat</div>
             <div id="pinNumber">PIN</div>
@@ -23,10 +25,10 @@
             <textarea class="chatTextBox" placeholder="Enter your message here..."></textarea>
         </div>
         <div>
-            <input type="button" class="chatButton" value="Send" onclick="">
+            <input type="button" class="chatButton" value="Send" onclick="send_message()">
             <input type="button" class="pollButton" value="Poll" onclick="openPollForm()">
         </div>
-        
+
         <div id="pollFormContainer" class="modal">
             <div class="modal-content">
                 <span class="close-button" onclick="closePollForm()">×</span>
@@ -34,16 +36,19 @@
                 <form id="pollForm">
                     <label for="pollTitle">Poll Title:</label>
                     <div>
-                        <input type="text" class="poll_option_title" id="pollTitle" name="pollTitle" placeholder="What question do you want to ask?" required>
+                        <input type="text" class="poll_option_title" id="pollTitle" name="pollTitle"
+                            placeholder="What question do you want to ask?" required>
                     </div>
                     <label for="pollOption1">Options:</label>
                     <div id="additionalOptions">
                         <div class="optionItem">
-                            <input type="text" class="poll_option_title" id="pollOption1" name="pollOption1" placeholder="Type your answer" required>
+                            <input type="text" class="poll_option_title" id="pollOption1" name="pollOption1"
+                                placeholder="Type your answer" required>
                             <button type="button" class="deleteOptionButton">Delete</button>
                         </div>
                         <div class="optionItem">
-                            <input type="text" class="poll_option_title" id="pollOption2" name="pollOption2" placeholder="Type your answer" required>
+                            <input type="text" class="poll_option_title" id="pollOption2" name="pollOption2"
+                                placeholder="Type your answer" required>
                             <button type="button" class="deleteOptionButton">Delete</button>
                         </div>
                     </div>
@@ -55,6 +60,7 @@
             </div>
         </div>
     </div>
-	<script src="/scripts/chat.js"></script>
+    <script src="/scripts/chat.js"></script>
 </body>
+
 </html>

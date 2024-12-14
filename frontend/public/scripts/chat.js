@@ -402,7 +402,7 @@ async function send_message() {
   const encoded_message = encodeURIComponent(message_content);
 
   const response = await POST_message(encoded_message);
-  if (response.status != 201) {
+  if (response.status != 200) {
     alert("Message failed to send.");
   }
 }

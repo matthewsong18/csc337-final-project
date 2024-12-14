@@ -11,7 +11,8 @@ const deleteOptionButtons = document.querySelectorAll(".deleteOptionButton");
 
 // State Variables
 const pathSegments = window.location.pathname.split("/");
-const chatId = pathSegments[pathSegments.length - 1];
+const chatId = pathSegments[pathSegments.length - 2];
+const user_id = pathSegments[pathSegments.length - 1];
 let autoScrollEnabled = true;
 let event_source;
 let optionCount = 2; // default lowest option counts
@@ -400,7 +401,10 @@ async function send_message() {
   const message_content = document.getElementById("chatTextBox").value;
   const encoded_message = encodeURIComponent(message_content);
 
-  // FIX: Unknown where `user_id` is
+  POST_message(encoded_message);
+}
+
+async function POST_message(encoded_message) {
   const response = await fetch(
     `/chat/${chatId}/${user_id}/${encoded_message}`,
     {

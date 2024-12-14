@@ -1,56 +1,12 @@
 
 html {
-    font-family: 'Inter', 'sans-serif';
+    font-family: 'Arial', 'sans-serif';
 }
 
 body {
     background-color: #f1f8fe;
-	margiin: 0;
+	margin: 0;
 	padding: 0;
-}
-
-#chatName {
-	font-family: 'Inter', 'sans-serif';
-	font-weight: bold;
-	font-size: 4.0rem;
-}
-
-.chatTextBox {
-    position: fixed;
-    top: 85vh;
-    left: 45%;
-    transform: translateX(-50%);
-    height: 10vh;
-    width: 80vw;
-    border: 2px solid #1280f2;
-    border-radius: 5px;
-    font-size: 1.5rem;
-    padding: 10px;
-    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
-    background-color: white;
-    color: #02111e;
-}
-
-.helpButton {
-    position: fixed;
-    top: 3vh;
-    left: 3vh;
-    height: 50px;
-    width: 150px;
-    background-color: white;
-    border: none;
-    border-radius: 20px;
-    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
-    font-size: 1rem;
-    text-align: center;
-    color: #02111e;
-    cursor: pointer;
-}
-
-.helpButton:hover {
-    transform: scale(1.1);
-    background: linear-gradient(120deg, #1280f2, #f653df);
-    color: white;
 }
 
 .headerBox {
@@ -63,7 +19,6 @@ body {
     border-bottom: 2px solid #1280f2;
     box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
     color: #02111e;
-    font-size: 1.5rem;
     line-height: 0.75;
     font-weight: bold;
     margin: 0;
@@ -73,9 +28,201 @@ body {
     justify-content: center;
 }
 
-.headerBox span {
+#chatName {
+	font-weight: bold;
+	font-size: calc(0.6vw + 2rem);
     margin: 0;
     padding: 0;
+}
+
+#pinNumber {
+    font-size: calc(0.6vw + 0.5rem);
+    margin: 0;
+    padding-top: 5px;
+}
+
+.help_button {
+    position: fixed;
+    top: 15px;
+    left: 15px;
+    height: 40px;
+    min-height: 1vh;
+    width: auto;
+    background-color: white;
+    border: none;
+    border-radius: 20px;
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
+    font-size: calc(0.6vw + 0.5rem);
+    text-align: center;
+    color: #02111e;
+    cursor: pointer;
+    padding: 0.2em 0.8em;
+    white-space: nowrap;
+}
+
+.help_button:hover {
+    transform: scale(1.1);
+    background: linear-gradient(120deg, #1280f2, #f653df);
+}
+
+/* Scrollable texting area */
+.texting_area {
+    position: fixed;
+    top: 12vh; /* Height of the headerBox */
+    bottom: 15vh; /* Height of the input_area */
+    height: calc(100vh - 25vh); /* Total height minus header and input areas */
+    width: 100vw;
+    text-align: left;
+    overflow-y: auto; /* Enable scrolling */
+    scroll-behavior: smooth; /* Enable smooth scrolling */
+    padding: 10px;
+    box-sizing: border-box;
+    background-color: #f1f8fe;
+}
+
+/* Style the message */
+.message_container {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    margin-bottom: 15px;
+    padding: 10px;
+    border-radius: 5px;
+    color: #fff; /* White text for visibility */
+    font-family: 'Arial', sans-serif;
+}
+
+.message_container:hover {
+    background: linear-gradient(120deg, #1280f2, #c875f8);
+}
+
+.sender_info {
+    display: flex;
+    gap: 5px;
+    margin-right: 15px;
+    text-align: left;
+}
+
+#sender_name {
+    font-weight: bold;
+    color: #02111e9b; 
+    font-size: calc(0.4vw + 0.5rem);
+}
+
+#timestamp {
+    font-size: calc(0.4vw + 0.5rem);
+    color: #8b8c8e; /* Slightly lighter text for contrast */
+}
+
+.message_content {
+    padding: 10px;
+    line-height: 1.4;
+    color: #02111e; 
+    font-size: 0.9rem;
+    flex-grow: 1;
+    word-wrap: break-word;
+}
+
+.poll_content {
+    width: 30vw;
+    padding: 10px;
+}
+
+.poll_header {
+    margin-bottom: 10px;
+    border-bottom: 1px solid #40444b; /* Subtle border for separation */
+    padding-bottom: 5px;
+}
+
+.poll_title {
+    font-weight: bold;
+    font-size: calc(0.6vw + 0.5rem);
+    padding-top: 5px;
+    color: #02111e; 
+}
+
+.poll_options {
+    margin: 10px 0;
+}
+
+.poll_option {
+    display: flex;
+    justify-content: space-between;
+    padding: 8px 10px;
+    border-radius: 5px;
+    background-color: #36393f; /* Slightly darker box */
+    margin-bottom: 5px;
+    cursor: pointer; /* Indicate it's clickable */
+    transition: background-color 0.2s;
+}
+
+.poll_option:hover {
+    background-color: #40444b; /* Slight hover effect */
+}
+
+.option_text, .poll_option_count {
+    font-size: calc(0.6vw + 0.5rem);
+    color: #dcddde; /* Lighter gray for text */
+}
+
+.vote_count {
+    font-size: 0.85rem;
+    color: #02111e9b; 
+}
+
+.poll_footer {
+    margin-top: 10px;
+    border-top: 1px solid #40444b;
+    padding-top: 5px;
+    font-size: 0.9rem;
+    color: #99aab5; /* Subtle gray */
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.vote_count {
+    font-size: calc(0.6vw + 0.5rem);
+}
+
+.vote_button {
+    background-color: #1280f2;
+    color: white;
+    border-radius: 5px;
+    border-width: 0;
+    padding: 5px;
+    width: 5vw;
+    height: 4vh;
+    font-size: calc(0.6vw + 0.5rem);
+    cursor: pointer; /* Indicate it's clickable */
+}
+
+.vote_button:hover {
+    background-color: rgb(12, 110, 247);
+}
+
+.chatTextBox {
+    position: fixed;
+    bottom: 3vh;
+    left: 45%;
+    transform: translateX(-50%);
+
+    height: auto; /* Allow dynamic height adjustment */
+    max-height: 25vh; /* Maximum height before scroll appears */
+    width: 80vw;
+    line-height: 1.5;
+    resize: none; /* Disable resizing */;
+    overflow-y: auto; /* Add a vertical scrollbar if content exceeds max-height */
+    box-sizing: border-box;
+
+    border: 2px solid #1280f2;
+    border-radius: 5px;
+    font-size: calc(0.6vw + 0.5rem);
+    font-family: Arial, sans-serif;
+    padding: 10px;
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
+    background-color: white;
+    color: #02111e;
 }
 
 .chatButton {
@@ -91,10 +238,14 @@ body {
     color: white;
     cursor: pointer;
     box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
-    font-size: 1.5rem;
+    font-size: calc(0.6vw + 0.5rem);
     display: flex;
     align-items: center;
     justify-content: center;
+}
+
+.chatButton:hover {
+    background: linear-gradient(120deg, #1280f2, #f653df);
 }
 
 .pollButton {
@@ -110,14 +261,10 @@ body {
     color: white;
     cursor: pointer;
     box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
-    font-size: 1.5rem;
+    font-size: calc(0.6vw + 0.5rem);
     display: flex;
     align-items: center;
     justify-content: center;
-}
-
-.chatButton:hover {
-    background: linear-gradient(120deg, #1280f2, #f653df);
 }
 
 .pollButton:hover {
@@ -130,6 +277,9 @@ body {
     left: 50%;
     transform: translate(-50%, -50%);
     width: 40vw;
+    max-height: 40vh;
+    height: auto;
+    overflow-y: auto;
     padding: 20px;
     background-color: white;
     border-radius: 10px;
@@ -138,6 +288,7 @@ body {
     display: flex;
     flex-direction: column;
     gap: 20px;
+    display: none;
 }
 
 #pollFormContainer input,
@@ -163,6 +314,25 @@ body {
     transform: scale(1.1);
 }
 
+.pollForm {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.poll_option_title {
+    width: 30vw;
+    margin-bottom: 5px;
+}
+
+.optionItem {
+    display: flex;
+    gap: 5px;
+}
+
+.deleteOptionButton {
+    margin-bottom: 5px;
+}
 
 .close-button {
     color: #aaa;

@@ -1,4 +1,5 @@
 const UserService = require("../services/UserService");
+const Chat = require("../models/Chat");
 
 async function user_signup(request, response) {
   try {
@@ -43,8 +44,29 @@ async function getUserByName(req, res) {
   }
 }
 
+async function get_chat_history(req, res) {
+  const { username } = req.params;
+  console.log("getting chat history");
+
+  try {
+    const user = await UserService.findUser(username);
+      // If the user has no chats, return an empty array
+      if (!user.chats || user.chats.length === 0) {
+        return res.status(200).json([]);
+      }
+
+      const chatDocuments = await Chat.find({ users: user._id });
+      res.status(200).json({chats: chatDocuments, user_id: user._id});
+
+  } catch (error) {
+
+    res.status(404).json({ message: error.message });
+  }
+}
+
 module.exports = {
   getUserByName,
   user_signup,
   create_new_user,
+  get_chat_history
 };

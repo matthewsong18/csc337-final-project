@@ -3,9 +3,30 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Help page</title>
+	<link rel="stylesheet" href="/styles/help.css">
+    <title>Help Page</title>
 </head>
 <body>
-    <h1>Help Page</h1>
+	<input type="button" class = "headerButton" id="homeButton" value="Home" onclick="window.location.href='home.html'">
+    <header>
+        <h1>Help Page</h1>
+    </header>
+    <main>
+        <section id="help-sections">
+            <button class="help-button" data-section="account">Account</button>
+            <button class="help-button" data-section="features">Features</button>
+            <button class="help-button" data-section="safety">Safety and Guidelines</button>
+            <button class="help-button" data-section="troubleshooting">Troubleshooting</button>
+        </section>
+    </main>
+
+    <div id="help-popup" class="hidden">
+        <div id="popup-content">
+            <button id="close-popup">Close</button>
+            <div id="popup-text"></div>
+        </div>
+    </div>
+
+    <script src="/scripts/help.js"></script>
 </body>
 </html>

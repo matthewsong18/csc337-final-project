@@ -319,7 +319,7 @@ async function join_chat(user, chat_pin, res) {
 
   try {
     console.log("Attempting to find chat");
-    validate_chat_pin(chat_pin);
+    await validate_chat_pin(chat_pin);
 
     const chat = await Chat.findOne({ pin: chat_pin });
     console.log("Chat found");

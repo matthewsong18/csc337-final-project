@@ -4,7 +4,7 @@ const User = require("../../models/User.js");
 
 describe("UserService", () => {
   beforeAll(async () => {
-    await mongoose.connect("mongodb://localhost:27017/user_service_testdb");
+    await mongoose.connect("mongodb://127.0.0.1:27017/user_service_testdb");
   });
 
   afterAll(async () => {

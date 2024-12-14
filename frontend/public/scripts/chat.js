@@ -11,7 +11,7 @@ const deleteOptionButtons = document.querySelectorAll(".deleteOptionButton");
 
 // State Variables
 const pathSegments = window.location.pathname.split('/');
-const chatId = pathSegments[pathSegments.length - 1];
+const chatId = pathSegments[pathSegments.length - 2];
 let autoScrollEnabled = true;
 let event_source;
 let optionCount = 2; // default lowest option counts

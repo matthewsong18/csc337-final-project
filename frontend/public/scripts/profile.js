@@ -40,7 +40,7 @@ async function joinChat() {
             if (data.exists) {
 				
 				// redirects to chat page
-                window.location.href = `/chat/${chat_pin}`;
+                window.location.href = `/chat/${chat_pin}/${data.user_id}`;
             } else {
                 alert("Chatroom not found.");
             }
@@ -84,7 +84,7 @@ async function createChat() {
             const chat_pin = data.chat_pin;  // Get the chat_pin (random PIN)
 
             // Redirect to the newly created chat page using the chatId
-            window.location.href = `/chat/${chat_pin}`;
+            window.location.href = `/chat/${chat_pin}/${data.user_id}`;
         } else {
             const data = await response.json();
             console.error("Error creating chat:", data.message || "Creating chat failed.");

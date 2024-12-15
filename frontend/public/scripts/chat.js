@@ -16,6 +16,7 @@ const user_id = pathSegments[pathSegments.length - 1];
 let autoScrollEnabled = true;
 let event_source;
 let optionCount = 2; // default lowest option counts
+const HOSTNAME = window.location.hostname;
 const PORT = window.location.port;
 
 // Initialize Page
@@ -33,7 +34,7 @@ function displayChatPin() {
 
 function loadChat() {
   event_source = new EventSource(
-    `http://127.0.0.1:${PORT}/chat/${chat_pin}/events`,
+    `http://${HOSTNAME}:${PORT}/chat/${chat_pin}/events`,
   );
   event_source.addEventListener("message", (event) => {
     console.log("listening for update");

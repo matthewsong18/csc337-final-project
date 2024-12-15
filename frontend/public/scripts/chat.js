@@ -74,7 +74,7 @@ function populateChat(initial_chat) {
 function renderPoll(poll) {
   console.log("render poll");
   const container = createContainer();
-  const senderInfo = createSenderInfo("Bob", poll.createdAt);
+  const senderInfo = createSenderInfo("Anoynomous Poll", poll.createdAt, true);
   const pollContent = createPollContent(poll);
   container.append(senderInfo, pollContent);
   textingArea.appendChild(container);
@@ -86,15 +86,20 @@ function createContainer() {
   return container;
 }
 
-function createSenderInfo(author, time) {
+function createSenderInfo(author, time, poll = false) {
   const senderInfo = document.createElement("div");
   senderInfo.classList.add("sender_info");
   const senderName = document.createElement("div");
   senderName.setAttribute("id", "sender_name");
-  if (author.user_name) {
+  if (poll) {
+    senderName.textContent = author;
+  } else if (author.user_name) {
     senderName.textContent = author.user_name;
   } else { // display unique id for guest
-    senderName.textContent = `guest_${author._id.substring(0, 6)}`;
+    const timestamp = author._id.slice(4, 8); // First 8 characters (timestamp in hex)
+    const suffix = author._id.slice(-3);     // Last 3 characters
+    const guestName = `Guest_${timestamp}${suffix}`;
+    senderName.textContent = guestName;
   }
   const timestamp = document.createElement("div");
   timestamp.setAttribute("id", "timestamp");
@@ -134,6 +139,8 @@ function formatTimestamp(timestamp) {
 function createPollContent(pollData) {
   // Destructure pollData
   const { title, options, users_voted } = pollData;
+  console.log(`poll data: ${pollData.options}`);
+  console.log(`poll data: ${pollData.title}`);
 
   // Create the main poll container
   const pollContent = document.createElement("div");
@@ -265,6 +272,7 @@ function resetAllOptions() {
       additionalOptionsContainer.firstChild,
     );
   }
+  pollTitle.value = "";
   // create 2 initial options
   addPollOption();
   addPollOption();
@@ -274,7 +282,7 @@ function resetAllOptions() {
 function addPollOption() {
   if (optionCount <= 10) {
     optionCount++;
-    const newOptionInput = createInput(`pollOption${optionCount}`, true);
+    const newOptionInput = createInput(`pollOption`, true);
     const newDeleteButton = createDeleteButton();
     const newOptionItem = document.createElement("div");
 
@@ -318,59 +326,9 @@ function createDeleteButton() {
   return deleteButton;
 }
 
-// Submit Poll Data
-async function submitPoll(event) {
-  event.preventDefault();
-
-  const pollTitle = document.getElementById("pollTitle").value;
-  const options = gatherPollOptions();
-
-  if (!options.length) {
-    alert("Please add at least one option.");
-    return;
-  }
-
-  try {
-    const response = await sendPollData(pollTitle, options);
-    handlePollResponse(response);
-  } catch (error) {
-    console.error("Error creating poll:", error);
-    alert("An error occurred. Please try again.");
-  }
-}
-
-function gatherPollOptions() {
-  const options = [];
-  for (let i = 1; i <= optionCount; i++) {
-    const optionValue = document.getElementById(`pollOption${i}`).value;
-    if (optionValue) options.push(optionValue);
-  }
-  return options;
-}
-
-async function sendPollData(title, options) {
-  return fetch(`/chat/${chat_pin}/poll`, {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-    },
-    body: JSON.stringify({ pollTitle: title, options }),
-  });
-}
-
-function handlePollResponse(response) {
-  if (response.ok) {
-    alert("Poll created successfully!");
-    closePollForm();
-  } else {
-    alert("Failed to create poll. Please try again.");
-  }
-}
-
 // Setup Event Listeners for poll form
 function setupEventListeners() {
   addOptionButton.addEventListener("click", addPollOption);
-  pollForm.addEventListener("submit", submitPoll);
   deleteOptionButtons.forEach((button) =>
     button.addEventListener("click", (event) => {
       if (optionCount > 2) {
@@ -473,3 +431,63 @@ async function show_profile_button(){
 window.onload = () => {
 	show_profile_button();
 };
+
+function gatherPollData() {
+  const pollTitle = document.getElementById("pollTitle").value;
+  const options = gatherPollOptions();
+  return {
+    title: pollTitle,
+    options,
+  }
+}
+
+function gatherPollOptions() {
+  const options = [];
+  const options_elements = document.querySelectorAll("#pollOption");
+  for (let i = 0; i < options_elements.length; i++) {
+    const optionValue = options_elements[i].value;
+    if (optionValue) options.push(optionValue);
+    else options.push("Invalid poll title");
+  }
+  return options;
+}
+
+function handlePollResponse(response) {
+  if (response.ok) {
+    alert("Poll created successfully!");
+    closePollForm();
+  } else {
+    alert("Failed to create poll. Please try again.");
+  }
+}
+
+// TO send a poll:
+// 1. We should get the poll info from the form
+// 2. We should POST the message to the server
+async function send_poll() {
+  const poll_form = gatherPollData();
+  console.log(user_id);
+  const response = await POST_poll(poll_form);
+  if (response.status != 201) {
+    alert("Poll failed to send.");
+  }
+  const data = await response.json();
+  renderPoll(data);
+  closePollForm();
+}
+
+async function POST_poll(poll_form) {
+  return await fetch(
+    `/chat/poll/${chat_pin}/create`,
+    {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ 
+        poll_title: poll_form.title,
+        poll_options: poll_form.options,
+      }),
+    },
+  );
+}

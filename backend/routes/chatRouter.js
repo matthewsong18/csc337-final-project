@@ -10,6 +10,7 @@ const {
   create_chat_guest,
   create_chat_user,
   message_post,
+  get_user_info,
 } = require("../controllers/chatController");
 
 // Establish a SSE connection
@@ -36,7 +37,7 @@ chatRouter.post("/create/guest", create_chat_guest);
 chatRouter.post("/create/:username/:chat_name", create_chat_user);
 
 // Post a message to a chat
-chatRouter.post("/:chat_pin/:user_id/:message_content", message_post);
+chatRouter.post("/message/:chat_pin/:user_id", message_post);
 
 // Set poll title
 chatRouter.post("/:chat_id/:poll_title", (req, res) => {
@@ -53,9 +54,14 @@ chatRouter.post("/:chat_id/poll/:poll_id/vote/:poll_option_id", (req, res) => {
   res.send("User vote a poll option");
 });
 
+// Getting user json by id for profile button
+chatRouter.get("/:user_id/getuser/info", get_user_info);
+
+
 // Handle undefined routes
 chatRouter.get("*", (req, res) => {
   res.sendFile(path.join(__dirname, "../../frontend/public/error.html"));
 });
+
 
 module.exports = chatRouter;

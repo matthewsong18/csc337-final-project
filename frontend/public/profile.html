@@ -13,20 +13,18 @@
             <img id= "logo" src="../img/AChat.png" alt="Achat logo">
         </a>
         <input type="button" id="helpButton" name="button" value="Help" onclick="window.location.href='/help.html'">
+        <div class="welcomeMessage" id="welcomeMessage">
+            <h1> WELCOME </h1>
+            <h2 id ="username"> User </h2>
+        </div>
     </div>
    
     <div id = "contentContainer">
-        <div class="welcomeMessage" id="welcomeMessage">
-            <h1> WELCOME</h1>
-            <h2 id ="username"> User </h2>
-        </div>
-    
         <div id = "middleContainer">
-            
+            <div id = "chatHistoryHeader">
+                CHAT HISTORY
+            </div>
             <div id = "chatHistoryContainer">
-                <div id = "chatHistoryHeader">
-                    CHAT HISTORY
-                </div>
                 <table id="chatHistory">
                     <thead>
                         <tr>
@@ -40,23 +38,27 @@
                     </tbody>
                 </table>
             </div>
-    
+
             <div id = "joinOrCreateComponent"> 
-                <div id="joinHeader">Join a Chat</div>
-                <input type="text" class = "inputField" id="chatPin" placeholder="PIN #">
     
                 <div class="buttonContainer">
-                    <input type="button" class="bodyButton" id="joinButton" value="Join Chat" onclick="joinChat()"><br>
-                    <div class="divider"> OR </div>
+                    <div id= "joinContainer">
+                        <div id="joinHeader">Join a Chat</div>
+                        <input type="text" class = "inputField" id="chatPin" placeholder="PIN #"><br><br>
+                        <input type="button" class="bodyButton" id="joinButton" value="Join Chat" onclick="joinChat()"><br>
+                     </div>
                     <div id = "createChatContainer">
                         <div id="joinHeader">Create a Chat</div>
-                        <input type="text" class = "inputField" id="chatName" placeholder="NAME">
-                    </div><br><br>
-                    <input type="button" class="bodyButton" id="createButton" value="Create Chat" onclick="createChat()"><br>
+                        <input type="text" class = "inputField" id="chatName" placeholder="NAME"><br><br>
+                        <input type="button" class="bodyButton" id="createButton" value="Create Chat" onclick="createChat()"><br>
+                    </div>
                 </div>
             </div>
-    
+
         </div>
+
+            
+        
 
     </div>
 	<script src="/scripts/profile.js"></script>

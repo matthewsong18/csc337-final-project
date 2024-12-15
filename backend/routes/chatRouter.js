@@ -12,10 +12,10 @@ const {
   message_post,
   get_user_info,
 } = require("../controllers/chatController");
+const { create_poll } = require("../controllers/pollController.js");
 
-const {create_poll, } = require("../controllers/pollController.js");
-
-const { create_message } = require("../controllers/message_controller.js");
+// Establish a SSE connection
+chatRouter.get("/:chat_id/events", subscribe_to_chat);
 
 // Get a chat
 chatRouter.get("/:chat_id/:user_id", get_chat);
@@ -31,6 +31,9 @@ chatRouter.get("/:chat_pin/join/guest", join_chat_guest);
 // Join a chat as a user
 chatRouter.get("/:username/:chat_pin/join/user", join_chat_user);
 
+// Getting user json by id for profile button
+chatRouter.get("/:user_id/getuser/info", get_user_info);
+
 // Create a new chat as guest
 chatRouter.post("/create/guest", create_chat_guest);
 
@@ -40,26 +43,13 @@ chatRouter.post("/create/:username/:chat_name", create_chat_user);
 // Post a message to a chat
 chatRouter.post("/message/:chat_pin/:user_id", message_post);
 
-// // Set poll title
-// chatRouter.post("/:chat_id/:poll_title", (req, res) => {
-//   res.send("user set a poll title");
-// });
-
-chatRouter.post("/:chat_id/poll/post/create", create_poll);
-
-// Create a poll option
-chatRouter.post("/:chat_id/poll/:poll_id/:poll_option", (req, res) => {
-  res.send("User created a poll option");
-});
+// Post a poll to a chat
+chatRouter.post("/poll/:chat_pin/create", create_poll);
 
 // Vote for a poll option
 chatRouter.post("/:chat_id/poll/:poll_id/vote/:poll_option_id", (req, res) => {
   res.send("User vote a poll option");
 });
-
-// Getting user json by id for profile button
-chatRouter.get("/:user_id/getuser/info", get_user_info);
-
 
 // Handle undefined routes
 chatRouter.get("*", (req, res) => {
@@ -68,4 +58,3 @@ chatRouter.get("*", (req, res) => {
 
 
 module.exports = chatRouter;
-

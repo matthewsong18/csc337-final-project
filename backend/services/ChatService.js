@@ -14,6 +14,20 @@ class ChatService {
 
     await chat.save();
   }
+
+  static async add_poll(chat_pin, poll_id) {
+    const chat = await Chat.findOne({ pin: chat_pin});
+    if (!chat) {
+      throw new Error("Chat does not exist");
+    }
+
+    const polls = chat.polls;
+    polls.push(poll_id);
+
+    chat.polls = polls;
+
+    await chat.save();
+  }
 }
 
 module.exports = ChatService;

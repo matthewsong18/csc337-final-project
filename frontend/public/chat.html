@@ -46,19 +46,19 @@
                     <label for="pollOption1">Options:</label>
                     <div id="additionalOptions">
                         <div class="optionItem">
-                            <input type="text" class="poll_option_title" id="pollOption1" name="pollOption1"
+                            <input type="text" class="poll_option_title" id="pollOption" name="pollOption1"
                                 placeholder="Type your answer" required>
                             <button type="button" class="deleteOptionButton">Delete</button>
                         </div>
                         <div class="optionItem">
-                            <input type="text" class="poll_option_title" id="pollOption2" name="pollOption2"
+                            <input type="text" class="poll_option_title" id="pollOption" name="pollOption2"
                                 placeholder="Type your answer" required>
                             <button type="button" class="deleteOptionButton">Delete</button>
                         </div>
                     </div>
                     <div>
                         <button type="button" id="addOptionButton">Add Option</button>
-                        <button type="submit">Submit</button>
+                        <button type="button" onclick="send_poll()">Submit</button>
                     </div>
                 </form>
             </div>

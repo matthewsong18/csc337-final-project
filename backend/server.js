@@ -19,8 +19,8 @@ function start_database_connection(DATABASE_URL) {
 }
 
 function start_listening(PORT) {
-  app.listen(PORT, "127.0.0.1", () => {
-    console.log(`Achat app - listening on: http://127.0.0.1:${PORT}`);
+  app.listen(PORT, () => {
+    console.log(`Achat app - listening on: http://localhost:${PORT}`);
   });
 }
 
